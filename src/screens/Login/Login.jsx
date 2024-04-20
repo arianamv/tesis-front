@@ -1,22 +1,20 @@
 import * as React from 'react';
-import Avatar from '@mui/material/Avatar';
 import Button from '@mui/material/Button';
 import CssBaseline from '@mui/material/CssBaseline';
 import TextField from '@mui/material/TextField';
-import FormControlLabel from '@mui/material/FormControlLabel';
-import Checkbox from '@mui/material/Checkbox';
 import Link from '@mui/material/Link';
 import Paper from '@mui/material/Paper';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
-import LockOutlinedIcon from '@mui/icons-material/LockOutlined';
 import Typography from '@mui/material/Typography';
 import { createTheme, ThemeProvider } from '@mui/material/styles';
-import { authService } from "../services/authService"
+import { authService } from '../../services/authService';
 import { useNavigate } from "react-router-dom";
-import { validar } from '../helpers/Validaciones';
+import { validar } from '../../validations/Validaciones';
 import { FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLabel, OutlinedInput } from '@mui/material';
 import { Visibility, VisibilityOff } from '@mui/icons-material';
+import background from '../../assets/Login_image.jpg'
+import logo from '../../assets/Logo.png'
 
 function Copyright(props) {
   return (
@@ -90,7 +88,7 @@ export default function LoginPage() {
           md={7}
           sx={{            
             height: "100vh",
-            backgroundImage: 'url(http://www.ispconsulting.pe/imagenes/4.jpg)',
+            backgroundImage: `url(${background})`,
             backgroundRepeat: 'no-repeat',
             backgroundColor: (t) =>
               t.palette.mode === 'light' ? t.palette.grey[50] : t.palette.grey[900],
@@ -108,13 +106,10 @@ export default function LoginPage() {
             }}
           > 
             <Box sx={{mb:6}}>
-                <img src="http://www.ispconsulting.pe/imagenes/logo.png" width={150} alt="logo" />
+                <img src={require("../../assets/Logo.png")} width={150} alt="logo" />
             </Box>
-            <Typography  sx={{color: "#9C9C9C", fontSize:"32px", mb:2}} component="h1" variant="h5">
-              <strong>Bienvenido a ISP Consulting</strong>
-            </Typography>
-            <Typography  sx={{color: "green", fontSize:"32px", mb:2}} component="h1" variant="h5">
-              <strong>ENTORNO DE PRUEBAS Y DESARROLLO: 13/07/2023 - 10:28 PM</strong>
+            <Typography  sx={{color: "#074F57", fontSize:"32px", mb:2}} component="h1" variant="h5">
+              <strong>Bienvenido a SAM</strong>
             </Typography>
             <Box component="form" noValidate onSubmit={handleSubmit} sx={{ mt: 1 }}>
               <TextField
@@ -158,7 +153,7 @@ export default function LoginPage() {
                 type="submit"
                 fullWidth
                 variant="contained"
-                sx={{ mt: 3, mb: 2, backgroundColor: "#154360"}}
+                sx={{ mt: 3, mb: 2, backgroundColor: "#074F57"}}
                 size="large"
               >
                 INICIAR SESIÓN
@@ -170,7 +165,6 @@ export default function LoginPage() {
                   </Link>
                 </Grid>
               </Grid>
-              <Copyright sx={{ mt: 5 }} />
             </Box>
           </Box>
         </Grid>
