@@ -1,10 +1,12 @@
 import React, {useState} from 'react'
-import NavBarAdmin from '../../components/NavbarAdmin'
+import NavBarAdmin from '../../components/Navbars/NavbarAdmin'
 import Typography from '@mui/material/Typography';
 import ColumnTabs from '../../components/Tabs/columnTabs';
 import Row from 'react-bootstrap/Row';
 import Box from '@mui/material/Box';
 import SearchIcon from "@mui/icons-material/Search";
+import AccountCircle from '@mui/icons-material/AccountCircle';
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import {
     Divider,
     Grid,
@@ -14,7 +16,9 @@ import {
     Button,
     Container,
     Stack,
+    IconButton,
   } from "@mui/material";
+import FilterCampañas from '../../components/Filters/FilterCampañas';
 
 function GestionDatos() {
   const [numTab, setNumTab] = React.useState('1');
@@ -32,65 +36,78 @@ function GestionDatos() {
   const [showGestCustomer, setShowGestCustomer] = React.useState(false);
   const [disable, setDisable] = React.useState(false);
   const [searchLabel, setSearchLabel] = React.useState("Buscar por palabra clave");
+  const [filterOpen, setFilterOpen] = React.useState(null);
 
   const onSearch = (event) => {
     setSearch(event.target.value);
   };
 
+  const openFilter = (event) => {
+    setFilterOpen(event.currentTarget);
+  };
+
+
   return (
     <div>
-      <Box sx={{ display: 'flex' }}>
+      <FilterCampañas
+        show={filterOpen}
+        setShow={setFilterOpen}
+      />
+      <Box sx={{ display: 'flex'}}>
       <NavBarAdmin/>
         <Row>
-        <Typography variant='h6' 
-          sx={{ 
-            pt: 3, 
-            pl: 3, 
-            fontWeight: 'medium',
-            color: '#103A5E'
-        }}>
-            Gestión de movimientos
-        </Typography>
-
+        <Box display='flex'>
+          <Box display='flex' sx={{ width: '90%' }}>
+          <Typography variant='h6' 
+            sx={{ 
+              pt: 3, 
+              pl: 3, 
+              fontWeight: 'medium',
+              color: '#103A5E'
+            }}>
+            Gestión de datos
+          </Typography>
+          </Box>
+          <Box display='flex' justifyContent='flex-end' sx={{ width: '10%' }}>
+          <IconButton
+            size="large"
+            edge="end"
+          >
+            <AccountCircle />
+          </IconButton>
+          </Box>
+        </Box>
         <Box sx={{
             mt: 1,
             ml: 3,
-            pb: 2,
-            pl: 2,
-            width: '100%',
+            width: '90vw',
             border: 1,
             borderColor: '#D3D3D3',
             justifyContent: 'center',
             display: 'flex'
         }}>
-              <Grid
-                container
-                rowSpacing={1}
-                columnSpacing={{
-                    xs: 1,
-                    sm: 2,
-                    md: 3,
+
+            <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
+              <TextField
+                value={search}
+                onChange={onSearch}
+                fullWidth={true}
+                variant="standard"
+                InputProps={{
+                    endAdornment: (
+                    <InputAdornment position="end">
+                        <SearchIcon style={{ color: "#074F57" }}/>
+                    </InputAdornment>
+                    ),
                 }}
-              >
-                <Grid item xs={6}>
-                  <TextField
-                    value={search}
-                    label={searchLabel}
-                    onChange={onSearch}
-                    fullWidth={true}
-                    variant="standard"
-                    InputProps={{
-                      endAdornment: (
-                        <InputAdornment position="end">
-                          <SearchIcon />
-                        </InputAdornment>
-                      ),
-                    }}
-                  />
-                </Grid>
-                
-              </Grid>
+              />
             </Box>
+            <Box display='flex' justifyContent='center' alignItems='center' sx={{ width: '5%' }}>
+              <IconButton onClick={openFilter}>
+                <FilterAltIcon style={{ color: "#074F57" }}/>
+              </IconButton>
+            </Box>
+          </Box>
 
         <ColumnTabs
           value={numTab}

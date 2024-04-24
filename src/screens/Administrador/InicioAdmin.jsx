@@ -1,5 +1,5 @@
 import React from 'react'
-import NavBarAdmin from '../../components/NavbarAdmin'
+import NavBarAdmin from '../../components/Navbars/NavbarAdmin'
 import Bar from '../../components/Bar'
 import Toolbar from '@mui/material/Toolbar';
 import Box from '@mui/material/Box';

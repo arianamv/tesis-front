@@ -9,96 +9,43 @@ import DownloadIcon from '@mui/icons-material/Download';
 import DeleteIcon from '@mui/icons-material/Delete';
 import SearchIcon from "@mui/icons-material/Search";
 import EditIcon from '@mui/icons-material/Edit';
+import AddIcon from '@mui/icons-material/Add';
+import FileDownloadIcon from '@mui/icons-material/FileDownload';
 import useAlert from './AlertContext/useAlert';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import useProgress from './ProgressContext/useProgress'
-
-
-export const CLIENTE_COLUMNS = {
-  id: true,
-  ruc: true,
-  razonSocial: true,
-  dirFiscal: true,
-  estado: true,
-  nombreFac: false,
-  correoFac: false,
-  telefonoFac: false,
-  nombreGest: false,
-  correoGest: false,
-  telefonoGest: false,
-  nombreCob: false,
-  correoCob: false,
-  telefonoCob: false,
-};
-
-export const FACTURACION_COLUMNS = {
-    id: true,
-    ruc: true,
-    razonSocial: true,
-    dirFiscal: false,
-    estado: false,
-    nombreFac: true,
-    correoFac: true,
-    telefonoFac: true,
-    nombreGest: false,
-    correoGest: false,
-    telefonoGest: false,
-    nombreCob: false,
-    correoCob: false,
-    telefonoCob: false,
-  };
-
-  export const GESTIONES_COLUMNS = {
-    id: true,
-    ruc: true,
-    razonSocial: true,
-    dirFiscal: false,
-    estado: false,
-    nombreFac: false,
-    correoFac: false,
-    telefonoFac: false,
-    nombreGest: true,
-    correoGest: true,
-    telefonoGest: true,
-    nombreCob: false,
-    correoCob: false,
-    telefonoCob: false,
-  };
-
-  export const COBRANZA_COLUMNS = {
-    id: true,
-    ruc: true,
-    razonSocial: true,
-    dirFiscal: false,
-    estado: false,
-    nombreFac: false,
-    correoFac: false,
-    telefonoFac: false,
-    nombreGest: false,
-    correoGest: false,
-    telefonoGest: false,
-    nombreCob: true,
-    correoCob: true,
-    telefonoCob: true,
-  };
+import PopupEliminar from './Popups/PopupEliminarCampaña';
 
 
 export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}) {
-  const [columnVisible, setColumnVisible] = React.useState(CLIENTE_COLUMNS);
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState("");
   const [idClient, setIdClient] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(false);
   const [openRestore, setOpenRestore] = React.useState(false);
-  const [rows, setRows] = React.useState([]);
   const [isEdition, setIsEdition] = React.useState(false);
   const { setProgress } = useProgress()
   const { setAlert } = useAlert()
   const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
+  const [showEliminar, setShowEliminar] = React.useState(false);
 
   const handleChange = (event) => {
     setEstadoCliente(event.target.value);
     //RellenarTabla(event.target.value)
   };
+
+  const rows = ([
+    {
+        id: 1,
+        nombre: '2024-1',
+        descripcion: 'Campaña 2024',
+        fechaInicio: '01/01/2024',
+        fechaFin: '31/12/2024',
+        cultivo: 'Palta',
+        año: '2024',
+        estado: 'Activo',
+    },
+  ]);
 
   const columnas = [
     { 
@@ -145,11 +92,11 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
         }
     },
     {
-        field: 'descripción',
+        field: 'descripcion',
         headerName: 'Descripción',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 100,
+        width: 200,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
@@ -280,12 +227,12 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
         headerClassName: 'super-app-theme--header',
         headerAlign: 'center',
         align: 'center',
+        width: 100,
         renderCell: (cellValues) => {
-            if (cellValues.row.estado === "ACTIVO"){
               return (
                 <div>
                     <IconButton onClick={ () => handleEdit(cellValues.id, cellValues)}>
-                        <EditIcon color="primary"/>
+                        <EditIcon style={{ color: "#074F57" }}/>
                     </IconButton>
                     
                     <IconButton onClick = {() => handleDelete(cellValues.id)}>
@@ -293,15 +240,6 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
                     </IconButton>
                 </div>
               );
-            } else {
-              return (
-                <div>                    
-                    <IconButton onClick = {() => handleRestore(cellValues.id)}>
-                        <Restore style={{ color: 'green' }}/>
-                    </IconButton>
-                </div>
-              );
-            }
         }
     },
   ];
@@ -325,13 +263,26 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
 
   function handleDelete(id){
     setIdClient(id);
-    setOpenAlert(true); 
+    setShowEliminar(true);
   }
 
   function handleRestore(id){
     setIdClient(id);
     setOpenRestore(true); 
   }
+
+  React.useEffect(() => {
+    if (search === "") {
+      setRowsTable(rows)
+    }
+    if (search != "") {
+      setRowsTable(rows.filter(
+          (key) => key.nombre?.toLowerCase().includes(search.toLowerCase()) ||
+          key.descripcion?.toLowerCase().includes(search.toLowerCase())
+        ))
+    }
+  }, [search]);
+
 /*
   const RellenarTabla = (estadoAux = "ACTIVO") => {
     setProgress(true)
@@ -375,27 +326,48 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
   }
 */
 
-  React.useEffect(() => {
-    if (search === "") {
-      setRowsTable(rows)
-    }
-    if (search != "") {
-      setRowsTable(rows.filter(
-          (key) => (key.razonSocial?.toLowerCase().includes(search.toLowerCase()) ||
-          key.ruc?.toString().includes(search))
-        ))
-    }
-    //console.log("RESULTADO", rowsTable)
-  }, [search]);
-
 
   return (
     <div>
-      <Box sx={{ height: 500, width: '100vh' }}>
+      <PopupEliminar
+        show={showEliminar}
+        setShow={setShowEliminar}
+      />
+      <Box display='flex' sx={{ mb: 1 }}>
+          <Box>
+            <Typography><b>Campañas</b></Typography>
+          </Box>
+          <Box display="flex" justifyContent="flex-end" sx={{ width: '100%',}}>
+            <Button
+              variant='contained'
+              size='small'
+              startIcon={<AddIcon />}
+              sx={{
+                  ml: 1,
+                  backgroundColor: '#074F57',
+                  position: 'relative'
+                }}
+            >
+              Añadir
+            </Button>
+            <Button
+              variant='contained'
+              size='small'
+              startIcon={<FileDownloadIcon />}
+              sx={{
+                ml: 1,
+                backgroundColor: '#074F57',
+                position: 'relative'
+              }}
+            >
+              Descargar
+            </Button>
+          </Box>
+          </Box>
+      <Box sx={{ display: "flex" }}>
       <DataGrid
         rows={rowsTable}
         columns={columnas}
-        columnVisibilityModel={columnVisible}
         initialState={{
           pagination: {
             paginationModel: {
@@ -406,7 +378,9 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
         pageSizeOptions={[10]}
         disableRowSelectionOnClick
         disableColumnMenu
+        disableColumnResize
         sx={{
+            height: '100%', width: '100%',
             '& .MuiDataGrid-columnHeaderTitle': {
                 textOverflow: "clip",
                 whiteSpace: "break-spaces",
@@ -429,7 +403,8 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable}
               maxHeight: "none !important"
             },
             '& .super-app-theme--header': {
-              backgroundColor: '#Efefef',
+              backgroundColor: '#74A57F',
+              color: '#FFFFFF'
             },
         }}
       />

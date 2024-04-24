@@ -38,7 +38,7 @@ export default function NavbarAdmin() {
         variant="permanent"
       >
         <Toolbar sx={{ justifyContent: 'center' }}>
-            <img src={require("../assets/Logo.png")} alt="logo" width={40}/>
+            <img src={require("../../assets/Logo.png")} alt="logo" width={40}/>
         </Toolbar>
         <Divider />
         <List>

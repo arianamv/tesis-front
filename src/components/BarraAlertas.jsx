@@ -42,11 +42,11 @@ function BarraAlertas() {
           <Box display='grid'>
             <FormControlLabel size='small' 
                 control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
-                label={<Typography variant='caption'>Uva</Typography>}
+                label={<Typography variant='caption'>Arañita roja</Typography>}
             />
             <FormControlLabel size='small' sx={{ mt: -2 }}
                 control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
-                label={<Typography variant='caption'>Palta</Typography>}
+                label={<Typography variant='caption'>Arañita marrón</Typography>}
             />
             <FormControlLabel size='small' sx={{ mt: -2 }}
                 control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}

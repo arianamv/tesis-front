@@ -42,6 +42,7 @@ function Bar() {
             <Select
               labelId="campaña"
               id="campaña-select"
+              variant='standard'
               value={fundo}
               onChange={handleChange}
               sx={{ 
@@ -63,6 +64,7 @@ function Bar() {
               labelId="fundo"
               id="fundo-select"
               value={campania}
+              variant='standard'
               onChange={handleChange}
               sx={{ 
                 width: 200,
@@ -82,6 +84,7 @@ function Bar() {
             <Select
               labelId="semana"
               id="semana-select"
+              variant='standard'
               value={semana}
               onChange={handleChange}
               sx={{ 

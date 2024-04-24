@@ -2,7 +2,6 @@ import './App.css';
 import { Routes, Route, BrowserRouter } from "react-router-dom";
 import Login from './screens/Login/Login';
 import InicioAdmin from './screens/Administrador/InicioAdmin';
-import PaginaPrueba from './components/PaginaPrueba';
 import GestionDatos from './screens/Administrador/GestionDatos';
 import GestionMovimientos from './screens/Administrador/GestionMovimientos';
 

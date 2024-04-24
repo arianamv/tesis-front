@@ -4,7 +4,9 @@ import Tab from '@mui/material/Tab';
 import TabContext from '@mui/lab/TabContext';
 import TabList from '@mui/lab/TabList';
 import TabPanel from '@mui/lab/TabPanel';
-import TableCampaña from '../TableCampañas';
+import Typography from '@mui/material/Typography';
+import Button from '@mui/material/Button';
+import TablaCampañas from '../TablaCampañas';
 
 function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}) {
   const handleChange = (event, newValue) => {
@@ -13,9 +15,10 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}
 
   return (
     <div>
-      <Box sx={{ width: '100%', typography: 'body1' }}>
+      <Box sx={{ width: '100%', typography: 'caption', mt: 1}}>
       <TabContext value={value}>
-        <Box sx={{ borderBottom: 1, borderColor: 'divider' }}>
+        <Box display='flex' sx={{ borderBottom: 2, borderColor: '#074F57' }} >
+        <Box display='flex'>
           <TabList 
             onChange={handleChange}
             aria-label="tabs-datos"
@@ -23,8 +26,9 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}
                 pl: 1,
                 pt: 1,
                 ".Mui-selected": {
-                    color: 'white',
+                    color: '#FFFFFF !important',
                     backgroundColor: '#074F57',
+                    colorInterpolation: '#FFFFFF',
                 },
             }}
             TabIndicatorProps={{
@@ -40,18 +44,28 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}
             <Tab label="Evaluadores" value="5" />
           </TabList>
         </Box>
+        
+        </Box>
         <TabPanel value="1">
-          <TableCampaña
+          <TablaCampañas
             search={search}
             setSearch={setSearch}
             rowsTable={rowsTable}
             setRowsTable={setRowsTable}
           />
         </TabPanel>
-        <TabPanel value="2">Item Two</TabPanel>
-        <TabPanel value="3">Item Three</TabPanel>
-        <TabPanel value="4">Item Two</TabPanel>
-        <TabPanel value="5">Item Three</TabPanel>
+        <TabPanel value="2">
+          <Typography sx={{ mb: 1 }}><b>Lotes</b></Typography>
+        </TabPanel>
+        <TabPanel value="3">
+          <Typography sx={{ mb: 1 }}><b>Plagas</b></Typography>
+        </TabPanel>
+        <TabPanel value="4">
+          <Typography sx={{ mb: 1 }}><b>Pesticidas</b></Typography>
+        </TabPanel>
+        <TabPanel value="5">
+          <Typography sx={{ mb: 1 }}><b>Evaluadores</b></Typography>
+        </TabPanel>
       </TabContext>
     </Box>
     </div>
