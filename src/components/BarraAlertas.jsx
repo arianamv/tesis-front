@@ -50,7 +50,7 @@ function BarraAlertas() {
             />
             <FormControlLabel size='small' sx={{ mt: -2 }}
                 control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
-                label={<Typography variant='caption'>Arándano</Typography>}
+                label={<Typography variant='caption'>Pulgón</Typography>}
             />
           </Box>
         </Box>
