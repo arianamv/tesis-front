@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, FormControl, FormHelperText, LinearProgress, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Download, Restore } from "@mui/icons-material";
@@ -18,9 +18,9 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
+import { listarLotes, listarLotesXCampañaXFundo } from '../services/adminService';
 
-
-export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable, rows, setRows}) {
+function TablaLotes({search,setSearch}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState("");
   const [idClient, setIdClient] = React.useState(0);
@@ -31,6 +31,9 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
   const { setAlert } = useAlert()
   const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
   const [showEliminar, setShowEliminar] = React.useState(false);
+  let [rowsTable, setRowsTable] = React.useState(-1);
+  let [rows, setRows] = React.useState(-1);
+  const [loading, setLoading] = React.useState(true);
 
   const handleChange = (event) => {
     setEstadoCliente(event.target.value);
@@ -64,7 +67,7 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
         headerName: 'Nombre', 
         headerClassName: 'super-app-theme--header',
         editable: false,
-        width: 200,
+        width: 170,
         headerAlign: 'center',
         align: 'center',
         renderCell: (cellValues) => {
@@ -104,8 +107,8 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
         }
     },
     {
-      field: 'fechaIni',
-      headerName: 'Fecha de inicio',
+      field: 'area',
+      headerName: 'Área',
       headerClassName: 'super-app-theme--header',
       width: 100,
       headerAlign: 'center',
@@ -121,14 +124,14 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
                   lineHeight: '16px',
                 }}
               >
-                  {formatDate(cellValues.value)}
+                  {(cellValues.value)}
               </Box>
           )
       }
     },
     {
-        field: 'fechaFin',
-        headerName: 'Fecha Fin',
+        field: 'cultivo',
+        headerName: 'Cultivo',
         headerAlign: 'center',
         width: 100,
         headerClassName: 'super-app-theme--header',
@@ -143,17 +146,17 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
                     lineHeight: '16px',
                   }}
                 >
-                    {formatDate(cellValues.value)}
+                    {capitalizeWords(cellValues.value)}
                 </Box>
             )
         }
     },
     {
-        field: 'cultivo',
-        headerName: 'Cultivo',
+        field: 'variedad',
+        headerName: 'Variedad',
         headerAlign: 'center',
         headerClassName: 'super-app-theme--header',
-        width: 150,
+        width: 100,
         align: 'center',
         renderCell: (cellValues) => {
             return (
@@ -164,16 +167,16 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
                     lineHeight: '16px',
                   }}
                 >
-                    {cellValues.value}
+                    {capitalizeWords(cellValues.value)}
                 </Box>
             )
         }
     },
     {
-        field: 'fechCosecha',
-        headerName: 'Fecha Cosecha',
+        field: 'numPlantas',
+        headerName: 'N° Plantas',
         headerAlign: 'center',
-        width: 120,
+        width: 100,
         headerClassName: 'super-app-theme--header',
         align: 'center',
         renderCell: (cellValues) => {
@@ -186,7 +189,29 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
                     lineHeight: '16px',
                   }}
                 >
-                    {formatDate(cellValues.value)}
+                    {(cellValues.value)}
+                </Box>
+            )
+        }
+    },
+    {
+        field: 'numSurcos',
+        headerName: 'N° Surcos',
+        headerAlign: 'center',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        align: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {(cellValues.value)}
                 </Box>
             )
         }
@@ -295,48 +320,47 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
     }
   }, [search]);
 
-/*
-  const RellenarTabla = (estadoAux = "ACTIVO") => {
-    setProgress(true)
-    getCustomers()
-      .then((response) => {
-        //console.log(response?.data)
+  const getLotes = () => {
+    listarLotes().then((response) => {
         if(response?.data){
-          let auxrows = [];
-          for(let i = 0; i < response?.data.length; i++){
-            if (response?.data[i].estado_empresa_cliente === estadoAux){
-              auxrows.push({
-                id: response?.data[i].id,
-                ruc: response?.data[i].ruc,
-                razonSocial: response?.data[i].razon_social,
-                dirFiscal: response?.data[i].direccion_fiscal,
-                estado: response?.data[i].estado_empresa_cliente,
-                nombreFac: response?.data[i].contacto_facturacion?.nombres,
-                correoFac: response?.data[i].contacto_facturacion?.correo,
-                telefonoFac: response?.data[i].contacto_facturacion?.celular,
-                nombreCob: response?.data[i].contacto_gest_cobranza?.nombres,
-                correoCob: response?.data[i].contacto_gest_cobranza?.correo,
-                telefonoCob: response?.data[i].contacto_gest_cobranza?.celular,
-                nombreGest: response?.data[i].contacto_gest_colaborador?.nombres,
-                correoGest: response?.data[i].contacto_gest_colaborador?.correo,
-                telefonoGest: response?.data[i].contacto_gest_colaborador?.celular,
-              })
+            if(response?.data.Lote){
+              let auxLotes = [];
+              for(let i = 0; i < response?.data?.Lote?.length; i++){
+                auxLotes.push({
+                  id: response?.data.Lote[i].idCampañaXLote,
+                  estado: response?.data.Lote[i].estado,
+                  gravedad: response?.data.Lote[i].gravedad,
+                  idFundo: response?.data.Lote[i].Lote_Fundo_idFundo,
+                  idCampañaXCultivo: response?.data.Lote[i].CampañaXCultivo_idCampañaXCultivo,
+                  idCampaña: response?.data.Lote[i].CampañaXCultivo_Campaña_idCampaña,
+                  idCultivo: response?.data.Lote[i].CampañaXCultivo_Cultivo_idCultivo,
+                  numPlantas: response?.data.Lote[i].numPlantas,
+                  numSurcos: response?.data.Lote[i].numSurcos,
+                  nombre: response?.data.Lote[i].nombreLote,
+                  descripcion: response?.data.Lote[i].descripcion,
+                  area: response?.data.Lote[i].tamanio,
+                  estadoLote: response?.data.Lote[i].estadoLote,
+                  cultivo: response?.data.Lote[i].nombreCultivo,
+                  variedad: response?.data.Lote[i].nombreVariedad,
+                  nombreFundo: response?.data.Lote[i].nombreFundo,
+                  nombreCampaña: response?.data.Lote[i].nombreCampaña,
+                  coordenadas: response?.data.Lote[i].coordenadas,
+                })
+              }
+              setRows(auxLotes);
+              rows = auxLotes;
+              setRowsTable(auxLotes);
+              rowsTable = auxLotes;
+              console.log(rowsTable);
+              setLoading(false);
             }
           }
-          console.log("RELLENAR TABLA")
-          console.log(auxrows)
-          setRows(auxrows);
-          setRowsTable(auxrows);
-        }
-        setProgress(false)
-        //console.log(rowsTable)
-      }).catch((error) => {
-        setProgress(false)
-        setAlert("Error: "+error, "error")
-        //console.log(error)
-      })
+        })
   }
-*/
+
+  React.useEffect(() => {
+    getLotes()
+  }, [])
 
   return (
     <div>
@@ -346,7 +370,7 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
       />
       <Box display='flex' sx={{ mb: 1 }}>
           <Box>
-            <Typography><b>Campañas</b></Typography>
+            <Typography><b>Lotes</b></Typography>
           </Box>
           <Box display="flex" justifyContent="flex-end" sx={{ width: '100%',}}>
             <Button
@@ -386,6 +410,10 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
             },
           },
         }}
+        slots={{
+          loadingOverlay: LinearProgress,
+        }}
+        loading={loading}
         pageSizeOptions={[10]}
         disableRowSelectionOnClick
         disableColumnMenu
@@ -424,3 +452,5 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
     </div>
   );
 }
+
+export default TablaLotes

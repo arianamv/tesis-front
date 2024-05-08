@@ -7,8 +7,9 @@ import TabPanel from '@mui/lab/TabPanel';
 import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TablaCampañas from '../TablaCampañas';
+import TablaLotes from '../TablaLotes';
 
-function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}) {
+function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable, rows, setRows}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -52,10 +53,15 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable}
             setSearch={setSearch}
             rowsTable={rowsTable}
             setRowsTable={setRowsTable}
+            rows={rows}
+            setRows={setRows}
           />
         </TabPanel>
         <TabPanel value="2">
-          <Typography sx={{ mb: 1 }}><b>Lotes</b></Typography>
+          <TablaLotes
+            search={search}
+            setSearch={setSearch}
+          />
         </TabPanel>
         <TabPanel value="3">
           <Typography sx={{ mb: 1 }}><b>Plagas</b></Typography>

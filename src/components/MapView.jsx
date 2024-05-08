@@ -16,7 +16,7 @@ function SetViewOnClick({ coords }) {
   return null;
 }
 
-function MapView({fundo, lotes, fundoObject}) {
+function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck, paltaCheck, aranCheck}) {
 
   const mapRef = useRef(null);
 
@@ -31,7 +31,8 @@ function MapView({fundo, lotes, fundoObject}) {
   const medio = { color: 'orange' }
   const grave = { color: 'red' }
   const [showDetallePlaga, setShowDetallePlaga] = React.useState(false);
-  let coords = [fundoObject?.latitud, fundoObject?.longitud]
+  let [coords, setCoords] = React.useState([0,0]);
+  
 
   function getIconPesticide(){
     return L.icon({
@@ -47,8 +48,68 @@ function MapView({fundo, lotes, fundoObject}) {
   }
 
   React.useEffect(() => {
-    coords = [fundoObject.latitud, fundoObject.longitud]
-  }, [fundoObject])
+    console.log("map fundos", fundos)
+    var filterData = fundos?.filter(item => item.idFundo.toString().includes(fundo));
+    setSelectedFundo(filterData);
+    selectedFundo = filterData;
+    console.log("FILTER", selectedFundo)
+    setCoords([selectedFundo[0].latitud, selectedFundo[0].longitud])
+    coords = [selectedFundo[0]?.latitud, selectedFundo[0]?.longitud]
+  }, [])
+
+  React.useEffect(() => {
+    var filterData = fundos?.filter(item => item.idFundo.toString().includes(fundo));
+    setSelectedFundo(filterData);
+    selectedFundo = filterData;
+    console.log("FILTER", selectedFundo)
+    setCoords([selectedFundo[0].latitud, selectedFundo[0].longitud])
+    coords = [selectedFundo[0]?.latitud, selectedFundo[0]?.longitud]
+    console.log("COORDS", coords);
+  }, [fundo])
+
+  const getColor = (e) => {
+    switch(e.gravedad) {
+      case 0: 
+        return 'black';
+      case 1: 
+        return 'green';
+      case 2: 
+        return 'orange';
+      case 3: 
+        return 'red';
+    }
+  }
+
+  const renderLotes = (e, color, coordenadas) => {
+    return (e.gravedad === 0) ? (
+      <FeatureGroup pathOptions={color}>
+        <Popup>
+          <b>{e.nombreLote}</b><br/>
+          <Divider sx={{ mt: 1, mb: 1 }}/>
+          <b>Cultivo:</b> {e.nombreCultivo}<br/>
+          <b>Variedad:</b> {e.nombreVariedad}<br/>
+          <b>Área sembrada: </b> {e.tamanio} <br/>
+          <b>N° plantas:</b> {e.numPlantas}<br/>
+          <b>N° surcos:</b> {e.numSurcos}<br/>
+        </Popup>
+        <Polygon pathOptions={color} positions={coordenadas} />
+      </FeatureGroup>
+      ) : (
+        <FeatureGroup pathOptions={color}>
+        <Popup>
+        <b>{e.nombreLote}</b><br/>
+          <Divider sx={{ mt: 1, mb: 1 }}/>
+          <b>Cultivo:</b> {e.nombreCultivo}<br/>
+          <b>Variedad:</b> {e.nombreVariedad}<br/>
+          <b>Área sembrada: </b> {e.tamanio} <br/>
+          <b>N° plantas:</b> {e.numPlantas}<br/>
+          <b>N° surcos:</b> {e.numSurcos}<br/>
+          <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+        </Popup>
+        <Polygon pathOptions={color} positions={coordenadas} />
+        </FeatureGroup>
+      );
+  }
 
   return (
     <div class="leaflet-container">
@@ -64,113 +125,103 @@ function MapView({fundo, lotes, fundoObject}) {
         />
         <SetViewOnClick coords={coords} />
         {lotes?.map((e) => {
-          console.log(lotes)
           let coordenadas = []
           for (let i=0; i<e.coordenadas.length; i++){
             coordenadas.push([
-              e.coordenadas[i].latitud, e.coordenadas[i].longitud
+              e?.coordenadas[i]?.latitud, e?.coordenadas[i]?.longitud
             ])
           }
-          if(e.gravedad === 0)
-          return  (
-            <FeatureGroup pathOptions={normal}>
-            <Popup>
-              <b>{e.nombreLote}</b><br/>
-              <Divider sx={{ mt: 1, mb: 1 }}/>
-              <b>Cultivo:</b> {e.nombreCultivo}<br/>
-              <b>Variedad:</b> {e.nombreVariedad}<br/>
-              <b>Área sembrada: </b> {e.tamanio} <br/>
-              <b>N° plantas:</b> {e.numPlantas}<br/>
-              <b>N° surcos:</b> {e.numSurcos}<br/>
-            </Popup>
-            <Polygon pathOptions={normal} positions={coordenadas} />
-            </FeatureGroup>
-          )
-          if(e.gravedad === 1)
-          return (
-            <FeatureGroup pathOptions={leve}>
-            <Popup>
-            <b>{e.nombreLote}</b><br/>
-              <Divider sx={{ mt: 1, mb: 1 }}/>
-              <b>Cultivo:</b> {e.nombreCultivo}<br/>
-              <b>Variedad:</b> {e.nombreVariedad}<br/>
-              <b>Área sembrada: </b> {e.tamanio} <br/>
-              <b>N° plantas:</b> {e.numPlantas}<br/>
-              <b>N° surcos:</b> {e.numSurcos}<br/>
-              <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
-            </Popup>
-            <Polygon pathOptions={leve} positions={coordenadas} />
-          </FeatureGroup>
-          )
-          if(e.gravedad === 2)
-          return (
-            <FeatureGroup pathOptions={medio}>
-            <Popup>
-            <b>{e.nombreLote}</b><br/>
-              <Divider sx={{ mt: 1, mb: 1 }}/>
-              <b>Cultivo:</b> {e.nombreCultivo}<br/>
-              <b>Variedad:</b> {e.nombreVariedad}<br/>
-              <b>Área sembrada: </b> {e.tamanio} <br/>
-              <b>N° plantas:</b> {e.numPlantas}<br/>
-              <b>N° surcos:</b> {e.numSurcos}<br/>
-              <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
-            </Popup>
-            <Polygon pathOptions={medio} positions={coordenadas} />
-          </FeatureGroup>
-          )
-          if(e.gravedad === 3)
-          return (
-            <FeatureGroup pathOptions={grave}>
-            <Popup>
-            <b>{e.nombreLote}</b><br/>
-              <Divider sx={{ mt: 1, mb: 1 }}/>
-              <b>Cultivo:</b> {e.nombreCultivo}<br/>
-              <b>Variedad:</b> {e.nombreVariedad}<br/>
-              <b>Área sembrada: </b> {e.tamanio} <br/>
-              <b>N° plantas:</b> {e.numPlantas}<br/>
-              <b>N° surcos:</b> {e.numSurcos}<br/>
-              <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
-            </Popup>
-            <Polygon pathOptions={grave} positions={coordenadas} />
-          </FeatureGroup>
-          )
-        })}
-          
-          <FeatureGroup pathOptions={grave}>
-            <Popup>
-              <b>Lote 001</b><br/>
-              <Divider sx={{ mt: 1, mb: 1 }}/>
-              <b>Cultivo:</b> <br/>
-              <b>Variedad:</b> <br/>
-              <b>Área sembrada: </b> <br/>
-              <b>N° plantas:</b> <br/>
-              <b>N° surcos:</b> <br/>
-              <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
-            </Popup>
-            <Polygon pathOptions={grave} positions={polylinePlaga} />
-          </FeatureGroup>
-          {
-            polylineAplicacion.map((lote, index) => {
-                var loteAplicacion = L.polygon(lote);
-                var centro = loteAplicacion.getBounds().getCenter();
-                return(
-                  <FeatureGroup pathOptions={medio}>
-                    <Popup>
-                      <b>Lote 001</b><br/>
-                      <Divider sx={{ mt: 1, mb: 1 }}/>
-                        <b>Cultivo:</b> <br/>
-                        <b>Variedad:</b> <br/>
-                        <b>Área sembrada: </b> <br/>
-                        <b>N° plantas:</b> <br/>
-                        <b>N° surcos:</b> <br/>
-                        <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} >Detalle Aplicación</Button>
-                    </Popup>
-                    <Polygon pathOptions={medio} positions={lote} />
-                    <Marker position={centro} icon={getIconPesticide()}/>
-                  </FeatureGroup>
-                )
-            })
+          const color = {
+            color: getColor(e)
           }
+          if (e.idCultivo === 1 && uvaCheck === true)
+          return (e.gravedad === 0) ? (
+            <FeatureGroup pathOptions={color}>
+              <Popup>
+                <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+            </FeatureGroup>
+            ) : (
+              <FeatureGroup pathOptions={color}>
+              <Popup>
+              <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+              </FeatureGroup>
+            );
+            if (e.idCultivo === 2 && paltaCheck === true)
+          return (e.gravedad === 0) ? (
+            <FeatureGroup pathOptions={color}>
+              <Popup>
+                <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+            </FeatureGroup>
+            ) : (
+              <FeatureGroup pathOptions={color}>
+              <Popup>
+              <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+              </FeatureGroup>
+            );
+          if (e.idCultivo === 3 && aranCheck === true)
+          return (e.gravedad === 0) ? (
+            <FeatureGroup pathOptions={color}>
+              <Popup>
+                <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+            </FeatureGroup>
+            ) : (
+              <FeatureGroup pathOptions={color}>
+              <Popup>
+              <b>{e.nombreLote}</b><br/>
+                <Divider sx={{ mt: 1, mb: 1 }}/>
+                <b>Cultivo:</b> {e.nombreCultivo}<br/>
+                <b>Variedad:</b> {e.nombreVariedad}<br/>
+                <b>Área sembrada: </b> {e.tamanio} <br/>
+                <b>N° plantas:</b> {e.numPlantas}<br/>
+                <b>N° surcos:</b> {e.numSurcos}<br/>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+              </Popup>
+              <Polygon pathOptions={color} positions={coordenadas} />
+              </FeatureGroup>
+            );
+        })}
         </MapContainer>
     </div>
   )

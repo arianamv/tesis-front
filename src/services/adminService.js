@@ -71,3 +71,39 @@ export const listarLotesXCampañaXFundo = (data) => {
             });
     });
 };
+
+export const listarUsuarios = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("usuario/listarUsuario", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarCampañaXCultivo = () => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("campania/listarCampaniaXCultivo")
+        .then((resultado) => {
+            resolve(resultado);
+        })
+        .catch((error) => {
+            resolve(error);
+        });
+    });
+}
+
+export const listarLotes = () => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("lote/listarLote")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};

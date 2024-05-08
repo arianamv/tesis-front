@@ -3,6 +3,7 @@ import NavBarAdmin from '../../components/Navbars/NavbarAdmin'
 import Typography from '@mui/material/Typography';
 import ColumnTabs from '../../components/Tabs/columnTabs';
 import Row from 'react-bootstrap/Row';
+import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from '@mui/icons-material/AccountCircle';
@@ -19,13 +20,14 @@ import {
     IconButton,
   } from "@mui/material";
 import FilterCampañas from '../../components/Filters/FilterCampañas';
+import { listarCampanias, listarCampañaXCultivo } from '../../services/adminService';
 
 function GestionDatos() {
   const [numTab, setNumTab] = React.useState('1');
-  const [rowsTable, setRowsTable] = React.useState([]);
-  const [rowsCamp, setRowsCamp] = React.useState([]);
-  const [rowsLote, setRowsLote] = React.useState([]);
-  const [rowsPlaga, setRowsPlaga] = React.useState([]);
+  let [rowsTable, setRowsTable] = React.useState([]);
+  let [rowsCamp, setRowsCamp] = React.useState(-1);
+  let [rowsLote, setRowsLote] = React.useState([]);
+  let [rowsPlaga, setRowsPlaga] = React.useState([]);
   const [rowsPest, setrowsPest] = React.useState([]);
   const [rowsEvaluador, setRowsEvaluador] = React.useState([]);
   const [rowsDescargar, setRowsDescargar] = React.useState(rowsTable);
@@ -37,6 +39,37 @@ function GestionDatos() {
   const [disable, setDisable] = React.useState(false);
   const [searchLabel, setSearchLabel] = React.useState("Buscar por palabra clave");
   const [filterOpen, setFilterOpen] = React.useState(null);
+  let [campanias, setCampanias] = React.useState(-1);
+  let [rows, setRows] = React.useState(-1);
+
+  const getCampañaXCultivo = () => {
+    listarCampañaXCultivo().then((response) => {
+      if(response?.data){
+        if(response?.data.Campaña){
+          let aux = [];
+          for(let i = 0; i < response?.data?.Campaña?.length; i++){
+            aux.push({
+              id: response?.data.Campaña[i].idCampañaXCultivo,
+              estado: response?.data.Campaña[i].estado,
+              idCampaña: response?.data.Campaña[i].Campaña_idCampaña,
+              idCultivo: response?.data.Campaña[i].Cultivo_idCultivo,
+              fechCosecha: response?.data.Campaña[i].fechCosecha,
+              cultivo: response?.data.Campaña[i].nombreCultivo,
+              fechaIni: response?.data.Campaña[i].fechaIni,
+              fechaFin: response?.data.Campaña[i].fechaFin,
+              nombre: response?.data.Campaña[i].nombreCampaña,
+              descripcion: response?.data.Campaña[i].descripcion,
+            })
+          }
+          setRows(aux);
+          rows = aux;
+          setRowsTable(aux);
+          rowsTable = aux;
+          console.log(rowsTable)
+        }
+      }
+    })
+  }
 
   const onSearch = (event) => {
     setSearch(event.target.value);
@@ -46,8 +79,11 @@ function GestionDatos() {
     setFilterOpen(event.currentTarget);
   };
 
+  React.useEffect(() => {
+    getCampañaXCultivo()
+  }, [])
 
-  return (
+  return (rowsTable !== -1) ?(
     <div>
       <FilterCampañas
         show={filterOpen}
@@ -116,12 +152,18 @@ function GestionDatos() {
           setSearch={setSearch}
           rowsTable={rowsTable}
           setRowsTable={setRowsTable}
+          rows={rows}
+          setRows={setRows}
         />
         </Row>
         
       </Box>
     </div>
-  )
+  ) : (
+    <Box sx={{ display: 'flex' }}>
+      <CircularProgress />
+    </Box>
+  );
 }
 
 export default GestionDatos

@@ -13,13 +13,12 @@ import { listarCampanias, listarFundos } from '../services/adminService';
 
 const drawerWidth = 300;
 
-function Bar({fundo, setFundo, campania, setCampania}) {
+function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, campania, setCampania}) {
   const [age, setAge] = React.useState('');
   const [selectedFundo, setSelectedFundo] = React.useState(2);
   const [selectedCampania, setSelectedCampania] = React.useState(4);
   const [semana, setSemana] = React.useState('');
   let [campanias, setCampanias] = React.useState([]);
-  let [fundos, setFundos] = React.useState([]);
   const handleChange = (event) => {
     setAge(event.target.value);
   };
@@ -39,10 +38,6 @@ function Bar({fundo, setFundo, campania, setCampania}) {
   }
 
   React.useEffect(() => {
-    listarFundos().then((response) => {
-      setFundos(response.data?.Fundo)
-      fundos = response.data?.Fundo
-    })
     listarCampanias().then((response) => {
       setCampanias(response.data?.Campaña)
       campanias = response.data?.Campaña
@@ -62,6 +57,7 @@ function Bar({fundo, setFundo, campania, setCampania}) {
             display: 'flex',
         }}
       >
+        {console.log(fundos)}
         <Toolbar>
         <Typography sx={{ color: 'white' }}>
             Fundo:
@@ -80,7 +76,7 @@ function Bar({fundo, setFundo, campania, setCampania}) {
                 backgroundColor: 'white'
               }}
             >
-              {fundos?.map((e) => (
+              {fundos.map((e) => (
                 <MenuItem key={e.idFundo} value={e.idFundo}>
                   {e.nombreFundo}
                 </MenuItem>

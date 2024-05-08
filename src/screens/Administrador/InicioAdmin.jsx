@@ -10,14 +10,18 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import { getFundo, listarCampanias, listarCoordenadaXLote, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
+import { getFundo, listarCampanias, listarCoordenadaXLote, listarFundos, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
 
 function InicioAdmin() {
   let [fundo, setFundo] = React.useState(2);
   let [lotes, setLotes] = React.useState(-1);
   let [campania, setCampania] = React.useState(4);
   let [cargaCoord, setCargaCoord] = React.useState(-1);
-  let [fundoObject, setFundoObject] = React.useState('');
+  let [uvaCheck, setUvaCheck] = React.useState(true);
+  let [paltaCheck, setPaltaCheck] = React.useState(true);
+  let [aranCheck, setAranCheck] = React.useState(true);
+  let [fundos, setFundos] = React.useState(-1);
+  const [fundoObject, setFundoObject] = React.useState(-1);
 
   const getLotesXFundo = (fundo) => {
     console.log(fundo)
@@ -38,7 +42,6 @@ function InicioAdmin() {
           }
           setLotes(auxLotes);
           lotes = auxLotes;
-          console.log(lotes)
         }
       }
     })
@@ -77,28 +80,22 @@ function InicioAdmin() {
     })
   }
 
-  const listFundo = (fundo) => {
-    getFundo(fundo).then((response) => {
-      if(response?.data){
-        setFundoObject(response.data.Fundo)
-        fundoObject = response.data.Fundo
-        console.log(fundoObject)
-      }
+  const getFundos = () => {
+    listarFundos().then((response) => {
+      setFundos(response.data?.Fundo)
+      fundos = response.data?.Fundo
     })
   }
-  
+
   React.useEffect(() => {
     let data = {
       "idFundo": fundo,
       "idCampania": campania
     }
-    let idFundo = {
-      "nombre_id": fundo
-    }
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)
-    listFundo(idFundo)
-    console.log(lotes)
+    getFundos()
+    console.log("lotes", lotes)
   }, [])
 
   React.useEffect(() => {
@@ -106,27 +103,33 @@ function InicioAdmin() {
       "idFundo": fundo,
       "idCampania": campania
     }
-    let idFundo = {
-      "nombre_id": fundo
-    }
-    console.log(idFundo)
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)
-    listFundo(idFundo)
-    console.log(lotes)
+    console.log("lotes",lotes)
   }, [fundo, campania])
 
-  return (lotes !== -1) ?(
+
+  return (lotes !== -1 && fundos !== -1) ?(
     <div>
       <Box sx={{ display: 'flex' }}>
       <Bar
         fundo={fundo}
+        fundos={fundos}
         setFundo={setFundo}
+        fundoObject={fundoObject}
+        setFundoObject={setFundoObject}
         campania={campania}
         setCampania={setCampania}
       />
       <NavBarAdmin/>
-      <BarraAlertas/>
+      <BarraAlertas
+        uvaCheck={uvaCheck}
+        setUvaCheck={setUvaCheck}
+        paltaCheck={paltaCheck}
+        setPaltaCheck={setPaltaCheck}
+        aranCheck={aranCheck}
+        setAranCheck={setAranCheck}
+      />
       <Box
         component="main"
         sx={{ flexGrow: 1, bgcolor: 'background.default', p: 3 }}
@@ -138,7 +141,12 @@ function InicioAdmin() {
             <MapView
               fundo={fundo}
               lotes={lotes}
-              fundoObject={fundoObject[0]}
+              fundos={fundos}
+              selectedFundo={fundoObject}
+              setSelectedFundo={setFundoObject}
+              uvaCheck={uvaCheck}
+              paltaCheck={paltaCheck}
+              aranCheck={aranCheck}
             />
           </Col>
         </Row>

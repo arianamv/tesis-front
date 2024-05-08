@@ -6,7 +6,17 @@ import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
 
-function BarraAlertas() {
+function BarraAlertas({ uvaCheck, setUvaCheck, paltaCheck, setPaltaCheck, aranCheck, setAranCheck }) {
+  console.log(uvaCheck)
+  const handleChangeUvas = (e) => {
+    setUvaCheck(e.target.checked);
+  }
+  const handleChangePalta = (e) => {
+    setPaltaCheck(e.target.checked);
+  }
+  const handleChangeAran = (e) => {
+    setAranCheck(e.target.checked);
+  }
   return (
     <div>
       <Box sx={{ 
@@ -26,15 +36,15 @@ function BarraAlertas() {
           <Typography variant='body2' sx={{ color: '#103A5E', pt: 1 }}>Cultivos</Typography>
           <Box display='grid'>
             <FormControlLabel size='small' 
-                control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
+                control={<Checkbox color="success" checked={uvaCheck} onChange={handleChangeUvas} size='small' sx={{transform: "scale(0.8)",}}/>}
                 label={<Typography variant='caption'>Uva</Typography>}
             />
             <FormControlLabel size='small' sx={{ mt: -2 }}
-                control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
+                control={<Checkbox color="success" checked={paltaCheck} onChange={handleChangePalta} defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
                 label={<Typography variant='caption'>Palta</Typography>}
             />
             <FormControlLabel size='small' sx={{ mt: -2 }}
-                control={<Checkbox color="success" defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
+                control={<Checkbox color="success" checked={aranCheck} onChange={handleChangeAran} defaultChecked size='small' sx={{transform: "scale(0.8)",}}/>}
                 label={<Typography variant='caption'>Arándano</Typography>}
             />
           </Box>
