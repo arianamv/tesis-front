@@ -2,10 +2,11 @@ import React from 'react'
 import { Alert, Button, Box, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Snackbar, Typography } from '@mui/material';
 import CloseIcon from '@mui/icons-material/Close';
 
-function PopUpDetallePlaga({show, setShow, titulo}) {
+function PopUpDetallePlaga({show, setShow, titulo, lote}) {
   const handleClose = async() => {
     setShow(false);
   };
+  console.log(lote)
   return (
     <div>
       <Dialog
@@ -41,8 +42,8 @@ function PopUpDetallePlaga({show, setShow, titulo}) {
             <Typography><b>Alerta:</b> Grave </Typography>
             <Typography><b>Cantidad encontrada:</b> 40 </Typography>
             <Typography><b>Fecha de registro:</b> 01/01/2024 </Typography>
-            <Typography><b>Cultivo:</b> Uva</Typography>
-            <Typography><b>Variedad:</b> Uva</Typography>
+            <Typography><b>Cultivo:</b> {lote.nombreCultivo}</Typography>
+            <Typography><b>Variedad:</b> {lote.nombreVariedad}</Typography>
             <Typography><b>Evaluador:</b> Sergio Soto Vargas </Typography>
           </DialogContentText>
           </Box>

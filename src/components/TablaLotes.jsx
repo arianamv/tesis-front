@@ -277,7 +277,6 @@ function TablaLotes({search,setSearch}) {
 
   const formatDate = (value) => {
     let date = new Date(value)
-    console.log(value)
     if(value != null)
     return padWithLeadingZeros(date.getUTCDate(), 2) + '/' + padWithLeadingZeros(parseInt(date.getUTCMonth() + 1), 2) + '/' + date.getUTCFullYear();    
   }
@@ -327,7 +326,8 @@ function TablaLotes({search,setSearch}) {
               let auxLotes = [];
               for(let i = 0; i < response?.data?.Lote?.length; i++){
                 auxLotes.push({
-                  id: response?.data.Lote[i].idCampañaXLote,
+                  id: i+1,
+                  idCampañaXLote: response?.data.Lote[i].idCampañaXLote,
                   estado: response?.data.Lote[i].estado,
                   gravedad: response?.data.Lote[i].gravedad,
                   idFundo: response?.data.Lote[i].Lote_Fundo_idFundo,

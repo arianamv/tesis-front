@@ -32,7 +32,7 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
   const grave = { color: 'red' }
   const [showDetallePlaga, setShowDetallePlaga] = React.useState(false);
   let [coords, setCoords] = React.useState([0,0]);
-  
+  let [lote, setLote] = React.useState(-1);
 
   function getIconPesticide(){
     return L.icon({
@@ -40,10 +40,8 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
         iconSize: new L.Point(30,30),
     })
   }
-
-  
-
-  const handleOpen = () => {
+  const handleOpen = (e) => {
+    setLote(e)
     setShowDetallePlaga(true);
   }
 
@@ -67,6 +65,7 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
     console.log("COORDS", coords);
   }, [fundo])
 
+
   const getColor = (e) => {
     switch(e.gravedad) {
       case 0: 
@@ -80,44 +79,14 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
     }
   }
 
-  const renderLotes = (e, color, coordenadas) => {
-    return (e.gravedad === 0) ? (
-      <FeatureGroup pathOptions={color}>
-        <Popup>
-          <b>{e.nombreLote}</b><br/>
-          <Divider sx={{ mt: 1, mb: 1 }}/>
-          <b>Cultivo:</b> {e.nombreCultivo}<br/>
-          <b>Variedad:</b> {e.nombreVariedad}<br/>
-          <b>Área sembrada: </b> {e.tamanio} <br/>
-          <b>N° plantas:</b> {e.numPlantas}<br/>
-          <b>N° surcos:</b> {e.numSurcos}<br/>
-        </Popup>
-        <Polygon pathOptions={color} positions={coordenadas} />
-      </FeatureGroup>
-      ) : (
-        <FeatureGroup pathOptions={color}>
-        <Popup>
-        <b>{e.nombreLote}</b><br/>
-          <Divider sx={{ mt: 1, mb: 1 }}/>
-          <b>Cultivo:</b> {e.nombreCultivo}<br/>
-          <b>Variedad:</b> {e.nombreVariedad}<br/>
-          <b>Área sembrada: </b> {e.tamanio} <br/>
-          <b>N° plantas:</b> {e.numPlantas}<br/>
-          <b>N° surcos:</b> {e.numSurcos}<br/>
-          <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
-        </Popup>
-        <Polygon pathOptions={color} positions={coordenadas} />
-        </FeatureGroup>
-      );
-  }
-
   return (
     <div class="leaflet-container">
-        <PopUpDetallePlaga
-          show={showDetallePlaga}
-          setShow={setShowDetallePlaga}
-          titulo={"Arañita Roja"}
-        />
+      <PopUpDetallePlaga
+        show={showDetallePlaga}
+        setShow={setShowDetallePlaga}
+        titulo={"Arañita Roja"}
+        lote={lote}
+      />
         <MapContainer center={coords} zoom={15} scrollWheelZoom={false} sx={{height: 10}}>
         <TileLayer
             attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
@@ -149,6 +118,8 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
               <Polygon pathOptions={color} positions={coordenadas} />
             </FeatureGroup>
             ) : (
+              <div>
+                
               <FeatureGroup pathOptions={color}>
               <Popup>
               <b>{e.nombreLote}</b><br/>
@@ -158,10 +129,11 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
                 <b>Área sembrada: </b> {e.tamanio} <br/>
                 <b>N° plantas:</b> {e.numPlantas}<br/>
                 <b>N° surcos:</b> {e.numSurcos}<br/>
-                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={() => handleOpen(e)} >Detalle Plaga</Button>
               </Popup>
               <Polygon pathOptions={color} positions={coordenadas} />
               </FeatureGroup>
+              </div>
             );
             if (e.idCultivo === 2 && paltaCheck === true)
           return (e.gravedad === 0) ? (
@@ -187,7 +159,7 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
                 <b>Área sembrada: </b> {e.tamanio} <br/>
                 <b>N° plantas:</b> {e.numPlantas}<br/>
                 <b>N° surcos:</b> {e.numSurcos}<br/>
-                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={() => handleOpen(e)} >Detalle Plaga</Button>
               </Popup>
               <Polygon pathOptions={color} positions={coordenadas} />
               </FeatureGroup>
@@ -216,7 +188,7 @@ function MapView({fundo, lotes,fundos, selectedFundo, setSelectedFundo, uvaCheck
                 <b>Área sembrada: </b> {e.tamanio} <br/>
                 <b>N° plantas:</b> {e.numPlantas}<br/>
                 <b>N° surcos:</b> {e.numSurcos}<br/>
-                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={handleOpen} >Detalle Plaga</Button>
+                <Button size="small" variant="contained" sx={{ backgroundColor: '#074F57', mt: 1, mb: 1 }} onClick={() => handleOpen(e)} >Detalle Plaga</Button>
               </Popup>
               <Polygon pathOptions={color} positions={coordenadas} />
               </FeatureGroup>

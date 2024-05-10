@@ -107,3 +107,15 @@ export const listarLotes = () => {
             });
     });
 };
+
+export const listarEvaluadores = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("usuario/listarEvaluadores", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};

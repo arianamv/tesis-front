@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Button from '@mui/material/Button';
 import TablaCampañas from '../TablaCampañas';
 import { LineChart } from '@mui/x-charts/LineChart';
+import TablaEvaluaciones from '../TablaEvaluaciones';
 
 function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTable}) {
   const [vista, setVista] = React.useState(0);
@@ -69,11 +70,9 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTab
         <TabPanel value="1">
           {
             !vista &&
-            (<TablaCampañas
+            (<TablaEvaluaciones
               search={search}
               setSearch={setSearch}
-              rowsTable={rowsTable}
-              setRowsTable={setRowsTable}
             />)
           }
           {

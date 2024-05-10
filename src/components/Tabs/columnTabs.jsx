@@ -8,6 +8,7 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import TablaCampañas from '../TablaCampañas';
 import TablaLotes from '../TablaLotes';
+import TablaEvaluadores from '../TablaEvaluadores';
 
 function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable, rows, setRows}) {
   const handleChange = (event, newValue) => {
@@ -51,10 +52,6 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable,
           <TablaCampañas
             search={search}
             setSearch={setSearch}
-            rowsTable={rowsTable}
-            setRowsTable={setRowsTable}
-            rows={rows}
-            setRows={setRows}
           />
         </TabPanel>
         <TabPanel value="2">
@@ -70,7 +67,10 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable,
           <Typography sx={{ mb: 1 }}><b>Pesticidas</b></Typography>
         </TabPanel>
         <TabPanel value="5">
-          <Typography sx={{ mb: 1 }}><b>Evaluadores</b></Typography>
+        <TablaEvaluadores
+            search={search}
+            setSearch={setSearch}
+          />
         </TabPanel>
       </TabContext>
     </Box>

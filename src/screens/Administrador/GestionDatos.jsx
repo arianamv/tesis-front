@@ -42,35 +42,6 @@ function GestionDatos() {
   let [campanias, setCampanias] = React.useState(-1);
   let [rows, setRows] = React.useState(-1);
 
-  const getCampañaXCultivo = () => {
-    listarCampañaXCultivo().then((response) => {
-      if(response?.data){
-        if(response?.data.Campaña){
-          let aux = [];
-          for(let i = 0; i < response?.data?.Campaña?.length; i++){
-            aux.push({
-              id: response?.data.Campaña[i].idCampañaXCultivo,
-              estado: response?.data.Campaña[i].estado,
-              idCampaña: response?.data.Campaña[i].Campaña_idCampaña,
-              idCultivo: response?.data.Campaña[i].Cultivo_idCultivo,
-              fechCosecha: response?.data.Campaña[i].fechCosecha,
-              cultivo: response?.data.Campaña[i].nombreCultivo,
-              fechaIni: response?.data.Campaña[i].fechaIni,
-              fechaFin: response?.data.Campaña[i].fechaFin,
-              nombre: response?.data.Campaña[i].nombreCampaña,
-              descripcion: response?.data.Campaña[i].descripcion,
-            })
-          }
-          setRows(aux);
-          rows = aux;
-          setRowsTable(aux);
-          rowsTable = aux;
-          console.log(rowsTable)
-        }
-      }
-    })
-  }
-
   const onSearch = (event) => {
     setSearch(event.target.value);
   };
@@ -79,11 +50,7 @@ function GestionDatos() {
     setFilterOpen(event.currentTarget);
   };
 
-  React.useEffect(() => {
-    getCampañaXCultivo()
-  }, [])
-
-  return (rowsTable !== -1) ?(
+  return (
     <div>
       <FilterCampañas
         show={filterOpen}
@@ -150,20 +117,12 @@ function GestionDatos() {
           setValue={setNumTab}
           search={search}
           setSearch={setSearch}
-          rowsTable={rowsTable}
-          setRowsTable={setRowsTable}
-          rows={rows}
-          setRows={setRows}
         />
         </Row>
         
       </Box>
     </div>
-  ) : (
-    <Box sx={{ display: 'flex' }}>
-      <CircularProgress />
-    </Box>
-  );
+  )
 }
 
 export default GestionDatos

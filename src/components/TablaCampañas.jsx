@@ -1,6 +1,6 @@
 import * as React from 'react';
 import { DataGrid } from '@mui/x-data-grid';
-import { Box, Button, Divider, FormControl, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
+import { Box, Button, Divider, FormControl, LinearProgress, FormHelperText, Grid, IconButton, InputAdornment, InputLabel, MenuItem, Paper, Select, TextField, Typography } from '@mui/material';
 import { alignProperty } from '@mui/material/styles/cssUtils';
 import VisibilityIcon from '@mui/icons-material/Visibility';
 import { Download, Restore } from "@mui/icons-material";
@@ -18,9 +18,11 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
+import { listarCampañaXCultivo } from '../services/adminService';
+import PopUpDescargar from './Popups/PopUpDescargar';
 
 
-export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable, rows, setRows}) {
+export default function TablaCampañas({search, setSearch}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState("");
   const [idClient, setIdClient] = React.useState(0);
@@ -31,6 +33,10 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
   const { setAlert } = useAlert()
   const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
   const [showEliminar, setShowEliminar] = React.useState(false);
+  const [showDescargar, setShowDescargar] = React.useState(false);
+  let [rowsTable, setRowsTable] = React.useState(-1);
+  let [rows, setRows] = React.useState(-1);
+  const [loading, setLoading] = React.useState(true);
 
   const handleChange = (event) => {
     setEstadoCliente(event.target.value);
@@ -252,7 +258,6 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
 
   const formatDate = (value) => {
     let date = new Date(value)
-    console.log(value)
     if(value != null)
     return padWithLeadingZeros(date.getUTCDate(), 2) + '/' + padWithLeadingZeros(parseInt(date.getUTCMonth() + 1), 2) + '/' + date.getUTCFullYear();    
   }
@@ -272,6 +277,10 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
       .map((word) => word.charAt(0).toUpperCase() + word.slice(1))
       .join(' ');
   };
+
+  function handleDownload(){
+    setShowDescargar(true);
+  }
 
   function handleDelete(id){
     setIdClient(id);
@@ -295,51 +304,47 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
     }
   }, [search]);
 
-/*
-  const RellenarTabla = (estadoAux = "ACTIVO") => {
-    setProgress(true)
-    getCustomers()
-      .then((response) => {
-        //console.log(response?.data)
-        if(response?.data){
-          let auxrows = [];
-          for(let i = 0; i < response?.data.length; i++){
-            if (response?.data[i].estado_empresa_cliente === estadoAux){
-              auxrows.push({
-                id: response?.data[i].id,
-                ruc: response?.data[i].ruc,
-                razonSocial: response?.data[i].razon_social,
-                dirFiscal: response?.data[i].direccion_fiscal,
-                estado: response?.data[i].estado_empresa_cliente,
-                nombreFac: response?.data[i].contacto_facturacion?.nombres,
-                correoFac: response?.data[i].contacto_facturacion?.correo,
-                telefonoFac: response?.data[i].contacto_facturacion?.celular,
-                nombreCob: response?.data[i].contacto_gest_cobranza?.nombres,
-                correoCob: response?.data[i].contacto_gest_cobranza?.correo,
-                telefonoCob: response?.data[i].contacto_gest_cobranza?.celular,
-                nombreGest: response?.data[i].contacto_gest_colaborador?.nombres,
-                correoGest: response?.data[i].contacto_gest_colaborador?.correo,
-                telefonoGest: response?.data[i].contacto_gest_colaborador?.celular,
-              })
-            }
+  const getCampañaXCultivo = () => {
+    listarCampañaXCultivo().then((response) => {
+      if(response?.data){
+        if(response?.data.Campaña){
+          let aux = [];
+          for(let i = 0; i < response?.data?.Campaña?.length; i++){
+            aux.push({
+              id: i+1,
+              idCampañaXCultivo: response?.data.Campaña[i].idCampañaXCultivo,
+              estado: response?.data.Campaña[i].estado,
+              idCampaña: response?.data.Campaña[i].Campaña_idCampaña,
+              idCultivo: response?.data.Campaña[i].Cultivo_idCultivo,
+              fechCosecha: response?.data.Campaña[i].fechCosecha,
+              cultivo: response?.data.Campaña[i].nombreCultivo,
+              fechaIni: response?.data.Campaña[i].fechaIni,
+              fechaFin: response?.data.Campaña[i].fechaFin,
+              nombre: response?.data.Campaña[i].nombreCampaña,
+              descripcion: response?.data.Campaña[i].descripcion,
+            })
           }
-          console.log("RELLENAR TABLA")
-          console.log(auxrows)
-          setRows(auxrows);
-          setRowsTable(auxrows);
+          setRows(aux);
+          rows = aux;
+          setRowsTable(aux);
+          rowsTable = aux;
+          console.log(rowsTable)
+          setLoading(false);
         }
-        setProgress(false)
-        //console.log(rowsTable)
-      }).catch((error) => {
-        setProgress(false)
-        setAlert("Error: "+error, "error")
-        //console.log(error)
-      })
+      }
+    })
   }
-*/
+
+  React.useEffect(() => {
+    getCampañaXCultivo()
+  }, [])
 
   return (
     <div>
+      <PopUpDescargar
+        show={showDescargar}
+        setShow={setShowDescargar}
+      />
       <PopupEliminar
         show={showEliminar}
         setShow={setShowEliminar}
@@ -370,6 +375,7 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
                 backgroundColor: '#074F57',
                 position: 'relative'
               }}
+              onClick={() => handleDownload()}
             >
               Descargar
             </Button>
@@ -389,6 +395,10 @@ export default function TablaCampañas({search,setSearch,rowsTable,setRowsTable,
         pageSizeOptions={[10]}
         disableRowSelectionOnClick
         disableColumnMenu
+        slots={{
+          loadingOverlay: LinearProgress,
+        }}
+        loading={loading}
         getRowId={(row) => row.id} 
         disableColumnResize
         sx={{
