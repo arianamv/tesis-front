@@ -119,3 +119,27 @@ export const listarEvaluadores = (data) => {
             });
     });
 };
+
+export const listarPlagas = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("plaga/listarPlaga", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarPesticidas = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("pesticida/listarPesticida", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};

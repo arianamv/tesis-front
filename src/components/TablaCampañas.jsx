@@ -18,8 +18,10 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarCampañaXCultivo } from '../services/adminService';
+import { listarCampanias, listarCampañaXCultivo } from '../services/adminService';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpAñadirCampaña from './Popups/PopUpAñadirCampaña';
+import PopUpModificarCampaña from './Popups/PopUpModificarCampaña';
 
 
 export default function TablaCampañas({search, setSearch}) {
@@ -34,6 +36,7 @@ export default function TablaCampañas({search, setSearch}) {
   const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
   const [showEliminar, setShowEliminar] = React.useState(false);
   const [showDescargar, setShowDescargar] = React.useState(false);
+  const [showAñadir, setShowAñadir] = React.useState(false);
   let [rowsTable, setRowsTable] = React.useState(-1);
   let [rows, setRows] = React.useState(-1);
   const [loading, setLoading] = React.useState(true);
@@ -92,7 +95,7 @@ export default function TablaCampañas({search, setSearch}) {
         headerName: 'Descripción',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 200,
+        width: 380,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
@@ -113,7 +116,7 @@ export default function TablaCampañas({search, setSearch}) {
       field: 'fechaIni',
       headerName: 'Fecha de inicio',
       headerClassName: 'super-app-theme--header',
-      width: 100,
+      width: 150,
       headerAlign: 'center',
       align: 'center',
       editable: false,
@@ -136,50 +139,7 @@ export default function TablaCampañas({search, setSearch}) {
         field: 'fechaFin',
         headerName: 'Fecha Fin',
         headerAlign: 'center',
-        width: 100,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {formatDate(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'cultivo',
-        headerName: 'Cultivo',
-        headerAlign: 'center',
-        headerClassName: 'super-app-theme--header',
         width: 150,
-        align: 'center',
-        renderCell: (cellValues) => {
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {cellValues.value}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'fechCosecha',
-        headerName: 'Fecha Cosecha',
-        headerAlign: 'center',
-        width: 120,
         headerClassName: 'super-app-theme--header',
         align: 'center',
         renderCell: (cellValues) => {
@@ -287,6 +247,10 @@ export default function TablaCampañas({search, setSearch}) {
     setShowEliminar(true);
   }
 
+  function handleAñadir(){
+    setShowAñadir(true);
+  }
+
   function handleRestore(id){
     setIdClient(id);
     setOpenRestore(true); 
@@ -316,12 +280,11 @@ export default function TablaCampañas({search, setSearch}) {
               estado: response?.data.Campaña[i].estado,
               idCampaña: response?.data.Campaña[i].Campaña_idCampaña,
               idCultivo: response?.data.Campaña[i].Cultivo_idCultivo,
-              fechCosecha: response?.data.Campaña[i].fechCosecha,
-              cultivo: response?.data.Campaña[i].nombreCultivo,
               fechaIni: response?.data.Campaña[i].fechaIni,
               fechaFin: response?.data.Campaña[i].fechaFin,
-              nombre: response?.data.Campaña[i].nombreCampaña,
+              nombre: response?.data.Campaña[i].nombre,
               descripcion: response?.data.Campaña[i].descripcion,
+              cultivos: response?.data.Campaña[i].cultivos,
             })
           }
           setRows(aux);
@@ -341,6 +304,15 @@ export default function TablaCampañas({search, setSearch}) {
 
   return (
     <div>
+      <PopUpAñadirCampaña
+        show={showAñadir}
+        setShow={setShowAñadir}
+      />
+      <PopUpModificarCampaña
+        show={showEditCustomer}
+        setShow={setShowEditCustomer}
+        row={dataCustomer}
+      />
       <PopUpDescargar
         show={showDescargar}
         setShow={setShowDescargar}
@@ -363,6 +335,7 @@ export default function TablaCampañas({search, setSearch}) {
                   backgroundColor: '#074F57',
                   position: 'relative'
                 }}
+              onClick = {() => handleAñadir()}
             >
               Añadir
             </Button>
@@ -432,5 +405,5 @@ export default function TablaCampañas({search, setSearch}) {
       />
       </Box>
     </div>
-  );
+  )
 }

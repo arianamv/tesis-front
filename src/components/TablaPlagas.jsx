@@ -18,10 +18,9 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarUsuarios } from '../services/adminService';
-import PopUpAñadirEvaluador from './Popups/PopUpAñadirEvaluador';
+import { listarEvaluadores, listarPlagas, listarUsuarios } from '../services/adminService';
 
-function TablaEvaluadores({search, setSearch}) {
+function TablaPlagas({search, setSearch}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -35,16 +34,11 @@ function TablaEvaluadores({search, setSearch}) {
     let [rowsTable, setRowsTable] = React.useState(-1);
     let [rows, setRows] = React.useState(-1);
     const [loading, setLoading] = React.useState(true);
-    const [showAñadir, setShowAñadir] = React.useState(false);
   
     const handleChange = (event) => {
       setEstadoCliente(event.target.value);
       //RellenarTabla(event.target.value)
     };
-
-    function handleAñadir(){
-      setShowAñadir(true);
-    }
   
     const columnas = [
       { 
@@ -73,7 +67,7 @@ function TablaEvaluadores({search, setSearch}) {
           headerName: 'Nombre', 
           headerClassName: 'super-app-theme--header',
           editable: false,
-          width: 350,
+          width: 150,
           headerAlign: 'center',
           align: 'center',
           renderCell: (cellValues) => {
@@ -91,11 +85,11 @@ function TablaEvaluadores({search, setSearch}) {
           }
       },
       {
-          field: 'dni',
-          headerName: 'DNI',
+          field: 'descripcion',
+          headerName: 'Descrición',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 150,
+          width: 200,
           headerAlign: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -107,16 +101,60 @@ function TablaEvaluadores({search, setSearch}) {
                       lineHeight: '16px',
                     }}
                   >
-                      {(cellValues.value)}
+                      {capitalizeWords(cellValues.value)}
                   </Box>
               )
           }
       },
       {
-        field: 'email',
-        headerName: 'Correo electrónico',
+        field: 'nombreCientifico',
+        headerName: 'Nombre científico',
+        editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 220,
+        width: 150,
+        headerAlign: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {capitalizeWords(cellValues.value)}
+                </Box>
+            )
+        }
+    },
+    {
+        field: 'familia',
+        headerName: 'Familia',
+        editable: false,
+        headerClassName: 'super-app-theme--header',
+        width: 100,
+        headerAlign: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {capitalizeWords(cellValues.value)}
+                </Box>
+            )
+        }
+    },
+      {
+        field: 'cantGrave',
+        headerName: 'Grave',
+        headerClassName: 'super-app-theme--header',
+        width: 100,
         headerAlign: 'center',
         align: 'center',
         editable: false,
@@ -136,10 +174,10 @@ function TablaEvaluadores({search, setSearch}) {
         }
       },
       {
-          field: 'telefono',
-          headerName: 'Teléfono',
+          field: 'cantMedio',
+          headerName: 'Medio',
           headerAlign: 'center',
-          width: 150,
+          width: 100,
           headerClassName: 'super-app-theme--header',
           align: 'center',
           renderCell: (cellValues) => {
@@ -152,10 +190,32 @@ function TablaEvaluadores({search, setSearch}) {
                       lineHeight: '16px',
                     }}
                   >
-                      {capitalizeWords(cellValues.value)}
+                      {(cellValues.value)}
                   </Box>
               )
           }
+      },
+      {
+        field: 'cantLeve',
+        headerName: 'Leve',
+        headerAlign: 'center',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        align: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {(cellValues.value)}
+                </Box>
+            )
+        }
       },
       {
           field: 'estado',
@@ -261,22 +321,23 @@ function TablaEvaluadores({search, setSearch}) {
       }
     }, [search]);
   
-    const getUsuarios = () => {
-        listarEvaluadores().then((response) => {
+    const getPlagas = () => {
+        listarPlagas().then((response) => {
           if(response?.data){
-              if(response?.data.Usuario){
+              if(response?.data.Plaga){
                 let aux = [];
-                for(let i = 0; i < response?.data?.Usuario?.length; i++){
+                for(let i = 0; i < response?.data?.Plaga?.length; i++){
                     aux.push({
                     id: i+1,
-                    idUsuario: response?.data.Usuario[i].idUsuario,
-                    nombre: response?.data.Usuario[i].nombres + " " + response?.data.Usuario[i].apellidoPat + " " + response?.data.Usuario[i].apellidoMat,
-                    dni: response?.data.Usuario[i].dni,
-                    email: response?.data.Usuario[i].email,
-                    telefono: response?.data.Usuario[i].telefono,
-                    contrasenia: response?.data.Usuario[i].contrasenia,
-                    estado: response?.data.Usuario[i].estado,
-                    idPerfil: response?.data.Usuario[i].Perfil_idPerfil,
+                    idPlaga: response?.data.Plaga[i].idPlaga,
+                    nombre: response?.data.Plaga[i].nombrePlaga,
+                    descripcion: response?.data.Plaga[i].descripcion,
+                    cantGrave: response?.data.Plaga[i].cantGrave,
+                    cantMedio: response?.data.Plaga[i].cantMedio,
+                    cantLeve: response?.data.Plaga[i].cantLeve,
+                    nombreCientifico: response?.data.Plaga[i].nombreCientifico,
+                    familia: response?.data.Plaga[i].familia,
+                    estado: response?.data.Plaga[i].estado,
                   })
                 }
                 setRows(aux);
@@ -291,22 +352,18 @@ function TablaEvaluadores({search, setSearch}) {
     }
   
     React.useEffect(() => {
-      getUsuarios()
+        getPlagas()
     }, [])
   
     return (
       <div>
-        <PopUpAñadirEvaluador
-          show={showAñadir}
-          setShow={setShowAñadir}
-        />
         <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
-              <Typography><b>Evaluadores</b></Typography>
+              <Typography><b>Plagas</b></Typography>
             </Box>
             <Box display="flex" justifyContent="flex-end" sx={{ width: '100%',}}>
               <Button
@@ -318,7 +375,6 @@ function TablaEvaluadores({search, setSearch}) {
                     backgroundColor: '#074F57',
                     position: 'relative'
                   }}
-                onClick = {() => handleAñadir()}
               >
                 Añadir
               </Button>
@@ -390,4 +446,4 @@ function TablaEvaluadores({search, setSearch}) {
     );
 }
 
-export default TablaEvaluadores
+export default TablaPlagas
