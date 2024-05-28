@@ -12,8 +12,9 @@ import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 
 function Cultivos({cultivo, i, cultivos, setCultivos}){
-  const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-  const [selectedFecha, setSelectedFecha] = React.useState(dayjs());
+  const [selectedCultivo, setSelectedCultivo] = React.useState(cultivo.idCultivo);
+  const [selectedFecha, setSelectedFecha] = React.useState(dayjs(cultivo.fechaCosecha));
+  console.log(cultivos)
   const handleChangeCultivo = (e) => {
     cultivo.idCultivo = e.target.value;
     setSelectedCultivo(e.target.value);
@@ -27,7 +28,6 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
     setCultivos(oldArray => {
       return oldArray.filter((value, i) => i !== e)
     })
-    console.log(e, cultivos)
   }
   return(
     <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
@@ -101,16 +101,13 @@ function PopUpModificarCampaña({show, setShow, row}) {
       setShow(false);
     };
 
-    const [cultivos, setCultivos] = React.useState([{
-      idCultivo: 1,
-      fechaCosecha: dayjs(),
-    }]);
+    let [cultivos, setCultivos] = React.useState(row.cultivos);
+    cultivos = row.cultivos;
     const handleAddCultivo = () => {
       const newCultivo = {
         idCultivo: 1,
         fechaCosecha: dayjs(),
       }
-      console.log(cultivos.length)
       if(cultivos.length < 3) setCultivos(v => [...v, newCultivo])
     }
 
@@ -120,10 +117,7 @@ function PopUpModificarCampaña({show, setShow, row}) {
       newCampaña.fechaIni = fechaIni;
       newCampaña.fechaFin = fechaFin;
       newCampaña.cultivos = cultivos;
-      console.log(newCampaña)
     }, [nombre, descripcion, fechaIni, fechaFin, cultivos])
-
-    console.log(row)
 
     return (
       <div>

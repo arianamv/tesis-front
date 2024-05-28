@@ -22,11 +22,19 @@ import { listarCampanias, listarCampañaXCultivo } from '../services/adminServic
 import PopUpDescargar from './Popups/PopUpDescargar';
 import PopUpAñadirCampaña from './Popups/PopUpAñadirCampaña';
 import PopUpModificarCampaña from './Popups/PopUpModificarCampaña';
+import dayjs from 'dayjs';
 
 
 export default function TablaCampañas({search, setSearch}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
-  const [dataCustomer, setDataCustomer] = React.useState("");
+  const [dataCustomer, setDataCustomer] = React.useState({
+    cultivos: [],
+    descripcion: "",
+    estado: 1,
+    fechaFin: dayjs(),
+    fechaIni: dayjs(),
+    nombre: "",
+  });
   const [idClient, setIdClient] = React.useState(0);
   const [openAlert, setOpenAlert] = React.useState(false);
   const [openRestore, setOpenRestore] = React.useState(false);

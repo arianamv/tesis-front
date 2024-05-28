@@ -89,7 +89,7 @@ function TablaPesticidas({search, setSearch}) {
           headerName: 'Descrición',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 200,
+          width: 150,
           headerAlign: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -128,100 +128,11 @@ function TablaPesticidas({search, setSearch}) {
             )
         }
     },
-    {
-        field: 'dosisRec',
-        headerName: 'Dosis Rec',
-        editable: false,
-        headerClassName: 'super-app-theme--header',
-        width: 50,
-        headerAlign: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'unidadRec',
-        headerName: 'Unidad',
-        editable: false,
-        headerClassName: 'super-app-theme--header',
-        width: 50,
-        headerAlign: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-      {
-        field: 'periodoCarencia',
-        headerName: 'Periodo Carencia',
-        headerClassName: 'super-app-theme--header',
-        width: 100,
-        headerAlign: 'center',
-        align: 'center',
-        editable: false,
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
-      },
-      {
-          field: 'periodoReingreso',
-          headerName: 'Periodo Reingreso',
-          headerAlign: 'center',
-          width: 100,
-          headerClassName: 'super-app-theme--header',
-          align: 'center',
-          renderCell: (cellValues) => {
-            //console.log(cellValues.value)
-              return (
-                  <Box
-                    sx={{
-                      maxHeight: 'inherit',
-                      whiteSpace: 'initial',
-                      lineHeight: '16px',
-                    }}
-                  >
-                      {(cellValues.value)}
-                  </Box>
-              )
-          }
-      },
       {
         field: 'recomendaciones',
         headerName: 'Recomendaciones',
         headerAlign: 'center',
-        width: 200,
+        width: 300,
         headerClassName: 'super-app-theme--header',
         align: 'center',
         renderCell: (cellValues) => {
@@ -257,6 +168,28 @@ function TablaPesticidas({search, setSearch}) {
                   }}
                 >
                     {capitalizeWords(cellValues.value)}
+                </Box>
+            )
+        }
+      },
+      {
+        field: 'toxicidad',
+        headerName: 'Toxicidad',
+        headerAlign: 'center',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        align: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {(cellValues.value)}
                 </Box>
             )
         }

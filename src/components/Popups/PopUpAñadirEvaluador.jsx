@@ -10,8 +10,88 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { listarLoteXFundo } from '../../services/adminService';
 
-function PopUpAñadirEvaluador({show, setShow}) {
+function Lotes({lote, i, lotes, setLotes, fundos, lotesFundo, setLotesFundo}){
+  const [selectedFundo, setSelectedFundo] = React.useState(1);
+  const [selectedLote, setSelectedLote] = React.useState(1);
+  const handleChangeFundo = (e) => {
+    lote.idFundo = e.target.value;
+    setSelectedFundo(e.target.value);
+    let id = {
+      nombre_id: e.target.value
+    }
+    getLotes(id);
+  }
+
+  const getLotes = (id) => {
+    listarLoteXFundo(id).then((response) => {
+      setLotesFundo(response.data?.Lote)
+      lotesFundo = response.data?.Lote
+    })
+  }
+
+  const handleChangeLote = (e) => {
+    lote.idLote = e.target.value;
+    setSelectedLote(e.target.value);
+  }
+  const handleDelete = (e) => {
+    lotes.splice(e, 1);
+    setLotes(oldArray => {
+      return oldArray.filter((value, i) => i !== e)
+    })
+    console.log(e, lotes)
+  }
+  return(
+    <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+      <Typography>
+        Fundo:
+      </Typography>
+      <FormControl size="small">
+        <Select
+          labelId="fundo"
+          id="fundo"
+          value={selectedFundo}
+          variant='outlined'
+          onChange={handleChangeFundo}
+          name="fundo"
+          sx={{ m: 1, minWidth: 250 }}
+        >
+          {fundos.map((e) => (
+            <MenuItem key={e.idFundo} value={e.idFundo}>
+              {e.nombreFundo}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <Typography>
+        Lote:
+      </Typography>
+      <FormControl size="small">
+        <Select
+          labelId="lote"
+          id="lote"
+          value={selectedLote}
+          variant='outlined'
+          onChange={handleChangeLote}
+          name="lote"
+          sx={{ m: 1, minWidth: 250 }}
+        >
+          {lotesFundo.map((e) => (
+            <MenuItem key={e.idLote} value={e.idLote}>
+              {e.nombreLote}
+            </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <IconButton onClick={() => handleDelete(i)}>
+        <RemoveCircleOutlineIcon style={{ color: "#074F57" }}/>
+      </IconButton>
+    </Box>
+  )
+}
+
+function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -28,16 +108,17 @@ function PopUpAñadirEvaluador({show, setShow}) {
       setShow(false);
     };
 
-    const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-    const handleChangeCultivo = (e) => {
-      setSelectedCultivo(e.target.value);
-    }
-
-    const [cultivos, setCultivos] = React.useState([]);
+    const [lotes, setLotes] = React.useState([{
+      idFundo: 1,
+      idLote: 1,
+    }]);
     const handleAddCultivo = () => {
-      const newCultivo = Date.now()
-      console.log(cultivos.length)
-      if(cultivos.length < 2) setCultivos(v => [...v, newCultivo])
+      const newLote = {
+        idFundo: 1,
+        idLote: 1,
+      }
+      console.log(lotes.length)
+      if(lotes.length < 5) setLotes(v => [...v, newLote])
     }
 
     const limpiarDatos = () => {
@@ -47,7 +128,7 @@ function PopUpAñadirEvaluador({show, setShow}) {
       setDNI("");
       setTelefono("");
       setCorreo("");
-      setCultivos([]);
+      setLotes([]);
     }
 
     return (
@@ -75,14 +156,18 @@ function PopUpAñadirEvaluador({show, setShow}) {
               <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '80%' }} value={nombre} onChange={(e) => setNombre(e.target.value)}/>
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '50%' }}>
               <Typography>
                 Apellido paterno:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '28%' }} value={apellidoPat} onChange={(e) => setApellidoPat(e.target.value)}/>
-              <Typography>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={apellidoPat} onChange={(e) => setApellidoPat(e.target.value)}/>
+              </Box>
+              <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '50%' }}>
+              <Typography sx={{ ml: 2 }}>
                 Apellido materno:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '28%' }} value={apellidoMat} onChange={(e) => setApellidoMat(e.target.value)}/>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={apellidoMat} onChange={(e) => setApellidoMat(e.target.value)}/>
+              </Box>
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Typography>
@@ -91,14 +176,18 @@ function PopUpAñadirEvaluador({show, setShow}) {
               <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '80%' }} value={correo} onChange={(e) => setCorreo(e.target.value)}/>
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '50%' }}>
               <Typography>
                 DNI:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '28%' }} value={dni} onChange={(e) => setDNI(e.target.value)}/>
-              <Typography>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={dni} onChange={(e) => setDNI(e.target.value)}/>
+              </Box>
+              <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '50%' }}>
+              <Typography sx={{ ml: 2 }}>
                 Telefono:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '28%' }} value={telefono} onChange={(e) => setTelefono(e.target.value)}/>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={telefono} onChange={(e) => setTelefono(e.target.value)}/>
+              </Box>
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: '#103A5E' }}>
@@ -111,32 +200,17 @@ function PopUpAñadirEvaluador({show, setShow}) {
               </IconButton>
             </Box>
             <Divider/>
-            <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
-              <Typography>
-                Lote:
-              </Typography>
-              <FormControl size="small" sx={{ m: 1, width: '80%' }}>
-                <Select
-                  labelId="fundo"
-                  id="fundo"
-                  value={selectedCultivo}
-                  variant='outlined'
-                  onChange={handleChangeCultivo}
-                  name="fundo"
-                  
-                >
-                  <MenuItem value={1}>
-                    {"Uva"}
-                  </MenuItem>
-                  <MenuItem value={2}>
-                    {"Palta"}
-                  </MenuItem>
-                  <MenuItem value={3}>
-                    {"Arándano"}
-                  </MenuItem>
-                </Select>
-              </FormControl>
-            </Box>
+            {lotes.map((lote, i) => 
+              <Lotes
+                lote={lote}
+                i={i}
+                lotes={lotes}
+                setLotes={setLotes}
+                fundos={fundos}
+                lotesFundo={lotesFundo}
+                setLotesFundo={setLotesFundo}
+              />
+            )}
             </Box>
           </DialogContent>
           <DialogActions>

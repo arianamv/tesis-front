@@ -143,3 +143,27 @@ export const listarPesticidas = (data) => {
             });
     });
 };
+
+export const listarVariedadesXCultivo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("cultivo/listarVariedadesXCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarCultivos = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("cultivo/listarCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};

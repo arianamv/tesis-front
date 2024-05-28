@@ -19,6 +19,8 @@ import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
 import { listarEvaluadores, listarPlagas, listarUsuarios } from '../services/adminService';
+import PopUpAñadirPlaga from './Popups/PopUpAñadirPlaga';
+import PopUpModificarPlaga from './Popups/PopUpModificarPlaga';
 
 function TablaPlagas({search, setSearch}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
@@ -30,6 +32,7 @@ function TablaPlagas({search, setSearch}) {
     const { setProgress } = useProgress()
     const { setAlert } = useAlert()
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
+    const [showAñadir, setShowAñadir] = React.useState(false);
     const [showEliminar, setShowEliminar] = React.useState(false);
     let [rowsTable, setRowsTable] = React.useState(-1);
     let [rows, setRows] = React.useState(-1);
@@ -303,6 +306,10 @@ function TablaPlagas({search, setSearch}) {
       setIdClient(id);
       setShowEliminar(true);
     }
+
+    function handleAñadir(){
+      setShowAñadir(true);
+    }
   
     function handleRestore(id){
       setIdClient(id);
@@ -357,6 +364,15 @@ function TablaPlagas({search, setSearch}) {
   
     return (
       <div>
+        <PopUpAñadirPlaga
+          show={showAñadir}
+          setShow={setShowAñadir}
+        />
+        <PopUpModificarPlaga
+        show={showEditCustomer}
+        setShow={setShowEditCustomer}
+        row={dataCustomer}
+        />
         <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
@@ -375,6 +391,7 @@ function TablaPlagas({search, setSearch}) {
                     backgroundColor: '#074F57',
                     position: 'relative'
                   }}
+                onClick = {() => handleAñadir()}
               >
                 Añadir
               </Button>

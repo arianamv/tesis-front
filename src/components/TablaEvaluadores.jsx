@@ -18,7 +18,7 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarUsuarios } from '../services/adminService';
+import { listarEvaluadores, listarFundos, listarLoteXFundo, listarUsuarios } from '../services/adminService';
 import PopUpAñadirEvaluador from './Popups/PopUpAñadirEvaluador';
 
 function TablaEvaluadores({search, setSearch}) {
@@ -261,7 +261,28 @@ function TablaEvaluadores({search, setSearch}) {
       }
     }, [search]);
   
+    let [fundos, setFundos] = React.useState(-1);
+    const getFundos = () => {
+      listarFundos().then((response) => {
+        setFundos(response.data?.Fundo)
+        fundos = response.data?.Fundo
+      })
+    }
+
+    let [lotesFundo, setLotesFundo] = React.useState(-1);
+    const getLotes = (id) => {
+      listarLoteXFundo(id).then((response) => {
+        setLotesFundo(response.data?.Lote)
+        lotesFundo = response.data?.Lote
+      })
+    }
+
     const getUsuarios = () => {
+        getFundos();
+        let id = {
+          nombre_id: 1,
+        }
+        getLotes(id);
         listarEvaluadores().then((response) => {
           if(response?.data){
               if(response?.data.Usuario){
@@ -299,6 +320,9 @@ function TablaEvaluadores({search, setSearch}) {
         <PopUpAñadirEvaluador
           show={showAñadir}
           setShow={setShowAñadir}
+          fundos={fundos}
+          lotesFundo={lotesFundo}
+          setLotesFundo={setLotesFundo}
         />
         <PopupEliminar
           show={showEliminar}

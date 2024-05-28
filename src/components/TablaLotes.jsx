@@ -18,7 +18,8 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarLotes, listarLotesXCampañaXFundo } from '../services/adminService';
+import { listarCampanias, listarCultivos, listarFundos, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo } from '../services/adminService';
+import PopUpAñadirLote from './Popups/PopUpAñadirLote';
 
 function TablaLotes({search,setSearch}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
@@ -34,11 +35,16 @@ function TablaLotes({search,setSearch}) {
   let [rowsTable, setRowsTable] = React.useState(-1);
   let [rows, setRows] = React.useState(-1);
   const [loading, setLoading] = React.useState(true);
+  const [showAñadir, setShowAñadir] = React.useState(false);
 
   const handleChange = (event) => {
     setEstadoCliente(event.target.value);
     //RellenarTabla(event.target.value)
   };
+
+  function handleAñadir(){
+    setShowAñadir(true);
+  }
 
   const columnas = [
     { 
@@ -130,91 +136,27 @@ function TablaLotes({search,setSearch}) {
       }
     },
     {
-        field: 'cultivo',
-        headerName: 'Cultivo',
-        headerAlign: 'center',
-        width: 100,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'variedad',
-        headerName: 'Variedad',
-        headerAlign: 'center',
-        headerClassName: 'super-app-theme--header',
-        width: 100,
-        align: 'center',
-        renderCell: (cellValues) => {
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'numPlantas',
-        headerName: 'N° Plantas',
-        headerAlign: 'center',
-        width: 100,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'numSurcos',
-        headerName: 'N° Surcos',
-        headerAlign: 'center',
-        width: 100,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
+      field: 'nombreFundo',
+      headerName: 'Fundo',
+      headerClassName: 'super-app-theme--header',
+      width: 200,
+      headerAlign: 'center',
+      align: 'center',
+      editable: false,
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {capitalizeWords(cellValues.value)}
+              </Box>
+          )
+      }
     },
     {
         field: 'estado',
@@ -319,7 +261,48 @@ function TablaLotes({search,setSearch}) {
     }
   }, [search]);
 
+  let [variedades, setVariedades] = React.useState([]);
+  const getVariedades = (id) => {
+    listarVariedadesXCultivo(id).then((response) => {
+      setVariedades(response.data?.Cultivo)
+      variedades = response.data?.Cultivo
+    })
+    console.log("variedades", variedades)
+  }
+
+  let [cultivos, setCultivos] = React.useState([]);
+  const getCultivos = () => {
+    listarCultivos().then((response) => {
+      setCultivos(response.data?.Cultivo)
+      cultivos = response.data?.Cultivo
+    })
+  }
+
+  let [campañas, setCampañas] = React.useState([]);
+  const getCampañas = () => {
+    listarCampanias().then((response) => {
+      setCampañas(response.data?.Campaña)
+      campañas = response.data?.Campaña
+    })
+  }
+
+  let [fundos, setFundos] = React.useState([]);
+  const getFundos = () => {
+    listarFundos().then((response) => {
+      setFundos(response.data?.Fundo)
+      fundos = response.data?.Fundo
+    })
+  }
+
   const getLotes = () => {
+    getCampañas();
+    getCultivos();
+    getFundos();
+    let id = {
+      nombre_id: 1
+    }
+    getVariedades(id);
+    setLoading(true);
     listarLotes().then((response) => {
         if(response?.data){
             if(response?.data.Lote){
@@ -327,23 +310,15 @@ function TablaLotes({search,setSearch}) {
               for(let i = 0; i < response?.data?.Lote?.length; i++){
                 auxLotes.push({
                   id: i+1,
-                  idCampañaXLote: response?.data.Lote[i].idCampañaXLote,
+                  idLote: response?.data.Lote[i].idLote,
                   estado: response?.data.Lote[i].estado,
                   gravedad: response?.data.Lote[i].gravedad,
                   idFundo: response?.data.Lote[i].Lote_Fundo_idFundo,
-                  idCampañaXCultivo: response?.data.Lote[i].CampañaXCultivo_idCampañaXCultivo,
-                  idCampaña: response?.data.Lote[i].CampañaXCultivo_Campaña_idCampaña,
-                  idCultivo: response?.data.Lote[i].CampañaXCultivo_Cultivo_idCultivo,
-                  numPlantas: response?.data.Lote[i].numPlantas,
-                  numSurcos: response?.data.Lote[i].numSurcos,
                   nombre: response?.data.Lote[i].nombreLote,
                   descripcion: response?.data.Lote[i].descripcion,
                   area: response?.data.Lote[i].tamanio,
                   estadoLote: response?.data.Lote[i].estadoLote,
-                  cultivo: response?.data.Lote[i].nombreCultivo,
-                  variedad: response?.data.Lote[i].nombreVariedad,
                   nombreFundo: response?.data.Lote[i].nombreFundo,
-                  nombreCampaña: response?.data.Lote[i].nombreCampaña,
                   coordenadas: response?.data.Lote[i].coordenadas,
                 })
               }
@@ -364,6 +339,15 @@ function TablaLotes({search,setSearch}) {
 
   return (
     <div>
+      <PopUpAñadirLote
+        show={showAñadir}
+        setShow={setShowAñadir}
+        cultivos={cultivos}
+        campañas={campañas}
+        variedades={variedades}
+        setVariedades={setVariedades}
+        fundos={fundos}
+      />
       <PopupEliminar
         show={showEliminar}
         setShow={setShowEliminar}
@@ -382,6 +366,7 @@ function TablaLotes({search,setSearch}) {
                   backgroundColor: '#074F57',
                   position: 'relative'
                 }}
+              onClick = {() => handleAñadir()}
             >
               Añadir
             </Button>
@@ -450,7 +435,7 @@ function TablaLotes({search,setSearch}) {
       />
       </Box>
     </div>
-  );
+  )
 }
 
 export default TablaLotes
