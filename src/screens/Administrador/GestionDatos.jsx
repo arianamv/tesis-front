@@ -3,58 +3,105 @@ import NavBarAdmin from '../../components/Navbars/NavbarAdmin'
 import Typography from '@mui/material/Typography';
 import ColumnTabs from '../../components/Tabs/columnTabs';
 import Row from 'react-bootstrap/Row';
-import CircularProgress from '@mui/material/CircularProgress';
 import Box from '@mui/material/Box';
 import SearchIcon from "@mui/icons-material/Search";
 import AccountCircle from '@mui/icons-material/AccountCircle';
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import {
-    Divider,
-    Grid,
     InputAdornment,
-    Paper,
     TextField,
-    Button,
-    Container,
-    Stack,
     IconButton,
   } from "@mui/material";
 import FilterCampañas from '../../components/Filters/FilterCampañas';
-import { listarCampanias, listarCampañaXCultivo } from '../../services/adminService';
+import FilterLotes from '../../components/Filters/FilterLotes';
+import FilterPlagas from '../../components/Filters/FilterPlagas';
+import FilterPesticidas from '../../components/Filters/FilterPesticidas';
+import FilterUsuarios from '../../components/Filters/FilterUsuarios';
 
 function GestionDatos() {
   const [numTab, setNumTab] = React.useState('1');
-  let [rowsTable, setRowsTable] = React.useState([]);
-  let [rowsCamp, setRowsCamp] = React.useState(-1);
-  let [rowsLote, setRowsLote] = React.useState([]);
-  let [rowsPlaga, setRowsPlaga] = React.useState([]);
-  const [rowsPest, setrowsPest] = React.useState([]);
-  const [rowsEvaluador, setRowsEvaluador] = React.useState([]);
-  const [rowsDescargar, setRowsDescargar] = React.useState(rowsTable);
   const [search, setSearch] = React.useState("");
-  const [titulo, setTitulo] = React.useState("");
-  const [archivo, setArchivo] = React.useState("base_datos.csv");
-  const [flagButton, setFlagButton] = React.useState(0);
-  const [showGestCustomer, setShowGestCustomer] = React.useState(false);
-  const [disable, setDisable] = React.useState(false);
-  const [searchLabel, setSearchLabel] = React.useState("Buscar por palabra clave");
-  const [filterOpen, setFilterOpen] = React.useState(null);
-  let [campanias, setCampanias] = React.useState(-1);
-  let [rows, setRows] = React.useState(-1);
+  const [filterCampaña, setFilterCampaña] = React.useState(null);
+  let [rowsTableCampaña, setRowsTableCampaña] = React.useState(-1);
+  let [rowsCampaña, setRowsCampaña] = React.useState(-1);
+  const [filterLote, setFilterLote] = React.useState(null);
+  let [rowsTableLote, setRowsTableLote] = React.useState(-1);
+  let [rowsLote, setRowsLote] = React.useState(-1);
+  const [filterPlaga, setFilterPlaga] = React.useState(null);
+  let [rowsTablePlaga, setRowsTablePlaga] = React.useState(-1);
+  let [rowsPlaga, setRowsPlaga] = React.useState(-1);
+  const [filterPesticida, setFilterPesticida] = React.useState(null);
+  let [rowsTablePesticida, setRowsTablePesticida] = React.useState(-1);
+  let [rowsPesticida, setRowsPesticida] = React.useState(-1);
+  const [filterEvaluador, setFilterEvaluador] = React.useState(null);
+  let [rowsTableEvaluador, setRowsTableEvaluador] = React.useState(-1);
+  let [rowsEvaluador, setRowsEvaluador] = React.useState(-1);
 
   const onSearch = (event) => {
     setSearch(event.target.value);
   };
 
   const openFilter = (event) => {
-    setFilterOpen(event.currentTarget);
+    switch (numTab){
+      case '1':
+        setFilterCampaña(event.currentTarget);
+        return;
+      case '2':
+        setFilterLote(event.currentTarget);
+        return;
+      case '3':
+        setFilterPlaga(event.currentTarget);
+        return;
+      case '4':
+        setFilterPesticida(event.currentTarget);
+        return;
+      case '5':
+        setFilterEvaluador(event.currentTarget);
+        return;
+    }
   };
 
   return (
     <div>
       <FilterCampañas
-        show={filterOpen}
-        setShow={setFilterOpen}
+        show={filterCampaña}
+        setShow={setFilterCampaña}
+        rowsTable={rowsTableCampaña}
+        setRowsTable={setRowsTableCampaña}
+        rows={rowsCampaña}
+        setRows={setRowsCampaña}
+      />
+      <FilterLotes
+        show={filterLote}
+        setShow={setFilterLote}
+        rowsTable={rowsTableLote}
+        setRowsTable={setRowsTableLote}
+        rows={rowsLote}
+        setRows={setRowsLote}
+      />
+      <FilterPlagas
+        show={filterPlaga}
+        setShow={setFilterPlaga}
+        rowsTable={rowsTablePlaga}
+        setRowsTable={setRowsTablePlaga}
+        rows={rowsPlaga}
+        setRows={setRowsPlaga}
+      />
+      <FilterPesticidas
+        show={filterPesticida}
+        setShow={setFilterPesticida}
+        rowsTable={rowsTablePesticida}
+        setRowsTable={setRowsTablePesticida}
+        rows={rowsPesticida}
+        setRows={setRowsPesticida}
+      />
+      <FilterUsuarios
+        show={filterEvaluador}
+        setShow={setFilterEvaluador}
+        rowsTable={rowsTableEvaluador}
+        setRowsTable={setRowsTableEvaluador}
+        rows={rowsEvaluador}
+        setRows={setRowsEvaluador}
       />
       <Box sx={{ display: 'flex'}}>
       <NavBarAdmin/>
@@ -117,6 +164,26 @@ function GestionDatos() {
           setValue={setNumTab}
           search={search}
           setSearch={setSearch}
+          rowsTableCampaña={rowsTableCampaña}
+          setRowsTableCampaña={setRowsTableCampaña}
+          rowsCampaña={rowsCampaña}
+          setRowsCampaña={setRowsCampaña}
+          rowsTableLote={rowsTableLote}
+          setRowsTableLote={setRowsTableLote}
+          rowsLote={rowsLote}
+          setRowsLote={setRowsLote}
+          rowsTablePlaga={rowsTablePlaga}
+          setRowsTablePlaga={setRowsTablePlaga}
+          rowsPlaga={rowsPlaga}
+          setRowsPlaga={setRowsPlaga}
+          rowsTablePesticida={rowsTablePesticida}
+          setRowsTablePesticida={setRowsTablePesticida}
+          rowsPesticida={rowsPesticida}
+          setRowsPesticida={setRowsPesticida}
+          rowsTableEvaluador={rowsTableEvaluador}
+          setRowsTableEvaluador={setRowsTableEvaluador}
+          rowsEvaluador={rowsEvaluador}
+          setRowsEvaluador={setRowsEvaluador}
         />
         </Row>
         

@@ -167,3 +167,15 @@ export const listarCultivos = (data) => {
             });
     });
 };
+
+export const listarMetodos = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("pesticida/listarMetodosAplicacion")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};

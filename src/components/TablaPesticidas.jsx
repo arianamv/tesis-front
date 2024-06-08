@@ -20,7 +20,7 @@ import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
 import { listarEvaluadores, listarPesticidas, listarPlagas, listarUsuarios } from '../services/adminService';
 
-function TablaPesticidas({search, setSearch}) {
+function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -31,8 +31,6 @@ function TablaPesticidas({search, setSearch}) {
     const { setAlert } = useAlert()
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
     const [showEliminar, setShowEliminar] = React.useState(false);
-    let [rowsTable, setRowsTable] = React.useState(-1);
-    let [rows, setRows] = React.useState(-1);
     const [loading, setLoading] = React.useState(true);
   
     const handleChange = (event) => {
@@ -89,8 +87,9 @@ function TablaPesticidas({search, setSearch}) {
           headerName: 'Descrición',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 150,
+          width: 350,
           headerAlign: 'center',
+          align: 'left',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
               return (
@@ -101,7 +100,7 @@ function TablaPesticidas({search, setSearch}) {
                       lineHeight: '16px',
                     }}
                   >
-                      {capitalizeWords(cellValues.value)}
+                      {(cellValues.value)}
                   </Box>
               )
           }
@@ -111,30 +110,8 @@ function TablaPesticidas({search, setSearch}) {
         headerName: 'Material',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 100,
+        width: 200,
         headerAlign: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-      {
-        field: 'recomendaciones',
-        headerName: 'Recomendaciones',
-        headerAlign: 'center',
-        width: 300,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
             return (
@@ -149,9 +126,9 @@ function TablaPesticidas({search, setSearch}) {
                 </Box>
             )
         }
-      },
+    },
       {
-        field: 'metodoAplicaciones',
+        field: 'metodoAplicacion',
         headerName: 'Método de aplicación',
         headerAlign: 'center',
         width: 100,
@@ -316,6 +293,7 @@ function TablaPesticidas({search, setSearch}) {
                     periodoReingreso: response?.data.Pesticida[i].periodoReingreso,
                     recomendaciones: response?.data.Pesticida[i].recomendaciones,
                     metodoAplicacion: response?.data.Pesticida[i].metodoAplicacion,
+                    toxicidad: response?.data.Pesticida[i].toxicidad,
                     estado: response?.data.Pesticida[i].estado,
                   })
                 }

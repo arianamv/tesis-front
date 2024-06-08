@@ -22,7 +22,7 @@ import { listarEvaluadores, listarPlagas, listarUsuarios } from '../services/adm
 import PopUpAñadirPlaga from './Popups/PopUpAñadirPlaga';
 import PopUpModificarPlaga from './Popups/PopUpModificarPlaga';
 
-function TablaPlagas({search, setSearch}) {
+function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -34,8 +34,6 @@ function TablaPlagas({search, setSearch}) {
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
     const [showAñadir, setShowAñadir] = React.useState(false);
     const [showEliminar, setShowEliminar] = React.useState(false);
-    let [rowsTable, setRowsTable] = React.useState(-1);
-    let [rows, setRows] = React.useState(-1);
     const [loading, setLoading] = React.useState(true);
   
     const handleChange = (event) => {

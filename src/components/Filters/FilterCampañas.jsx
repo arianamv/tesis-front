@@ -9,20 +9,32 @@ import Button from '@mui/material/Button';
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 
-function FilterCampañas({show, setShow}) {
+function FilterCampañas({show, setShow, rowsTable, setRowsTable, rows, setRows}) {
   const open = Boolean(show);
-  const id = open ? 'simple-popover' : undefined;
-  const [cultivo, setCultivo] = React.useState("");
   const [estado, setEstado] = React.useState("");
+  const id = open ? 'simple-popover' : undefined;
   const closeFilter = () => {
     setShow(null);
-  };
-  const handleCultivo = (event) => {
-    setCultivo(event.target.value);
   };
   const handleEstado = (event) => {
     setEstado(event.target.value);
   };
+  const onClickFilter = () => {
+    if (estado === "") {
+      setRowsTable(rows)
+    }
+    if (estado === 0) {
+      setRowsTable(rows.filter(
+        (key) => key.estado === 0
+      ))
+    }
+    if (estado === 1) {
+      setRowsTable(rows.filter(
+          (key) => key.estado === 1
+        ))
+    }
+    setShow(null);
+  }
   return (
     <div>
       {
@@ -52,32 +64,12 @@ function FilterCampañas({show, setShow}) {
             >
                 <Typography fontWeight="bold">Filtrar</Typography>
                 <Divider/>
-                <Box display='flex' sx={{ mt:1 }}>
-                  <Typography variant="body2" sx={{ mt: 1 }}>
-                    Cultivo:
-                  </Typography>
-                  <Select
-                    id="cultivo-select"
-                    value={cultivo}
-                    onChange={handleCultivo}
-                    size={'small'}
-                    variant='standard'
-                    sx={{ 
-                      width: '100%',
-                      ml: 2
-                    }}
-                  >
-                    <MenuItem value={'Palta'}>Palta</MenuItem>
-                    <MenuItem value={'Uva'}>Uva</MenuItem>
-                    <MenuItem value={'Arándano'}>Arándano</MenuItem>
-                  </Select>
-                </Box>
                 <Box display='flex' sx={{  mt:1 }}>
                   <Typography variant="body2" sx={{ mt: 1 }}>
-                    Cultivo:
+                    Estado:
                   </Typography>
                   <Select
-                    id="cultivo-select"
+                    id="estado-select"
                     value={estado}
                     onChange={handleEstado}
                     size={'small'}
@@ -103,7 +95,7 @@ function FilterCampañas({show, setShow}) {
                 <Button size="small" onClick={closeFilter} sx={{ color: '#074F57', mr: 2 }}>
                   Cancelar
                 </Button>
-                <Button size="small" onClick={closeFilter} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+                <Button size="small" onClick={() => onClickFilter()} variant="contained" sx={{ backgroundColor: '#074F57' }}>
                   Filtrar
                 </Button>
               </Box>

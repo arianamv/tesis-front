@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { listarCampanias, listarCultivos, listarFundos, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo } from '../services/adminService';
 import PopUpAñadirLote from './Popups/PopUpAñadirLote';
 
-function TablaLotes({search,setSearch}) {
+function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState("");
   const [idClient, setIdClient] = React.useState(0);
@@ -32,8 +32,6 @@ function TablaLotes({search,setSearch}) {
   const { setAlert } = useAlert()
   const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
   const [showEliminar, setShowEliminar] = React.useState(false);
-  let [rowsTable, setRowsTable] = React.useState(-1);
-  let [rows, setRows] = React.useState(-1);
   const [loading, setLoading] = React.useState(true);
   const [showAñadir, setShowAñadir] = React.useState(false);
 
@@ -95,7 +93,7 @@ function TablaLotes({search,setSearch}) {
         headerName: 'Descripción',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 200,
+        width: 400,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)

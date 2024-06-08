@@ -25,7 +25,7 @@ import PopUpModificarCampaña from './Popups/PopUpModificarCampaña';
 import dayjs from 'dayjs';
 
 
-export default function TablaCampañas({search, setSearch}) {
+export default function TablaCampañas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState({
     cultivos: [],
@@ -45,8 +45,6 @@ export default function TablaCampañas({search, setSearch}) {
   const [showEliminar, setShowEliminar] = React.useState(false);
   const [showDescargar, setShowDescargar] = React.useState(false);
   const [showAñadir, setShowAñadir] = React.useState(false);
-  let [rowsTable, setRowsTable] = React.useState(-1);
-  let [rows, setRows] = React.useState(-1);
   const [loading, setLoading] = React.useState(true);
 
   const handleChange = (event) => {

@@ -21,7 +21,7 @@ import { format } from 'date-fns';
 import { listarEvaluadores, listarFundos, listarLoteXFundo, listarUsuarios } from '../services/adminService';
 import PopUpAñadirEvaluador from './Popups/PopUpAñadirEvaluador';
 
-function TablaEvaluadores({search, setSearch}) {
+function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -32,8 +32,6 @@ function TablaEvaluadores({search, setSearch}) {
     const { setAlert } = useAlert()
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
     const [showEliminar, setShowEliminar] = React.useState(false);
-    let [rowsTable, setRowsTable] = React.useState(-1);
-    let [rows, setRows] = React.useState(-1);
     const [loading, setLoading] = React.useState(true);
     const [showAñadir, setShowAñadir] = React.useState(false);
   

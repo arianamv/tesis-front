@@ -12,8 +12,8 @@ import TablaCampañas from '../TablaCampañas';
 import { LineChart } from '@mui/x-charts/LineChart';
 import TablaEvaluaciones from '../TablaEvaluaciones';
 
-function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTable}) {
-  const [vista, setVista] = React.useState(0);
+function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTable, vista, setVista}) {
+  
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };

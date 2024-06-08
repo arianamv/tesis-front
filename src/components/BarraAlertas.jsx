@@ -1,12 +1,51 @@
-import React from 'react'
+import React, { useState } from 'react'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
 import Divider from '@mui/material/Divider';
 import Container from '@mui/material/Container';
 import FormControlLabel from '@mui/material/FormControlLabel';
 import Checkbox from '@mui/material/Checkbox';
+import { Button, Paper } from '@mui/material';
+import NotificationsActiveIcon from '@mui/icons-material/NotificationsActive';
+
+function Plagas (){
+  return (
+    <Box
+      display={'grid'}
+      sx={{ mt: 1, width: 200, pt: 0.5, pb: 0.5, pl: 1, pr: 1, backgroundColor: '#FFE3E3', borderRadius: 2 }}
+    >
+      <Box display={'flex'} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <Box display={'flex'} sx={{ alignItems: 'center' }}>
+          <NotificationsActiveIcon sx={{ color: '#7D7D7D', fontSize: '12px' }}/>
+          <Typography sx={{ fontSize: '10px', ml: 0.5, color: '#7D7D7D' }}>Alerta grave</Typography>
+        </Box>
+        <Typography sx={{ fontSize: '10px', color: '#103A5E' }}>01/01/2024</Typography>
+      </Box>
+      <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
+        <Typography sx={{ fontSize: '12px', color: '#103A5E' }}>Arañita roja</Typography>
+        <Typography sx={{ fontSize: '10px', color: '#103A5E' }}>13:05</Typography>
+      </Box>
+      <Box display={'flex'} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
+        <Typography sx={{ fontSize: '10px', color: '#103A5E' }}>Cantidad: 44</Typography>
+        <Button 
+        variant='contained'
+        size='small'
+        sx={{
+          ml: 1,
+          backgroundColor: '#074F57',
+          position: 'relative',
+          fontSize: '6px',
+          height: '20px'
+          }}>
+            Ver plaga
+        </Button>
+      </Box>
+    </Box>
+  )
+}
 
 function BarraAlertas({ uvaCheck, setUvaCheck, paltaCheck, setPaltaCheck, aranCheck, setAranCheck }) {
+  const [color, setColor] = useState('#FFE3E3');
   console.log(uvaCheck)
   const handleChangeUvas = (e) => {
     setUvaCheck(e.target.checked);
@@ -65,8 +104,9 @@ function BarraAlertas({ uvaCheck, setUvaCheck, paltaCheck, setPaltaCheck, aranCh
           </Box>
         </Box>
         <Box>
-          <Typography sx={{ color: '#103A5E', mt: -6}}>Plagas activas</Typography>
+          <Typography sx={{ color: '#103A5E', mt: -4}}>Plagas activas</Typography>
           <Divider sx={{ width: 200 }}/>
+          <Plagas/>
         </Box>
       </Box>
     </div>

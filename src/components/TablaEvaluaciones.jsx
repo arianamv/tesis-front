@@ -63,11 +63,11 @@ function TablaEvaluaciones({search, setSearch}) {
           }
       },
       {
-          field: 'nombre',
-          headerName: 'Nombre', 
+          field: 'descripción',
+          headerName: 'Descripción', 
           headerClassName: 'super-app-theme--header',
           editable: false,
-          width: 350,
+          width: 250,
           headerAlign: 'center',
           align: 'center',
           renderCell: (cellValues) => {
@@ -85,11 +85,11 @@ function TablaEvaluaciones({search, setSearch}) {
           }
       },
       {
-          field: 'dni',
-          headerName: 'DNI',
+          field: 'fecha',
+          headerName: 'Fecha',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 150,
+          width: 100,
           headerAlign: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -107,10 +107,32 @@ function TablaEvaluaciones({search, setSearch}) {
           }
       },
       {
-        field: 'email',
-        headerName: 'Correo electrónico',
+        field: 'semana',
+        headerName: 'Semana',
+        editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 220,
+        width: 100,
+        headerAlign: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {(cellValues.value)}
+                </Box>
+            )
+        }
+    },
+      {
+        field: 'lote',
+        headerName: 'Lote',
+        headerClassName: 'super-app-theme--header',
+        width: 150,
         headerAlign: 'center',
         align: 'center',
         editable: false,
@@ -130,10 +152,10 @@ function TablaEvaluaciones({search, setSearch}) {
         }
       },
       {
-          field: 'telefono',
-          headerName: 'Teléfono',
+          field: 'plaga',
+          headerName: 'Plaga',
           headerAlign: 'center',
-          width: 150,
+          width: 200,
           headerClassName: 'super-app-theme--header',
           align: 'center',
           renderCell: (cellValues) => {
@@ -151,6 +173,50 @@ function TablaEvaluaciones({search, setSearch}) {
               )
           }
       },
+      {
+        field: 'cantEncontrada',
+        headerName: 'Cantidad',
+        headerAlign: 'center',
+        width: 100,
+        headerClassName: 'super-app-theme--header',
+        align: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {(cellValues.value)}
+                </Box>
+            )
+        }
+    },
+    {
+      field: 'gravedad',
+      headerName: 'Gravedad',
+      headerAlign: 'center',
+      width: 100,
+      headerClassName: 'super-app-theme--header',
+      align: 'center',
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {(cellValues.value)}
+              </Box>
+          )
+      }
+  },
       {
           field: 'estado',
           headerName: 'Estado',

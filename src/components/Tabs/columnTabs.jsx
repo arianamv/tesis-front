@@ -12,7 +12,7 @@ import TablaEvaluadores from '../TablaEvaluadores';
 import TablaPlagas from '../TablaPlagas';
 import TablaPesticidas from '../TablaPesticidas';
 
-function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable, rows, setRows}) {
+function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setRowsTableCampaña, rowsCampaña, setRowsCampaña, rowsTableLote, setRowsTableLote, rowsLote, setRowsLote, rowsTablePlaga, setRowsTablePlaga, rowsPlaga, setRowsPlaga, rowsTablePesticida, setRowsTablePesticida, rowsPesticida, setRowsPesticida, rowsTableEvaluador, setRowsTableEvaluador, rowsEvaluador, setRowsEvaluador}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -54,30 +54,50 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTable,setRowsTable,
           <TablaCampañas
             search={search}
             setSearch={setSearch}
+            rowsTable={rowsTableCampaña}
+            setRowsTable={setRowsTableCampaña}
+            rows={rowsCampaña}
+            setRows={setRowsCampaña}
           />
         </TabPanel>
         <TabPanel value="2">
           <TablaLotes
             search={search}
             setSearch={setSearch}
+            rowsTable={rowsTableLote}
+            setRowsTable={setRowsTableLote}
+            rows={rowsLote}
+            setRows={setRowsLote}
           />
         </TabPanel>
         <TabPanel value="3">
           <TablaPlagas
             search={search}
             setSearch={setSearch}
+            rowsTable={rowsTablePlaga}
+            setRowsTable={setRowsTablePlaga}
+            rows={rowsPlaga}
+            setRows={setRowsPlaga}
           />
         </TabPanel>
         <TabPanel value="4">
           <TablaPesticidas
             search={search}
             setSearch={setSearch}
+            rowsTable={rowsTablePesticida}
+            setRowsTable={setRowsTablePesticida}
+            rows={rowsPesticida}
+            setRows={setRowsPesticida}
           />
         </TabPanel>
         <TabPanel value="5">
         <TablaEvaluadores
             search={search}
             setSearch={setSearch}
+            rowsTable={rowsTableEvaluador}
+            setRowsTable={setRowsTableEvaluador}
+            rows={rowsEvaluador}
+            setRows={setRowsEvaluador}
           />
         </TabPanel>
       </TabContext>
