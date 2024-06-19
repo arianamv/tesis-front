@@ -20,7 +20,7 @@ function PopUpDescargar({show, setShow}) {
         </DialogTitle>
         <DialogContent>
           <DialogContentText id="descripcion">
-            {"Se descargará un reporte con los filtros seleccionados en la pantalla anterior. Caso contrario, se descargará el reporte completo."}
+            {"Se descargará un reporte con los filtros seleccionados en la pantalla anterior."}
           </DialogContentText>
         </DialogContent>
         <DialogActions>

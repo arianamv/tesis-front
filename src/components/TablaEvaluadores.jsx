@@ -18,12 +18,23 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarFundos, listarLoteXFundo, listarUsuarios } from '../services/adminService';
+import { listarEvaluadores, listarFundos, listarLoteXFundo, listarUsuarios, listarUsuariosXFundo } from '../services/adminService';
 import PopUpAñadirEvaluador from './Popups/PopUpAñadirEvaluador';
+import PopUpModificarEvaluador from './Popups/PopUpModificarEvaluador';
+import PopUpDescargar from './Popups/PopUpDescargar';
 
 function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
-    const [dataCustomer, setDataCustomer] = React.useState("");
+    const [dataCustomer, setDataCustomer] = React.useState({
+      idUsuario: 0,
+      nombre: "",
+      apellidoPat: "",
+      apellidoMat: "",
+      telefono: "",
+      dni: "",
+      correo: "",
+      fundos: []
+    });
     const [idClient, setIdClient] = React.useState(0);
     const [openAlert, setOpenAlert] = React.useState(false);
     const [openRestore, setOpenRestore] = React.useState(false);
@@ -34,6 +45,7 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
     const [showEliminar, setShowEliminar] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
     const [showAñadir, setShowAñadir] = React.useState(false);
+    const [showDescargar, setShowDescargar] = React.useState(false);
   
     const handleChange = (event) => {
       setEstadoCliente(event.target.value);
@@ -42,6 +54,10 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
 
     function handleAñadir(){
       setShowAñadir(true);
+    }
+
+    function handleDownload(){
+      setShowDescargar(true);
     }
   
     const columnas = [
@@ -281,7 +297,7 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
           nombre_id: 1,
         }
         getLotes(id);
-        listarEvaluadores().then((response) => {
+        listarUsuariosXFundo().then((response) => {
           if(response?.data){
               if(response?.data.Usuario){
                 let aux = [];
@@ -290,12 +306,16 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
                     id: i+1,
                     idUsuario: response?.data.Usuario[i].idUsuario,
                     nombre: response?.data.Usuario[i].nombres + " " + response?.data.Usuario[i].apellidoPat + " " + response?.data.Usuario[i].apellidoMat,
+                    nombres: response?.data.Usuario[i].nombres,
+                    apellidoPat: response?.data.Usuario[i].apellidoPat,
+                    apellidoMat: response?.data.Usuario[i].apellidoMat,
                     dni: response?.data.Usuario[i].dni,
                     email: response?.data.Usuario[i].email,
                     telefono: response?.data.Usuario[i].telefono,
                     contrasenia: response?.data.Usuario[i].contrasenia,
                     estado: response?.data.Usuario[i].estado,
                     idPerfil: response?.data.Usuario[i].Perfil_idPerfil,
+                    fundos: response?.data.Usuario[i].fundos,
                   })
                 }
                 setRows(aux);
@@ -322,9 +342,19 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
           lotesFundo={lotesFundo}
           setLotesFundo={setLotesFundo}
         />
+        <PopUpModificarEvaluador
+          show={showEditCustomer}
+          setShow={setShowEditCustomer}
+          row={dataCustomer}
+          fundos={fundos}
+        />
         <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
+        />
+        <PopUpDescargar
+          show={showDescargar}
+          setShow={setShowDescargar}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
@@ -353,6 +383,7 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
                   backgroundColor: '#074F57',
                   position: 'relative'
                 }}
+                onClick={() => handleDownload()}
               >
                 Descargar
               </Button>

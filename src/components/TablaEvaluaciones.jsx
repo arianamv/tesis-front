@@ -18,9 +18,11 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarUsuarios } from '../services/adminService';
+import { listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
+import PopUpAñadirEvaluacion from './Popups/PopUpAñadirEvaluacion';
+import PopUpDescargar from './Popups/PopUpDescargar';
 
-function TablaEvaluaciones({search, setSearch}) {
+function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -30,15 +32,23 @@ function TablaEvaluaciones({search, setSearch}) {
     const { setProgress } = useProgress()
     const { setAlert } = useAlert()
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
+    const [showAñadir, setShowAñadir] = React.useState(false);
     const [showEliminar, setShowEliminar] = React.useState(false);
-    let [rowsTable, setRowsTable] = React.useState(-1);
-    let [rows, setRows] = React.useState(-1);
     const [loading, setLoading] = React.useState(true);
+    const [showDescargar, setShowDescargar] = React.useState(false);
   
     const handleChange = (event) => {
       setEstadoCliente(event.target.value);
       //RellenarTabla(event.target.value)
     };
+
+    function handleDownload(){
+      setShowDescargar(true);
+    }
+
+    function handleAñadir(){
+      setShowAñadir(true);
+    }
   
     const columnas = [
       { 
@@ -63,11 +73,11 @@ function TablaEvaluaciones({search, setSearch}) {
           }
       },
       {
-          field: 'descripción',
+          field: 'descripcion',
           headerName: 'Descripción', 
           headerClassName: 'super-app-theme--header',
           editable: false,
-          width: 250,
+          width: 200,
           headerAlign: 'center',
           align: 'center',
           renderCell: (cellValues) => {
@@ -101,7 +111,7 @@ function TablaEvaluaciones({search, setSearch}) {
                       lineHeight: '16px',
                     }}
                   >
-                      {(cellValues.value)}
+                      {formatDate(cellValues.value)}
                   </Box>
               )
           }
@@ -111,8 +121,9 @@ function TablaEvaluaciones({search, setSearch}) {
         headerName: 'Semana',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 100,
+        width: 80,
         headerAlign: 'center',
+        align: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
             return (
@@ -129,7 +140,7 @@ function TablaEvaluaciones({search, setSearch}) {
         }
     },
       {
-        field: 'lote',
+        field: 'nombreLote',
         headerName: 'Lote',
         headerClassName: 'super-app-theme--header',
         width: 150,
@@ -152,12 +163,11 @@ function TablaEvaluaciones({search, setSearch}) {
         }
       },
       {
-          field: 'plaga',
+          field: 'nombrePlaga',
           headerName: 'Plaga',
           headerAlign: 'center',
-          width: 200,
+          width: 150,
           headerClassName: 'super-app-theme--header',
-          align: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
               return (
@@ -278,7 +288,6 @@ function TablaEvaluaciones({search, setSearch}) {
   
     const formatDate = (value) => {
       let date = new Date(value)
-      console.log(value)
       if(value != null)
       return padWithLeadingZeros(date.getUTCDate(), 2) + '/' + padWithLeadingZeros(parseInt(date.getUTCMonth() + 1), 2) + '/' + date.getUTCFullYear();    
     }
@@ -321,22 +330,25 @@ function TablaEvaluaciones({search, setSearch}) {
       }
     }, [search]);
   
-    const getUsuarios = () => {
-        listarEvaluadores().then((response) => {
+    const getEvaluaciones = () => {
+        listarEvaluaciones().then((response) => {
           if(response?.data){
-              if(response?.data.Usuario){
+              if(response?.data.Evaluacion){
                 let aux = [];
-                for(let i = 0; i < response?.data?.Usuario?.length; i++){
+                for(let i = 0; i < response?.data?.Evaluacion?.length; i++){
                     aux.push({
                     id: i+1,
-                    idUsuario: response?.data.Usuario[i].idUsuario,
-                    nombre: response?.data.Usuario[i].nombres + " " + response?.data.Usuario[i].apellidoPat + " " + response?.data.Usuario[i].apellidoMat,
-                    dni: response?.data.Usuario[i].dni,
-                    email: response?.data.Usuario[i].email,
-                    telefono: response?.data.Usuario[i].telefono,
-                    contrasenia: response?.data.Usuario[i].contrasenia,
-                    estado: response?.data.Usuario[i].estado,
-                    idPerfil: response?.data.Usuario[i].Perfil_idPerfil,
+                    idEvaluacion: response?.data.Evaluacion[i].idEvaluacion,
+                    descripcion: response?.data.Evaluacion[i].descripcion,
+                    fecha: response?.data.Evaluacion[i].fecha,
+                    idCampañaXLote: response?.data.Evaluacion[i].CampañaXLote_idCampañaXLote,
+                    nombreLote: response?.data.Evaluacion[i].nombreLote,
+                    semana: response?.data.Evaluacion[i].semana,
+                    idPlaga: response?.data.Evaluacion[i].Plaga_idPlaga,
+                    nombrePlaga: response?.data.Evaluacion[i].nombrePlaga,
+                    cantEncontrada: response?.data.Evaluacion[i].cantEncontrada,
+                    gravedad: response?.data.Evaluacion[i].gravedad,
+                    estado: response?.data.Evaluacion[i].estado,
                   })
                 }
                 setRows(aux);
@@ -351,14 +363,22 @@ function TablaEvaluaciones({search, setSearch}) {
     }
   
     React.useEffect(() => {
-      getUsuarios()
+      getEvaluaciones()
     }, [])
   
     return (
       <div>
+        <PopUpAñadirEvaluacion
+          show={showAñadir}
+          setShow={setShowAñadir}
+        />
         <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
+        />
+        <PopUpDescargar
+          show={showDescargar}
+          setShow={setShowDescargar}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
@@ -374,6 +394,7 @@ function TablaEvaluaciones({search, setSearch}) {
                     backgroundColor: '#074F57',
                     position: 'relative'
                   }}
+                  onClick = {() => handleAñadir()}
               >
                 Añadir
               </Button>
@@ -386,6 +407,7 @@ function TablaEvaluaciones({search, setSearch}) {
                   backgroundColor: '#074F57',
                   position: 'relative'
                 }}
+                onClick={() => handleDownload()}
               >
                 Descargar
               </Button>

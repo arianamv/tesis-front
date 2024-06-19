@@ -20,6 +20,9 @@ import {
     MenuItem,
   } from "@mui/material";
 import ColumnTabsMov from '../../components/Tabs/columnTabsMov';
+import FilterEvaluaciones from '../../components/Filters/FilterEvaluaciones';
+import { listarSemanas } from '../../services/adminService';
+import FilterAplicaciones from '../../components/Filters/FilterAplicaciones';
 
 function SearchBar({search, setSearch}) {
   const onSearch = (event) => {
@@ -42,7 +45,7 @@ function SearchBar({search, setSearch}) {
   )
 }
 
-function CombSemanas({semana, setSemana}) {
+function CombSemanas({semana, setSemana, semanas, setSemanas}) {
   const handleSelect = (event) => {
     setSemana(event.target.value);
   }
@@ -57,8 +60,11 @@ function CombSemanas({semana, setSemana}) {
           width: '100%'
       }}
       >
-      <MenuItem value={0}>Tabla</MenuItem>
-      <MenuItem value={1}>Gráfico</MenuItem>
+      {semanas?.map((e) => (
+        <MenuItem key={e.idSemana} value={e.semana}>
+          {e.semana}
+        </MenuItem>
+      ))}
     </Select>
   )
 }
@@ -68,10 +74,59 @@ function GestionMovimientos() {
   const [rowsTable, setRowsTable] = React.useState([]);
   const [search, setSearch] = React.useState("");
   const [vista, setVista] = React.useState(0);
-  const [semana, setSemana] = React.useState(0);
+  const [semana, setSemana] = React.useState(1);
+  let [semanas, setSemanas] = React.useState([]);
+  const [filterEvaluaciones, setFilterEvaluaciones] = React.useState(null);
+  let [rowsTableEvaluaciones, setRowsTableEvaluaciones] = React.useState(-1);
+  let [rowsEvaluaciones, setRowsEvaluaciones] = React.useState(-1);
+  const [filterAplicaciones, setFilterAplicaciones] = React.useState(null);
+  let [rowsTableAplicaciones, setRowsTableAplicaciones] = React.useState(-1);
+  let [rowsAplicaciones, setRowsAplicaciones] = React.useState(-1);
+
+  const onSearch = (event) => {
+    setSearch(event.target.value);
+  };
+
+  const openFilter = (event) => {
+    switch (numTab){
+      case '1':
+        setFilterEvaluaciones(event.currentTarget);
+        return;
+      case '2':
+        setFilterAplicaciones(event.currentTarget);
+        return;
+    }
+  };
+
+  const getSemanas = () => {
+    listarSemanas().then((response) => {
+      setSemanas(response.data?.Evaluacion)
+      semanas = response.data?.Evaluacion
+    })
+  }
+
+  React.useEffect(() => {
+    getSemanas();
+  }, [])
 
   return (
     <div>
+      <FilterEvaluaciones
+        show={filterEvaluaciones}
+        setShow={setFilterEvaluaciones}
+        rowsTable={rowsTableEvaluaciones}
+        setRowsTable={setRowsTableEvaluaciones}
+        rows={rowsEvaluaciones}
+        setRows={setRowsEvaluaciones}
+      />
+      <FilterAplicaciones
+        show={filterAplicaciones}
+        setShow={setFilterAplicaciones}
+        rowsTable={rowsTableAplicaciones}
+        setRowsTable={setRowsTableAplicaciones}
+        rows={rowsAplicaciones}
+        setRows={setRowsAplicaciones}
+      />
       <Box sx={{ display: 'flex' }}>
         <NavBarAdmin/>
       <Row>
@@ -110,6 +165,8 @@ function GestionMovimientos() {
                     <CombSemanas
                     semana={semana}
                     setSemana={setSemana}
+                    semanas={semanas}
+                    setSemanas={setSemanas}
                     />
                   </Box>
                   </Box>
@@ -130,7 +187,7 @@ function GestionMovimientos() {
                   />
                   </Box>
                   <Box display='flex' justifyContent='center' alignItems='center' sx={{ width: '5%' }}>
-                  <IconButton>
+                  <IconButton onClick={openFilter}>
                     <FilterAltIcon style={{ color: "#074F57" }}/>
                   </IconButton>
                   </Box>
@@ -141,11 +198,19 @@ function GestionMovimientos() {
           setValue={setNumTab}
           search={search}
           setSearch={setSearch}
-          rowsTable={rowsTable}
-          setRowsTable={setRowsTable}
+          rowsTableEvaluaciones={rowsTableEvaluaciones}
+          setRowsTableEvaluaciones={setRowsTableEvaluaciones}
+          rowsEvaluaciones={rowsEvaluaciones}
+          setRowsEvaluaciones={setRowsEvaluaciones}
+          rowsTableAplicaciones={rowsTableAplicaciones}
+          setRowsTableAplicaciones={setRowsTableAplicaciones}
+          rowsAplicaciones={rowsAplicaciones}
+          setRowsAplicaciones={setRowsAplicaciones}
+          semana={semana}
+          setSemana={setSemana}
           vista={vista}
           setVista={setVista}
-        />
+          />
       </Row>
     </Box>
     </div>

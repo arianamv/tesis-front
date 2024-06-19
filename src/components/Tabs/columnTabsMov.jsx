@@ -11,15 +11,19 @@ import Button from '@mui/material/Button';
 import TablaCampañas from '../TablaCampañas';
 import { LineChart } from '@mui/x-charts/LineChart';
 import TablaEvaluaciones from '../TablaEvaluaciones';
+import { listarSemanas } from '../../services/adminService';
+import GraficoEvaluaciones from '../GraficoEvaluaciones';
+import TablaAplicaciones from '../TablaAplicaciones';
 
-function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTable, vista, setVista}) {
-  
+function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setRowsTableAplicaciones, rowsAplicaciones, setRowsAplicaciones, vista, setVista, semana, setSemana}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
+
   const handleVista = (event) => {
     setVista(event.target.value);
   }
+
   return (
     <div>
       <Box sx={{ width: '100%', typography: 'caption', mt: 1}}>
@@ -73,23 +77,41 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTable,setRowsTab
             (<TablaEvaluaciones
               search={search}
               setSearch={setSearch}
+              rowsTable={rowsTableEvaluaciones}
+              setRowsTable={setRowsTableEvaluaciones}
+              rows={rowsEvaluaciones}
+              setRows={setRowsEvaluaciones}
             />)
           }
           {
-            vista && <LineChart
-            xAxis={[{ data: [1, 2, 3, 5, 8, 10] }]}
-            series={[
-              {
-                data: [2, 5.5, 2, 8.5, 1.5, 5],
-              },
-            ]}
-            width={500}
-            height={300}
-          />
+            vista && <GraficoEvaluaciones
+              rowsTable={rowsTableEvaluaciones}
+              setRowsTable={setRowsTableEvaluaciones}
+              semana={semana}
+              setSemana={setSemana}
+            />
           }
         </TabPanel>
         <TabPanel value="2">
-          <Typography sx={{ mb: 1 }}><b>Aplicaciones de pesticidas</b></Typography>
+        {
+            !vista &&
+            (<TablaAplicaciones
+              search={search}
+              setSearch={setSearch}
+              rowsTable={rowsTableAplicaciones}
+              setRowsTable={setRowsTableAplicaciones}
+              rows={rowsAplicaciones}
+              setRows={setRowsAplicaciones}
+            />)
+          }
+          {
+            vista && <GraficoEvaluaciones
+              rowsTable={rowsTableAplicaciones}
+              setRowsTable={setRowsTableAplicaciones}
+              semana={semana}
+              setSemana={setSemana}
+            />
+          }
         </TabPanel>
       </TabContext>
     </Box>

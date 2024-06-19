@@ -120,6 +120,18 @@ export const listarEvaluadores = (data) => {
     });
 };
 
+export const listarAplicaciones = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("aplicacion/listarAplicaciones", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 export const listarPlagas = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.get("plaga/listarPlaga", data)
@@ -171,6 +183,210 @@ export const listarCultivos = (data) => {
 export const listarMetodos = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.get("pesticida/listarMetodosAplicacion")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarEvaluaciones = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("evaluacion/listarEvaluaciones")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarSemanas = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("evaluacion/listarSemanas")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarGravedades = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("evaluacion/listarGravedades")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarEvaluacionesXSemana = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarEvaluacionesXSemana", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarPlagasActivas = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarPlagasActivas", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarMejoresPesticidas = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("pesticida/listarMejoresPesticidas", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarPlaga = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("plaga/insertarPlaga", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarPlaga = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("plaga/modificarPlaga", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarPlaga = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("plaga/eliminarPlaga", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/insertarCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarCampañaXCultivo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/insertarCampaniaXCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/modificarCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarCampañaXCultivo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/modificarCampaniaXCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/eliminarCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarCampañaXCultivo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/eliminarCampaniaXCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarPesticidaXPlaga = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("pesticida/listarPesticidaXPlaga")
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarUsuariosXFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("usuario/listarUsuarioXFundo")
             .then((resultado) => {
                 resolve(resultado);
             })

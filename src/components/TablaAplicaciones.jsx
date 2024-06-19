@@ -18,13 +18,12 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarPlagas, listarUsuarios } from '../services/adminService';
-import PopUpAñadirPlaga from './Popups/PopUpAñadirPlaga';
-import PopUpModificarPlaga from './Popups/PopUpModificarPlaga';
-import PopUpEliminarPlaga from './Popups/PopUpEliminarPlaga';
+import { listarAplicaciones, listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
+import PopUpAñadirEvaluacion from './Popups/PopUpAñadirEvaluacion';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpAñadirAplicacion from './Popups/PopUpAñadirAplicacion';
 
-function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -46,6 +45,10 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
 
     function handleDownload(){
       setShowDescargar(true);
+    }
+
+    function handleAñadir(){
+      setShowAñadir(true);
     }
   
     const columnas = [
@@ -71,33 +74,33 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
           }
       },
       {
-          field: 'nombre',
-          headerName: 'Nombre', 
-          headerClassName: 'super-app-theme--header',
-          editable: false,
-          width: 150,
-          headerAlign: 'center',
-          align: 'center',
-          renderCell: (cellValues) => {
-              return (
-                  <Box
-                    sx={{
-                      maxHeight: 'inherit',
-                      whiteSpace: 'initial',
-                      lineHeight: '16px',
-                    }}
-                  >
-                      {capitalizeWords(cellValues.value)}
-                  </Box>
-              )
-          }
-      },
+        field: 'nombrePesticida',
+        headerName: 'Pesticida',
+        editable: false,
+        headerClassName: 'super-app-theme--header',
+        width: 200,
+        headerAlign: 'center',
+        renderCell: (cellValues) => {
+          //console.log(cellValues.value)
+            return (
+                <Box
+                  sx={{
+                    maxHeight: 'inherit',
+                    whiteSpace: 'initial',
+                    lineHeight: '16px',
+                  }}
+                >
+                    {capitalizeWords(cellValues.value)}
+                </Box>
+            )
+        }
+    },
       {
-          field: 'descripcion',
-          headerName: 'Descrición',
+          field: 'fecha',
+          headerName: 'Fecha',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 200,
+          width: 100,
           headerAlign: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -109,18 +112,19 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                       lineHeight: '16px',
                     }}
                   >
-                      {capitalizeWords(cellValues.value)}
+                      {formatDate(cellValues.value)}
                   </Box>
               )
           }
       },
       {
-        field: 'nombreCientifico',
-        headerName: 'Nombre científico',
+        field: 'semana',
+        headerName: 'Semana',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 150,
+        width: 80,
         headerAlign: 'center',
+        align: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
             return (
@@ -131,38 +135,16 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                     lineHeight: '16px',
                   }}
                 >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
-    {
-        field: 'familia',
-        headerName: 'Familia',
-        editable: false,
-        headerClassName: 'super-app-theme--header',
-        width: 100,
-        headerAlign: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
+                    {(cellValues.value)}
                 </Box>
             )
         }
     },
       {
-        field: 'cantGrave',
-        headerName: 'Grave',
+        field: 'cantidadAplicada',
+        headerName: 'Cantidad',
         headerClassName: 'super-app-theme--header',
-        width: 100,
+        width: 80,
         headerAlign: 'center',
         align: 'center',
         editable: false,
@@ -182,12 +164,11 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
         }
       },
       {
-          field: 'cantMedio',
-          headerName: 'Medio',
+          field: 'unidadAplicada',
+          headerName: 'Unidad',
           headerAlign: 'center',
-          width: 100,
+          width: 120,
           headerClassName: 'super-app-theme--header',
-          align: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
               return (
@@ -204,10 +185,10 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
           }
       },
       {
-        field: 'cantLeve',
-        headerName: 'Leve',
+        field: 'nombreCampaña',
+        headerName: 'Campaña',
         headerAlign: 'center',
-        width: 100,
+        width: 150,
         headerClassName: 'super-app-theme--header',
         align: 'center',
         renderCell: (cellValues) => {
@@ -224,7 +205,29 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                 </Box>
             )
         }
-      },
+    },
+    {
+      field: 'nombreLote',
+      headerName: 'Lote',
+      headerAlign: 'center',
+      width: 150,
+      headerClassName: 'super-app-theme--header',
+      align: 'center',
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {(cellValues.value)}
+              </Box>
+          )
+      }
+  },
       {
           field: 'estado',
           headerName: 'Estado',
@@ -286,7 +289,6 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
   
     const formatDate = (value) => {
       let date = new Date(value)
-      console.log(value)
       if(value != null)
       return padWithLeadingZeros(date.getUTCDate(), 2) + '/' + padWithLeadingZeros(parseInt(date.getUTCMonth() + 1), 2) + '/' + date.getUTCFullYear();    
     }
@@ -311,10 +313,6 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
       setIdClient(id);
       setShowEliminar(true);
     }
-
-    function handleAñadir(){
-      setShowAñadir(true);
-    }
   
     function handleRestore(id){
       setIdClient(id);
@@ -333,23 +331,28 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
       }
     }, [search]);
   
-    const getPlagas = () => {
-        listarPlagas().then((response) => {
+    const getAplicaciones = () => {
+        listarAplicaciones().then((response) => {
           if(response?.data){
-              if(response?.data.Plaga){
+              if(response?.data.Aplicacion){
                 let aux = [];
-                for(let i = 0; i < response?.data?.Plaga?.length; i++){
+                for(let i = 0; i < response?.data?.Aplicacion?.length; i++){
                     aux.push({
                     id: i+1,
-                    idPlaga: response?.data.Plaga[i].idPlaga,
-                    nombre: response?.data.Plaga[i].nombrePlaga,
-                    descripcion: response?.data.Plaga[i].descripcion,
-                    cantGrave: response?.data.Plaga[i].cantGrave,
-                    cantMedio: response?.data.Plaga[i].cantMedio,
-                    cantLeve: response?.data.Plaga[i].cantLeve,
-                    nombreCientifico: response?.data.Plaga[i].nombreCientifico,
-                    familia: response?.data.Plaga[i].familia,
-                    estado: response?.data.Plaga[i].estado,
+                    idADP: response?.data.Aplicacion[i].idADP,
+                    area: response?.data.Aplicacion[i].area,
+                    fecha: response?.data.Aplicacion[i].fecha,
+                    cantidadAplicada: response?.data.Aplicacion[i].cantidadAplicada,
+                    unidadAplicada: response?.data.Aplicacion[i].unidadAplicada,
+                    semana: response?.data.Aplicacion[i].semana,
+                    idCampañaXLote: response?.data.Aplicacion[i].CampañaXLote_idCampañaXLote,
+                    idPesticida: response?.data.Aplicacion[i].Pesticida_idPesticida,
+                    idCampaña: response?.data.Aplicacion[i].idCampaña,
+                    nombreCampaña: response?.data.Aplicacion[i].nombre,
+                    nombrePesticida: response?.data.Aplicacion[i].nombrePesticida,
+                    idLote: response?.data.Aplicacion[i].idLote,
+                    nombreLote: response?.data.Aplicacion[i].nombreLote,
+                    estado: response?.data.Aplicacion[i].estado,
                   })
                 }
                 setRows(aux);
@@ -364,24 +367,19 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
     }
   
     React.useEffect(() => {
-        getPlagas()
+        getAplicaciones()
+        console.log("Aplicaciones", rows)
     }, [])
   
     return (
       <div>
-        <PopUpAñadirPlaga
+        <PopUpAñadirAplicacion
           show={showAñadir}
           setShow={setShowAñadir}
         />
-        <PopUpModificarPlaga
-        show={showEditCustomer}
-        setShow={setShowEditCustomer}
-        row={dataCustomer}
-        />
-        <PopUpEliminarPlaga
+        <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
-          row={dataCustomer}
         />
         <PopUpDescargar
           show={showDescargar}
@@ -389,7 +387,7 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
-              <Typography><b>Plagas</b></Typography>
+              <Typography sx={{width: 300}}><b>Aplicaciones de pesticida</b></Typography>
             </Box>
             <Box display="flex" justifyContent="flex-end" sx={{ width: '100%',}}>
               <Button
@@ -401,7 +399,7 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                     backgroundColor: '#074F57',
                     position: 'relative'
                   }}
-                onClick = {() => handleAñadir()}
+                  onClick = {() => handleAñadir()}
               >
                 Añadir
               </Button>
@@ -474,4 +472,4 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
     );
 }
 
-export default TablaPlagas
+export default TablaAplicaciones

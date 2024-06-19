@@ -18,11 +18,25 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarPesticidas, listarPlagas, listarUsuarios } from '../services/adminService';
+import { listarEvaluadores, listarPesticidaXPlaga, listarPesticidas, listarPlagas, listarUsuarios } from '../services/adminService';
+import PopUpAñadirPesticida from './Popups/PopUpAñadirPesticida';
+import PopUpModificarPesticida from './Popups/PopUpModificarPesticida';
+import PopUpDescargar from './Popups/PopUpDescargar';
 
 function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
-    const [dataCustomer, setDataCustomer] = React.useState("");
+    const [dataCustomer, setDataCustomer] = React.useState({
+      id: 0,
+      idPesticida: 0,
+      nombre: "",
+      descripcion: "",
+      material: "",
+      recomendaciones: "",
+      metodoAplicacion: "",
+      toxicidad: 0,
+      estado: 1,
+      plagas: [],
+    });
     const [idClient, setIdClient] = React.useState(0);
     const [openAlert, setOpenAlert] = React.useState(false);
     const [openRestore, setOpenRestore] = React.useState(false);
@@ -30,13 +44,18 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
     const { setProgress } = useProgress()
     const { setAlert } = useAlert()
     const [estadoCliente, setEstadoCliente] = React.useState("ACTIVO");
+    const [showAñadir, setShowAñadir] = React.useState(false);
     const [showEliminar, setShowEliminar] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
-  
-    const handleChange = (event) => {
-      setEstadoCliente(event.target.value);
-      //RellenarTabla(event.target.value)
-    };
+    const [showDescargar, setShowDescargar] = React.useState(false);
+
+    function handleAñadir(){
+      setShowAñadir(true);
+    }
+
+    function handleDownload(){
+      setShowDescargar(true);
+    }
   
     const columnas = [
       { 
@@ -84,7 +103,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
       },
       {
           field: 'descripcion',
-          headerName: 'Descrición',
+          headerName: 'Descripción',
           editable: false,
           headerClassName: 'super-app-theme--header',
           width: 350,
@@ -276,7 +295,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
     }, [search]);
   
     const getPesticidas = () => {
-        listarPesticidas().then((response) => {
+        listarPesticidaXPlaga().then((response) => {
           if(response?.data){
               if(response?.data.Pesticida){
                 let aux = [];
@@ -287,14 +306,11 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
                     nombre: response?.data.Pesticida[i].nombrePeticida,
                     descripcion: response?.data.Pesticida[i].descripcion,
                     material: response?.data.Pesticida[i].material,
-                    dosisRec: response?.data.Pesticida[i].dosisRec,
-                    unidadRec: response?.data.Pesticida[i].unidadRec,
-                    periodoCarencia: response?.data.Pesticida[i].periodoCarencia,
-                    periodoReingreso: response?.data.Pesticida[i].periodoReingreso,
                     recomendaciones: response?.data.Pesticida[i].recomendaciones,
                     metodoAplicacion: response?.data.Pesticida[i].metodoAplicacion,
                     toxicidad: response?.data.Pesticida[i].toxicidad,
                     estado: response?.data.Pesticida[i].estado,
+                    plagas: response?.data.Pesticida[i].plagas,
                   })
                 }
                 setRows(aux);
@@ -309,14 +325,28 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
     }
   
     React.useEffect(() => {
-        getPesticidas()
+      getPesticidas()
+      console.log(rows);
     }, [])
   
     return (
       <div>
+        <PopUpAñadirPesticida
+          show={showAñadir}
+          setShow={setShowAñadir}
+        />
+        <PopUpModificarPesticida
+          show={showEditCustomer}
+          setShow={setShowEditCustomer}
+          row={dataCustomer}
+        />
         <PopupEliminar
           show={showEliminar}
           setShow={setShowEliminar}
+        />
+        <PopUpDescargar
+          show={showDescargar}
+          setShow={setShowDescargar}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
@@ -332,6 +362,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
                     backgroundColor: '#074F57',
                     position: 'relative'
                   }}
+                onClick = {() => handleAñadir()}
               >
                 Añadir
               </Button>
@@ -344,6 +375,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
                   backgroundColor: '#074F57',
                   position: 'relative'
                 }}
+                onClick={() => handleDownload()}
               >
                 Descargar
               </Button>

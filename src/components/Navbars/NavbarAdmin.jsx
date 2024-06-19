@@ -42,15 +42,25 @@ export default function NavbarAdmin() {
         </Toolbar>
         <Divider />
         <List>
-
-          {['Mapa', 'Gestión de datos', 'Gestión de movimientos', 'Salir'].map((text, index) => (
-            <ListItem key={text} disablePadding sx={{justifyContent: 'center'}}>
-              {index === 0 ? (
-                <ListItemButton sx={{
+          <Box
+            sx={{
+              display: "flex",
+              flexDirection: "column",
+            }}
+          >
+            <Box
+              sx={{
+                display: "flex",
+                flexDirection: "column",
+              }}
+            >
+            <ListItemButton sx={{
                   minHeight: 48,
                   px: 2.5,
-                  display: 'grid',
-                  justifyContent: 'center'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}
                 href="/home"
                 >
@@ -60,14 +70,15 @@ export default function NavbarAdmin() {
                   }}>
                   <MapOutlinedIcon style={{ color: 'white' }}/>
                 </ListItemIcon>
-                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{text}</Typography>
+                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{'Mapa'}</Typography>
               </ListItemButton>
-              ) : index === 1 ? (
-                <ListItemButton sx={{
+              <ListItemButton sx={{
                   minHeight: 48,
                   px: 2.5,
-                  display: 'grid',
-                  justifyContent: 'center'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}
                 href="/datos"
                 >
@@ -77,14 +88,15 @@ export default function NavbarAdmin() {
                   }}>
                   <TableChartOutlinedIcon style={{ color: 'white' }}/>
                 </ListItemIcon>
-                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{text}</Typography>
+                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{'Gestión de datos'}</Typography>
               </ListItemButton>
-              ) : index === 2 ? (
-                <ListItemButton sx={{
+              <ListItemButton sx={{
                   minHeight: 48,
                   px: 2.5,
-                  display: 'grid',
-                  justifyContent: 'center'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}
                 href='/movimientos'
                 >
@@ -94,16 +106,20 @@ export default function NavbarAdmin() {
                   }}>
                   <StackedLineChartOutlinedIcon style={{ color: 'white' }}/>
                 </ListItemIcon>
-                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{text}</Typography>
+                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{'Gestión de movimientos'}</Typography>
               </ListItemButton>
-              ) : (
-                <ListItemButton sx={{
+            </Box>
+          </Box>
+        </List>
+        <List sx={{ position: "absolute", bottom: "0" }}>
+              <ListItemButton sx={{
                   minHeight: 48,
-                  px: 2.5,
-                  display: 'grid',
-                  justifyContent: 'center'
+                  display: 'flex',
+                  flexDirection: 'column',
+                  justifyContent: 'center',
+                  alignItems: 'center'
                 }}
-                href="/movimientos"
+                href="/"
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
@@ -111,11 +127,8 @@ export default function NavbarAdmin() {
                   }}>
                   <LogoutOutlinedIcon style={{ color: 'white' }}/>
                 </ListItemIcon>
-                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{text}</Typography>
+                <Typography variant="caption" sx={{ fontSize: [7, "!important"], textAlign:"center", paddingTop: 0.5 }}>{'Salir'}</Typography>
               </ListItemButton>
-              )}
-            </ListItem>
-          ))}
         </List>
       </Drawer>
     </Box>

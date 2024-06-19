@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { insertarPlaga } from '../../services/adminService';
 
 function PopUpAñadirPlaga({show, setShow}) {
     const [showSection, setShowSection] = React.useState(false);
@@ -23,11 +24,11 @@ function PopUpAñadirPlaga({show, setShow}) {
     const [cantMedio, setCantMedio] = React.useState("");
     const [cantLeve, setCantLeve] = React.useState("");
 
-    const [newPlaga, setNewPlaga] = React.useState({
-      nombre: "",
+    const [selectedPlaga, setSelectedPlaga] = React.useState({
+      nombrePlaga: "",
       descripcion: "",
       familia: "",
-      nomCientifico: "",
+      nombreCientifico: "",
       cantGrave: "",
       cantMedio: "",
       cantLeve: "",
@@ -40,23 +41,19 @@ function PopUpAñadirPlaga({show, setShow}) {
       setShow(false);
     };
 
-    const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-    const handleChangeCultivo = (e) => {
-      setSelectedCultivo(e.target.value);
-    }
-
-    const [cultivos, setCultivos] = React.useState([{
-      idCultivo: 1,
-      fechaCosecha: dayjs(),
-    }]);
-    const handleAddCultivo = () => {
-      const newCultivo = {
-        idCultivo: 1,
-        fechaCosecha: dayjs(),
+    const addNewPlaga = async(data) => {
+      const result = await insertarPlaga(data);
+      if (result.status == 200) {
+        console.log("Se editó con éxito la base de datos");
+        console.log(result)
+        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
       }
-      console.log(cultivos.length)
-      if(cultivos.length < 3) setCultivos(v => [...v, newCultivo])
-    }
+      else {
+        alert('Algo salio mal al guardar la plaga');
+      }
+      limpiarDatos();
+      setShow(false);
+    };
 
     const limpiarDatos = () => {
       setNombre("");
@@ -69,14 +66,18 @@ function PopUpAñadirPlaga({show, setShow}) {
     }
 
     React.useEffect(() => {
-      newPlaga.nombre = nombre;
-      newPlaga.descripcion = descripcion;
-      newPlaga.familia = familia;
-      newPlaga.nomCientifico = nomCientifico;
-      newPlaga.cantGrave = cantGrave;
-      newPlaga.cantLeve = cantLeve;
-      newPlaga.cantMedio = cantMedio;
-      console.log(newPlaga)
+      let newPlaga = {
+        nombrePlaga: nombre,
+        descripcion: descripcion,
+        familia: familia,
+        nombreCientifico: nomCientifico,
+        cantGrave: parseInt(cantGrave),
+        cantLeve: parseInt(cantLeve),
+        cantMedio: parseInt(cantMedio),
+        estado: 1,
+      }
+      setSelectedPlaga(newPlaga);
+      console.log(selectedPlaga);
     }, [nombre, descripcion, familia, nomCientifico, cantGrave, cantMedio, cantLeve])
 
     return (
@@ -155,7 +156,7 @@ function PopUpAñadirPlaga({show, setShow}) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addNewPlaga(selectedPlaga)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

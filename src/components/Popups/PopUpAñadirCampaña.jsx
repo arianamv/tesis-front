@@ -10,18 +10,33 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { insertarCampaña, listarVariedadesXCultivo } from '../../services/adminService';
 
 function Cultivos({cultivo, i, cultivos, setCultivos}){
   const [selectedCultivo, setSelectedCultivo] = React.useState(1);
+  const [selectedVariedad, setSelectedVariedad] = React.useState(1);
   const [selectedFecha, setSelectedFecha] = React.useState(dayjs());
+  let [variedades, setVariedades] = React.useState([]);
+
   const handleChangeCultivo = (e) => {
     cultivo.idCultivo = e.target.value;
     setSelectedCultivo(e.target.value);
+    let id = {
+      nombre_id: e.target.value
+    }
+    getVariedades(id);
   }
+
+  const handleChangeVariedad = (e) => {
+    cultivo.idVariedad = e.target.value;
+    setSelectedVariedad(e.target.value);
+  }
+
   const handleChangeFecha = (e) => {
     cultivo.fechaCosecha = e;
     setSelectedFecha(e);
   }
+
   const handleDelete = (e) => {
     cultivos.splice(e, 1);
     setCultivos(oldArray => {
@@ -29,8 +44,24 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
     })
     console.log(e, cultivos)
   }
+
+  const getVariedades = (id) => {
+    listarVariedadesXCultivo(id).then((response) => {
+        setVariedades(response.data?.Cultivo)
+        variedades = response.data?.Cultivo
+      })
+  }
+
+  React.useEffect(() => {
+    let data = {
+      nombre_id: 1
+    }
+    getVariedades(data);
+  }, [])
+
   return(
-    <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+    <Box>
+      <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Typography>
         Cultivo:
       </Typography>
@@ -56,20 +87,44 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
         </Select>
       </FormControl>
       <Typography>
+        Variedad:
+      </Typography>
+      <FormControl size="small">
+        <Select
+          labelId="variedad"
+          id="variedad"
+          value={selectedVariedad}
+          variant='outlined'
+          onChange={handleChangeVariedad}
+          name="variedad"
+          sx={{ m: 1, minWidth: 250 }}
+        >
+          {variedades?.map((e) => (
+              <MenuItem key={e.idVariedad} value={e.idVariedad}>
+              {e.nombreVariedad}
+              </MenuItem>
+          ))}
+        </Select>
+      </FormControl>
+      <IconButton onClick={() => handleDelete(i)}>
+        <RemoveCircleOutlineIcon style={{ color: "#074F57" }}/>
+      </IconButton>
+    </Box>
+    <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
+      <Typography>
         Fecha cosecha:
       </Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <DatePicker
           slotProps={{ textField: { size: 'small' } }}
-          sx={{ m: 1, minWidth: 120 }}
+          sx={{ m: 1, width: 230 }}
           format="DD/MM/YYYY"
           value={selectedFecha}
           onChange={handleChangeFecha}
         />
       </LocalizationProvider>
-      <IconButton onClick={() => handleDelete(i)}>
-        <RemoveCircleOutlineIcon style={{ color: "#074F57" }}/>
-      </IconButton>
+    </Box>
+    <Divider/>
     </Box>
   )
 }
@@ -83,6 +138,14 @@ function PopUpAñadirCampaña({show, setShow}) {
     const [fechaIni, setFechaIni] = React.useState(dayjs());
     const [fechaFin, setFechaFin] = React.useState(dayjs());
 
+    const [selectedCampaña, setSelectedCampaña] = React.useState({
+      nombre: "",
+      descripcion: "",
+      fechaIni: "",
+      fechaFin: "",
+      estado: 1,
+    })
+
     const [newCampaña, setNewCampaña] = React.useState({
       nombre: "",
       descripcion: "",
@@ -91,7 +154,6 @@ function PopUpAñadirCampaña({show, setShow}) {
       estado: 1,
       cultivos: [],
     })
-
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -107,14 +169,49 @@ function PopUpAñadirCampaña({show, setShow}) {
     const [cultivos, setCultivos] = React.useState([{
       idCultivo: 1,
       fechaCosecha: dayjs(),
+      idVariedad: 1,
     }]);
+
     const handleAddCultivo = () => {
       const newCultivo = {
         idCultivo: 1,
         fechaCosecha: dayjs(),
+        idVariedad: 1,
       }
       console.log(cultivos.length)
       if(cultivos.length < 3) setCultivos(v => [...v, newCultivo])
+    }
+
+    const addCampaña = async(data) => {
+      let nuevaCampaña = {
+        nombre: nombre,
+        descripcion: descripcion,
+        fechaIni: fechaIni,
+        fechaFin: fechaFin,
+        estado: 1,
+      }
+      setSelectedCampaña(nuevaCampaña);
+      console.log(nuevaCampaña);
+      const result = await insertarCampaña(data);
+      if (result.status == 200) {
+        cultivos.map((cultivo, index) => {
+          let newCultivo = {
+            idCampaña: 0,
+            idCultivo: cultivo.idCultivo,
+            idVariedad: cultivo.idVariedad,
+            fechCosecha: cultivo.fechaCosecha,
+            estado: 1,
+          }
+        })
+        console.log("Se editó con éxito la base de datos");
+        console.log(result)
+        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+      }
+      else {
+        alert('Algo salio mal al guardar la campaña');
+      }
+      limpiarDatos();
+      setShow(false);
     }
 
     const limpiarDatos = () => {
@@ -125,6 +222,7 @@ function PopUpAñadirCampaña({show, setShow}) {
       setCultivos([{
         idCultivo: 1,
         fechaCosecha: dayjs(),
+        idVariedad: 1,
       }]);
     }
 

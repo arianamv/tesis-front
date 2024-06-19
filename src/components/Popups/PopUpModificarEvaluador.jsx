@@ -12,29 +12,14 @@ import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { listarLoteXFundo } from '../../services/adminService';
 
-function Lotes({lote, i, lotes, setLotes, fundos, lotesFundo, setLotesFundo}){
-  const [selectedFundo, setSelectedFundo] = React.useState(1);
-  const [selectedLote, setSelectedLote] = React.useState(1);
+function Lotes({lote, i, lotes, setLotes, fundos}){
+  let [selectedFundo, setSelectedFundo] = React.useState(lote.idFundo);
+  selectedFundo = lote.idFundo;
   const handleChangeFundo = (e) => {
     lote.idFundo = e.target.value;
     setSelectedFundo(e.target.value);
-    let id = {
-      nombre_id: e.target.value
-    }
-    getLotes(id);
   }
 
-  const getLotes = (id) => {
-    listarLoteXFundo(id).then((response) => {
-      setLotesFundo(response.data?.Lote)
-      lotesFundo = response.data?.Lote
-    })
-  }
-
-  const handleChangeLote = (e) => {
-    lote.idLote = e.target.value;
-    setSelectedLote(e.target.value);
-  }
   const handleDelete = (e) => {
     lotes.splice(e, 1);
     setLotes(oldArray => {
@@ -71,16 +56,22 @@ function Lotes({lote, i, lotes, setLotes, fundos, lotesFundo, setLotesFundo}){
   )
 }
 
-function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo}) {
+function PopUpModificarEvaluador({show, setShow, row, fundos}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
-    const [nombre, setNombre] = React.useState("");
-    const [apellidoPat, setApellidoPat] = React.useState("");
-    const [apellidoMat, setApellidoMat] = React.useState("");
-    const [correo, setCorreo] = React.useState("");
-    const [telefono, setTelefono] = React.useState("");
-    const [dni, setDNI] = React.useState("");
+    let [nombre, setNombre] = React.useState(row.nombres);
+    nombre = row.nombres;
+    let [apellidoPat, setApellidoPat] = React.useState(row.apellidoPat);
+    apellidoPat = row.apellidoPat;
+    let [apellidoMat, setApellidoMat] = React.useState(row.apellidoMat);
+    apellidoMat = row.apellidoMat;
+    let [correo, setCorreo] = React.useState(row.email);
+    correo = row.email;
+    let [telefono, setTelefono] = React.useState(row.telefono);
+    telefono = row.telefono;
+    let [dni, setDNI] = React.useState(row.dni);
+    dni = row.dni;
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -88,14 +79,11 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
       setShow(false);
     };
 
-    const [lotes, setLotes] = React.useState([{
-      idFundo: 1,
-      idLote: 1,
-    }]);
+    let [lotes, setLotes] = React.useState(row.fundos);
+    lotes = row.fundos;
     const handleAddCultivo = () => {
       const newLote = {
         idFundo: 1,
-        idLote: 1,
       }
       console.log(lotes.length)
       if(lotes.length < 2) setLotes(v => [...v, newLote])
@@ -124,7 +112,7 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
           maxHeight="md"
         >
           <DialogTitle id="titulo" sx={{ color: '#103A5E' }}>
-            {"Nuevo evaluador"}
+            {"Modificar evaluador"}
             <Divider/>
           </DialogTitle>
           <DialogContent>
@@ -187,8 +175,6 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
                 lotes={lotes}
                 setLotes={setLotes}
                 fundos={fundos}
-                lotesFundo={lotesFundo}
-                setLotesFundo={setLotesFundo}
               />
             )}
             </Box>
@@ -214,4 +200,4 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
     )
 }
 
-export default PopUpAñadirEvaluador
+export default PopUpModificarEvaluador

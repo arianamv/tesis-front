@@ -234,6 +234,7 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
                 </Select>
             </FormControl>
             </Box>
+            
             </Box>
           </DialogContent>
           <DialogActions>

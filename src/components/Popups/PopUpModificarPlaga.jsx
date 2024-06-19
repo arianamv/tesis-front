@@ -10,6 +10,7 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
+import { modificarPlaga } from '../../services/adminService';
 
 function PopUpModificarPlaga({show, setShow, row}) {
     const [showSection, setShowSection] = React.useState(false);
@@ -30,8 +31,9 @@ function PopUpModificarPlaga({show, setShow, row}) {
     let [cantLeve, setCantLeve] = React.useState(row.cantLeve);
     cantLeve = row.cantLeve;
     console.log(row)
-    const [newPlaga, setNewPlaga] = React.useState({
-      nombre: row.nombre,
+    const [selectedPlaga, setSelectedPlaga] = React.useState({
+      idPlaga: 1,
+      nombrePlaga: row.nombre,
       descripcion: row.descripcion,
       familia: row.familia,
       nomCientifico: row.nombreCientifico,
@@ -46,24 +48,6 @@ function PopUpModificarPlaga({show, setShow, row}) {
       setShow(false);
     };
 
-    const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-    const handleChangeCultivo = (e) => {
-      setSelectedCultivo(e.target.value);
-    }
-
-    const [cultivos, setCultivos] = React.useState([{
-      idCultivo: 1,
-      fechaCosecha: dayjs(),
-    }]);
-    const handleAddCultivo = () => {
-      const newCultivo = {
-        idCultivo: 1,
-        fechaCosecha: dayjs(),
-      }
-      console.log(cultivos.length)
-      if(cultivos.length < 3) setCultivos(v => [...v, newCultivo])
-    }
-
     const limpiarDatos = () => {
       setNombre("");
       setDescripcion("");
@@ -74,14 +58,33 @@ function PopUpModificarPlaga({show, setShow, row}) {
       setCantMedio("");
     }
 
+    const modifyPlaga = async(data) => {
+      const result = await modificarPlaga(data);
+      if (result.status == 200) {
+        console.log("Se editó con éxito la base de datos");
+        console.log(result)
+        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+      }
+      else {
+        alert('Algo salio mal al editar la plaga');
+      }
+      limpiarDatos();
+      setShow(false);
+    };
+
     React.useEffect(() => {
-      newPlaga.nombre = nombre;
-      newPlaga.descripcion = descripcion;
-      newPlaga.familia = familia;
-      newPlaga.nomCientifico = nomCientifico;
-      newPlaga.cantGrave = cantGrave;
-      newPlaga.cantLeve = cantLeve;
-      newPlaga.cantMedio = cantMedio;
+      let newPlaga = {
+        nombrePlaga: nombre,
+        descripcion: descripcion,
+        familia: familia,
+        nombreCientifico: nomCientifico,
+        cantGrave: parseInt(cantGrave),
+        cantLeve: parseInt(cantLeve),
+        cantMedio: parseInt(cantMedio),
+        estado: 1,
+      }
+      setSelectedPlaga(newPlaga);
+      console.log(selectedPlaga);
     }, [nombre, descripcion, familia, nomCientifico, cantGrave, cantMedio, cantLeve])
 
     return (
@@ -160,7 +163,7 @@ function PopUpModificarPlaga({show, setShow, row}) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => modifyPlaga(selectedPlaga)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

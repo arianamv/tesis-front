@@ -10,18 +10,22 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import { getFundo, listarCampanias, listarCoordenadaXLote, listarFundos, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
+import { getFundo, listarCampanias, listarCoordenadaXLote, listarEvaluacionesXSemana, listarFundos, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
 
 function InicioAdmin() {
   let [fundo, setFundo] = React.useState(2);
   let [lotes, setLotes] = React.useState(-1);
   let [campania, setCampania] = React.useState(4);
+  let [semana, setSemana] = React.useState(1);
   let [cargaCoord, setCargaCoord] = React.useState(-1);
   let [uvaCheck, setUvaCheck] = React.useState(true);
   let [paltaCheck, setPaltaCheck] = React.useState(true);
   let [aranCheck, setAranCheck] = React.useState(true);
   let [fundos, setFundos] = React.useState(-1);
+  let [evaluaciones, setEvaluaciones] = React.useState(-1);
   const [fundoObject, setFundoObject] = React.useState(-1);
+  let [plagas, setPlagas] = React.useState([]);
+  let [cultivos, setCultivos] = React.useState([]);
 
   const getLotesXFundo = (fundo) => {
     console.log(fundo)
@@ -62,6 +66,7 @@ function InicioAdmin() {
               idCampañaXCultivo: response?.data.Lote[i].CampañaXCultivo_idCampañaXCultivo,
               idCampaña: response?.data.Lote[i].CampañaXCultivo_Campaña_idCampaña,
               idCultivo: response?.data.Lote[i].CampañaXCultivo_Cultivo_idCultivo,
+              fechaCosecha: response?.data.Lote[i].fechCosecha,
               numPlantas: response?.data.Lote[i].numPlantas,
               numSurcos: response?.data.Lote[i].numSurcos,
               nombreLote: response?.data.Lote[i].nombreLote,
@@ -80,6 +85,32 @@ function InicioAdmin() {
     })
   }
 
+  const getEvaluacionesXSemana = (data) => {
+    listarEvaluacionesXSemana(data).then((response) => {
+      if(response?.data){
+        if(response?.data.Evaluacion){
+          let auxLotes = [];
+          for(let i = 0; i < response?.data?.Evaluacion?.length; i++){
+            auxLotes.push({
+              idEvaluacion: response?.data.Evaluacion[i].idEvaluacion,
+              estado: response?.data.Evaluacion[i].estado,
+              fecha: response?.data.Evaluacion[i].fecha,
+              idCampañaXLote: response?.data.Evaluacion[i].CampañaXLote_idCampañaXLote,
+              semana: response?.data.Evaluacion[i].semana,
+              cantEncontrada: response?.data.Evaluacion[i].cantEncontrada,
+              gravedad: response?.data.Evaluacion[i].gravedad,
+              idPlaga: response?.data.Evaluacion[i].idPlaga,
+              nombrePlaga: response?.data.Evaluacion[i].nombrePlaga,
+              usuario: response?.data.Evaluacion[i].nombres + " " + response?.data.Evaluacion[i].apellidoPat + " " + response?.data.Evaluacion[i].apellidoMat
+            })
+          }
+          setEvaluaciones(auxLotes);
+          evaluaciones = auxLotes;
+        }
+      }
+    })
+  }
+
   const getFundos = () => {
     listarFundos().then((response) => {
       setFundos(response.data?.Fundo)
@@ -92,10 +123,14 @@ function InicioAdmin() {
       "idFundo": fundo,
       "idCampania": campania
     }
+    let dataEval = {
+      "nombre_id": semana,
+    }
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)
     getFundos()
-    console.log("lotes", lotes)
+    getEvaluacionesXSemana(dataEval)
+    console.log("Eval", evaluaciones)
   }, [])
 
   React.useEffect(() => {
@@ -103,13 +138,17 @@ function InicioAdmin() {
       "idFundo": fundo,
       "idCampania": campania
     }
+    let dataEval = {
+      "nombre_id": semana,
+    }
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)
-    console.log("lotes",lotes)
-  }, [fundo, campania])
+    getEvaluacionesXSemana(dataEval)
+    console.log("Eval", evaluaciones)
+  }, [fundo, campania, semana])
 
 
-  return (lotes !== -1 && fundos !== -1) ?(
+  return (lotes !== -1 && fundos !== -1 && evaluaciones !== -1) ?(
     <div>
       <Box sx={{ display: 'flex' }}>
       <Bar
@@ -120,15 +159,24 @@ function InicioAdmin() {
         setFundoObject={setFundoObject}
         campania={campania}
         setCampania={setCampania}
+        semana={semana}
+        setSemana={setSemana}
       />
       <NavBarAdmin/>
       <BarraAlertas
+        evaluaciones={evaluaciones}
+        lotes={lotes}
+        plagas={plagas}
+        setPlagas={setPlagas}
+        cultivos={cultivos}
+        setCultivos={setCultivos}
         uvaCheck={uvaCheck}
         setUvaCheck={setUvaCheck}
         paltaCheck={paltaCheck}
         setPaltaCheck={setPaltaCheck}
         aranCheck={aranCheck}
         setAranCheck={setAranCheck}
+        semana={semana}
       />
       <Box
         component="main"
@@ -141,8 +189,12 @@ function InicioAdmin() {
             <MapView
               fundo={fundo}
               lotes={lotes}
+              plagas={plagas}
+              cultivos={cultivos}
               fundos={fundos}
+              evaluaciones={evaluaciones}
               selectedFundo={fundoObject}
+              selectedSemana={semana}
               setSelectedFundo={setFundoObject}
               uvaCheck={uvaCheck}
               paltaCheck={paltaCheck}

@@ -9,39 +9,48 @@ import MenuItem from '@mui/material/MenuItem';
 import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { listarCampanias, listarFundos } from '../services/adminService';
+import { listarCampanias, listarFundos, listarSemanas } from '../services/adminService';
 
 const drawerWidth = 300;
 
-function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, campania, setCampania}) {
+function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, campania, setCampania, semana, setSemana}) {
   const [age, setAge] = React.useState('');
   const [selectedFundo, setSelectedFundo] = React.useState(2);
   const [selectedCampania, setSelectedCampania] = React.useState(4);
-  const [semana, setSemana] = React.useState('');
+  const [selectedSemana, setSelectedSemana] = React.useState(1);
+  let [semanas, setSemanas] = React.useState([]);
   let [campanias, setCampanias] = React.useState([]);
-  const handleChange = (event) => {
-    setAge(event.target.value);
+  const handleChangeSemana = (event) => {
+    setSelectedSemana(event.target.value);
+    setSemana(event.target.value);
+    semana = event.target.value;
   };
 
   const handleChangeFundo = (e) => {
     setSelectedFundo(e.target.value);
     setFundo(e.target.value);
     fundo = e.target.value
-    console.log(fundo)
   }
 
   const handleChangeCampania = (e) => {
     setSelectedCampania(e.target.value);
     setCampania(e.target.value);
     campania = e.target.value
-    console.log(campania)
   }
+
+  const getSemanas = () => {
+    listarSemanas().then((response) => {
+      setSemanas(response.data?.Evaluacion)
+      semanas = response.data?.Evaluacion
+    })
+}
 
   React.useEffect(() => {
     listarCampanias().then((response) => {
       setCampanias(response.data?.Campaña)
       campanias = response.data?.Campaña
     })
+    getSemanas();
   }, [])
 
   return (
@@ -57,7 +66,6 @@ function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, c
             display: 'flex',
         }}
       >
-        {console.log(fundos)}
         <Toolbar>
         <Typography sx={{ color: 'white' }}>
             Fundo:
@@ -115,17 +123,19 @@ function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, c
               labelId="semana"
               id="semana-select"
               variant='standard'
-              value={semana}
-              onChange={handleChange}
+              value={selectedSemana}
+              onChange={handleChangeSemana}
               sx={{ 
                 width: 200,
                 marginRight: 50,
                 backgroundColor: 'white'
               }}
             >
-              <MenuItem value={10}>Ten</MenuItem>
-              <MenuItem value={20}>Twenty</MenuItem>
-              <MenuItem value={30}>Thirty</MenuItem>
+              {semanas?.map((e) => (
+                <MenuItem key={e.idSemana} value={e.semana}>
+                  {e.semana}
+                </MenuItem>
+              ))}
             </Select>
           </FormControl>
           <IconButton
