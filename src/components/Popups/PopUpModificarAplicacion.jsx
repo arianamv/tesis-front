@@ -10,74 +10,90 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { insertarAplicacion, insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPesticidas, listarPlagas, listarVariedadesXCultivo } from '../../services/adminService';
+import { insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPesticidas, listarPlagas, listarVariedadesXCultivo, modificarAplicacion } from '../../services/adminService';
 import moment from 'moment';
 
-function PopUpAñadirAplicacion({show, setShow}) {
+function PopUpModificarAplicacion({show, setShow, row}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
     const [evaluador, setEvaluador] = React.useState(1);
     const [descripcion, setDescripcion] = React.useState("");
     let [lote, setLote] = React.useState({
-      idLote: 1,
+        idLote: 1,
     });
-    const [cantidadAplicada, setCantidadAplicada] = React.useState("");
-    const [unidadAplicada, setUnidadAplicada] = React.useState("");
-    let [selectedAplicacion, setSelectedAplicacion] = React.useState(null);
+    const [cantidadAplicada, setCantidadAplicada] = React.useState(row.cantidadAplicada);
+    const [unidadAplicada, setUnidadAplicada] = React.useState(row.unidadAplicada);
+    let [selectedAplicacion, setSelectedAplicacion] = React.useState("");
     const [area, setArea] = React.useState("");
     const [variedad, setVariedad] = React.useState(1);
     let [arrayPlagas, setArrayPlagas] = React.useState([]);
     let [pesticida, setPesticida] = React.useState({
-      idPesticida: 1,
+        idPesticida: 1,
     });
-    const [selectedFecha, setSelectedFecha] = React.useState(dayjs());
+    const [selectedFecha, setSelectedFecha] = React.useState(dayjs(row.fecha));
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
-      limpiarDatos();
       setShow(false);
     };
 
     const addNewPlaga = async(data) => {
-      const result = await insertarAplicacion(data);
+      const result = await modificarAplicacion(data);
       if (result.status == 200) {
-        console.log("Se insertó con éxito la base de datos");
+        console.log("Se editó con éxito la base de datos");
         console.log(result)
-        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
+        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
       }
       else {
         alert('Algo salio mal al guardar el dato');
       }
-      limpiarDatos();
       setShow(false);
     };
 
     const limpiarDatos = () => {
-      setLote(lotes[0]);
-      setPesticida(pesticidas[0]);
-      setArea("");
-      setSelectedFecha(dayjs());
-      setCantidadAplicada("");
-      setUnidadAplicada("");
-    }
-
-    let fechaInicio = '2024-06-01'
+        setLote({
+            idLote: 1,
+        });
+        setPesticida({
+            idPesticida: 1,
+        });
+        setArea("");
+        setSelectedFecha(dayjs());
+        setCantidadAplicada("");
+        setUnidadAplicada("");
+      }
 
     React.useEffect(() => {
-      let newAplicacion = {
-        fecha: dayjs(selectedFecha),
-        area: area,
-        cantidadAplicada: cantidadAplicada,
-        unidadAplicada: unidadAplicada,
-        semana: moment().week() - moment(fechaInicio).week(),
-        idCampañaXLote: lote.idLote,
-        idPesticida: pesticida.idPesticida,
-        estado: 1,
-      }
-      setSelectedAplicacion(newAplicacion);
-      console.log(selectedAplicacion);
-    }, [selectedFecha, area, cantidadAplicada,unidadAplicada,lote,pesticida])
+        const selectedLote = lotes.filter((entry) => entry.idLote === row.idLote);
+        const selectedPesticida = pesticidas.filter((entry) => entry.idPesticida === row.idPesticida);
+        setLote(selectedLote[0]);
+        setPesticida(selectedPesticida[0]);
+        setSelectedFecha(dayjs(row.fecha))
+        setArea(row.area)
+        setCantidadAplicada(row.cantidadAplicada);
+        setUnidadAplicada(row.unidadAplicada);
+    }, [row])
+
+    let fechaInicio = '2024-06-01'
+  
+    React.useEffect(() => {
+        if(lote !== undefined && pesticida !== undefined){
+        let newAplicacion = {
+          idADP: row.idADP,
+          fecha: dayjs(selectedFecha),
+          area: area,
+          cantidadAplicada: cantidadAplicada,
+          unidadAplicada: unidadAplicada,
+          semana: moment().week() - moment(fechaInicio).week(),
+          idCampañaXLote: lote.idLote,
+          idPesticida: pesticida.idPesticida,
+          estado: 1,
+        }
+        setSelectedAplicacion(newAplicacion);
+        console.log(selectedAplicacion);
+        }
+      }, [selectedFecha, area, cantidadAplicada,unidadAplicada,lote,pesticida])
 
     let [evaluadores, setEvaluadores] = React.useState([]);
     const getEvaluadores = () => {
@@ -87,12 +103,13 @@ function PopUpAñadirAplicacion({show, setShow}) {
           })
     }
 
-    let [lotes, setLotes] = React.useState([]);
+    let [lotes, setLotes] = React.useState([{
+        idLote: 1,
+    }]);
     const getLotes = () => {
         listarLotes().then((response) => {
             setLotes(response.data?.Lote)
             lotes = response.data?.Lote
-            setLote(lotes[0])
           })
     }
 
@@ -100,12 +117,13 @@ function PopUpAñadirAplicacion({show, setShow}) {
         setSelectedFecha(e);
       }
 
-    let [pesticidas, setPesticidas] = React.useState([]);
+    let [pesticidas, setPesticidas] = React.useState([{
+        idPesticida: 1,
+    }]);
     const getPesticidas = () => {
         listarPesticidas().then((response) => {
           setPesticidas(response.data?.Pesticida)
           pesticidas = response.data?.Pesticida
-          setPesticida(pesticidas[0])
         })
     }
 
@@ -127,7 +145,7 @@ function PopUpAñadirAplicacion({show, setShow}) {
           maxHeight="md"
         >
           <DialogTitle id="titulo" sx={{ color: '#103A5E' }}>
-            {"Añadir aplicación de pesticida"}
+            {"Modificar aplicación de pesticida"}
             <Divider/>
           </DialogTitle>
           <DialogContent>
@@ -261,4 +279,4 @@ function PopUpAñadirAplicacion({show, setShow}) {
     )
 }
 
-export default PopUpAñadirAplicacion
+export default PopUpModificarAplicacion

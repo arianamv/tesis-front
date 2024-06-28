@@ -106,6 +106,7 @@ function MapView({fundo, lotes, plagas, cultivos, fundos, evaluaciones, selected
             ])
           }
           const found = evaluaciones.find(({ idCampañaXLote, semana }) => idCampañaXLote === e.idCampañaXLote && semana === selectedSemana);
+          
           const color = {
             color: getColor(found)
           }

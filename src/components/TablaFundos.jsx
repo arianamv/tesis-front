@@ -18,13 +18,16 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluadores, listarPlagas, listarUsuarios } from '../services/adminService';
+import { listarEvaluadores, listarFundos, listarPlagas, listarUsuarios } from '../services/adminService';
 import PopUpAñadirPlaga from './Popups/PopUpAñadirPlaga';
 import PopUpModificarPlaga from './Popups/PopUpModificarPlaga';
 import PopUpEliminarPlaga from './Popups/PopUpEliminarPlaga';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpAñadirFundo from './Popups/PopUpAñadirFundo';
+import PopUpModificarFundo from './Popups/PopUpModificarFundo';
+import PopUpEliminarFundo from './Popups/PopUpEliminarFundo';
 
-function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+function TablaFundos({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -71,11 +74,11 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
           }
       },
       {
-          field: 'nombre',
+          field: 'nombreFundo',
           headerName: 'Nombre', 
           headerClassName: 'super-app-theme--header',
           editable: false,
-          width: 150,
+          width: 250,
           headerAlign: 'center',
           align: 'center',
           renderCell: (cellValues) => {
@@ -94,10 +97,10 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
       },
       {
           field: 'descripcion',
-          headerName: 'Descrición',
+          headerName: 'Descripción',
           editable: false,
           headerClassName: 'super-app-theme--header',
-          width: 200,
+          width: 350,
           headerAlign: 'center',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -115,8 +118,8 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
           }
       },
       {
-        field: 'nombreCientifico',
-        headerName: 'Nombre científico',
+        field: 'latitud',
+        headerName: 'Latitud',
         editable: false,
         headerClassName: 'super-app-theme--header',
         width: 150,
@@ -131,17 +134,17 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                     lineHeight: '16px',
                   }}
                 >
-                    {capitalizeWords(cellValues.value)}
+                    {(cellValues.value)}
                 </Box>
             )
         }
     },
     {
-        field: 'familia',
-        headerName: 'Familia',
+        field: 'longitud',
+        headerName: 'Longitud',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 100,
+        width: 150,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
@@ -153,78 +156,11 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                     lineHeight: '16px',
                   }}
                 >
-                    {capitalizeWords(cellValues.value)}
+                    {(cellValues.value)}
                 </Box>
             )
         }
     },
-      {
-        field: 'cantGrave',
-        headerName: 'Grave',
-        headerClassName: 'super-app-theme--header',
-        width: 100,
-        headerAlign: 'center',
-        align: 'center',
-        editable: false,
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
-      },
-      {
-          field: 'cantMedio',
-          headerName: 'Medio',
-          headerAlign: 'center',
-          width: 100,
-          headerClassName: 'super-app-theme--header',
-          align: 'center',
-          renderCell: (cellValues) => {
-            //console.log(cellValues.value)
-              return (
-                  <Box
-                    sx={{
-                      maxHeight: 'inherit',
-                      whiteSpace: 'initial',
-                      lineHeight: '16px',
-                    }}
-                  >
-                      {(cellValues.value)}
-                  </Box>
-              )
-          }
-      },
-      {
-        field: 'cantLeve',
-        headerName: 'Leve',
-        headerAlign: 'center',
-        width: 100,
-        headerClassName: 'super-app-theme--header',
-        align: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {(cellValues.value)}
-                </Box>
-            )
-        }
-      },
       {
           field: 'estado',
           headerName: 'Estado',
@@ -271,7 +207,7 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
                           <EditIcon style={{ color: "#074F57" }}/>
                       </IconButton>
                       
-                      <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                      <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                           <DeleteIcon style={{ color: 'red' }}/>
                       </IconButton>
                   </div>
@@ -307,8 +243,9 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
         .join(' ');
     };
   
-    function handleDelete(id){
+    function handleDelete(id, datos){
       setIdClient(id);
+      setDataCustomer(datos.row);
       setShowEliminar(true);
     }
 
@@ -333,23 +270,21 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
       }
     }, [search]);
   
-    const getPlagas = () => {
-        listarPlagas().then((response) => {
+    const getFundos = () => {
+        listarFundos().then((response) => {
           if(response?.data){
-              if(response?.data.Plaga){
+              if(response?.data.Fundo){
                 let aux = [];
-                for(let i = 0; i < response?.data?.Plaga?.length; i++){
+                for(let i = 0; i < response?.data?.Fundo?.length; i++){
                     aux.push({
                     id: i+1,
-                    idPlaga: response?.data.Plaga[i].idPlaga,
-                    nombre: response?.data.Plaga[i].nombrePlaga,
-                    descripcion: response?.data.Plaga[i].descripcion,
-                    cantGrave: response?.data.Plaga[i].cantGrave,
-                    cantMedio: response?.data.Plaga[i].cantMedio,
-                    cantLeve: response?.data.Plaga[i].cantLeve,
-                    nombreCientifico: response?.data.Plaga[i].nombreCientifico,
-                    familia: response?.data.Plaga[i].familia,
-                    estado: response?.data.Plaga[i].estado,
+                    idFundo: response?.data.Fundo[i].idFundo,
+                    nombreFundo: response?.data.Fundo[i].nombreFundo,
+                    descripcion: response?.data.Fundo[i].descripcion,
+                    totalHectareas: response?.data.Fundo[i].totalHectareas,
+                    latitud: response?.data.Fundo[i].latitud,
+                    longitud: response?.data.Fundo[i].longitud,
+                    estado: response?.data.Fundo[i].estado,
                   })
                 }
                 setRows(aux);
@@ -364,27 +299,27 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
     }
   
     React.useEffect(() => {
-        getPlagas()
+        getFundos()
     }, [])
 
     React.useEffect(() => {
-      if(showAñadir === false) getPlagas();
-      if(showEditCustomer === false) getPlagas();
-      if(showEliminar === false) getPlagas();
+      if(showAñadir === false) getFundos();
+      if(showEditCustomer === false) getFundos();
+      if(showEliminar === false) getFundos();
   }, [showAñadir, showEditCustomer, showEliminar])
   
     return (
       <div>
-        <PopUpAñadirPlaga
+        <PopUpAñadirFundo
           show={showAñadir}
           setShow={setShowAñadir}
         />
-        <PopUpModificarPlaga
+        <PopUpModificarFundo
         show={showEditCustomer}
         setShow={setShowEditCustomer}
         row={dataCustomer}
         />
-        <PopUpEliminarPlaga
+        <PopUpEliminarFundo
           show={showEliminar}
           setShow={setShowEliminar}
           row={dataCustomer}
@@ -480,4 +415,4 @@ function TablaPlagas({search, setSearch, rowsTable, setRowsTable, rows, setRows}
     );
 }
 
-export default TablaPlagas
+export default TablaFundos

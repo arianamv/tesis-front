@@ -10,41 +10,27 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { insertarLote, listarLoteXFundo, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo } from '../../services/adminService';
+import { listarLoteXFundo, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo, modificarLote } from '../../services/adminService';
 import MapViewPopUp from '../MapViewPopUpEdit';
-import MapViewPopUpAñadir from '../MapViewPopUpAñadir';
 
-function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVariedades, fundos}) {
+function PopUpModificarLote({show, setShow, cultivos, row, campañas, variedades, setVariedades, fundos}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
-    const [nombre, setNombre] = React.useState("");
-    const [descripcion, setDescripcion] = React.useState("");
-    const [cultivo, setCultivo] = React.useState(1);
-    const [variedad, setVariedad] = React.useState(1);
-    const [numSurcos, setNumSurcos] = React.useState("");
-    const [numPlantas, setNumPlantas] = React.useState("");
-    const [campaña, setCampaña] = React.useState(1);
-    const [fundo, setFundo] = React.useState(1);
+    const [nombre, setNombre] = React.useState(row.nombreLote);
+    const [descripcion, setDescripcion] = React.useState(row.descripcion);
+    const [cultivo, setCultivo] = React.useState(row.idCultivo);
+    const [variedad, setVariedad] = React.useState(row.idVariedad);
+    const [numSurcos, setNumSurcos] = React.useState(row.numSurcos);
+    const [numPlantas, setNumPlantas] = React.useState(row.numPlantas);
+    const [campaña, setCampaña] = React.useState(row.idCampaña);
+    const [fundo, setFundo] = React.useState(row.idFundo);
     const [selectedFundo, setSelectedFundo] = React.useState([{
-      idFundo: 1,
+      idFundo: row.idFundo,
     }]);
     let [lotes, setLotes] = React.useState([{
       idLote: 1,
     }]);
-
-    const [newCampaña, setNewCampaña] = React.useState({
-      nombre: "",
-      descripcion: "",
-      cultivo: "",
-      variedad: "",
-      numSurcos: "",
-      numPlantas: "",
-      campaña: "",
-      idFundo: "",
-      estado: 1,
-    })
-
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -62,67 +48,83 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
       setFundo(1);
     }
 
+    React.useEffect(() => {
+        setNombre(row.nombreLote);
+        setDescripcion(row.descripcion);
+        setCultivo(row.idCultivo);
+        setVariedad(row.idVariedad);
+        setNumSurcos(row.numSurcos);
+        setNumPlantas(row.numPlantas);
+        setCampaña(row.idCampaña);
+        setFundo(row.idFundo);
+        setCoordenadas(row.coordenadas)
+      }, [row])
+
+      React.useEffect(() => {
+        setNombre(row.nombreLote);
+        setDescripcion(row.descripcion);
+        setCultivo(row.idCultivo);
+        setVariedad(row.idVariedad);
+        setNumSurcos(row.numSurcos);
+        setNumPlantas(row.numPlantas);
+        setCampaña(row.idCampaña);
+        setFundo(row.idFundo);
+      }, [])
+
+      const addNewLote = async(data) => {
+        const result = await modificarLote(data);
+        if (result.status == 200) {
+          console.log("Se insertó con éxito la base de datos");
+          console.log(result)
+          setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+        }
+        else {
+          alert('Algo salio mal al guardar el dato');
+        }
+        setShow(false);
+      }
+
     const [tamanio, setTamanio] = React.useState(1);
-    const [coordenadas, setCoordenadas] = React.useState([{
-        idCoordenada: 1,
-        latitud: 0, 
-        longitud: 0, 
-        estado: 1,  
-        Lote_Fundo_idFundo: fundo,
+    let [coordenadas, setCoordenadas] = React.useState([{
+      idCoordenada: 1,
     }])
 
     const [selectedLote, setSelectedLote] = React.useState("");
 
-    React.useEffect(() => {
-      let newLote = {
-        nombreLote: nombre,
-        descripcion: descripcion,
-        tamanio: tamanio/10000,
-        estado: 1,
-        Fundo_idFundo: fundo,
-        campaña: [{
+      React.useEffect(() => {
+        let newLote = {
+          idLote: row.idLote,
+          nombreLote: nombre,
+          descripcion: descripcion,
+          tamanio: tamanio/10000,
           estado: 1,
-          Lote_Fundo_idFundo: fundo,
-          numPlantas: numPlantas,
-          numSurcos: numSurcos,
-          Variedad_idVariedad: variedad,
-          Variedad_Cultivo_idCultivo: cultivo,
-          Campaña_idCampaña: campaña,
-        }],
-        coordenadas: coordenadas,
-      }
-      setSelectedLote(newLote);
-      console.log(selectedLote);
-    }, [nombre, descripcion,tamanio, cultivo, variedad, numPlantas, numSurcos, fundo])
-
-    const addNewLote = async(data) => {
-      const result = await insertarLote(data);
-      if (result.status == 200) {
-        console.log("Se insertó con éxito la base de datos");
-        console.log(result)
-        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
-      }
-      else {
-        alert('Algo salio mal al guardar el dato');
-      }
-      limpiarDatos();
-      setShow(false);
-    }
+          Fundo_idFundo: fundo,
+          campaña: [{
+            idCampañaXLote: row.idCampañaXLote,
+            estado: 1,
+            Lote_Fundo_idFundo: fundo,
+            numPlantas: numPlantas,
+            numSurcos: numSurcos,
+            Variedad_idVariedad: variedad,
+            Variedad_Cultivo_idCultivo: cultivo,
+            Campaña_idCampaña: campaña,
+          }],
+          coordenadas: coordenadas,
+        }
+        setSelectedLote(newLote);
+        console.log(selectedLote);
+      }, [nombre, descripcion,tamanio, cultivo, variedad, numPlantas, numSurcos, fundo, coordenadas])
 
     React.useEffect(() => {
       let data = {
         nombre_id: selectedFundo[0].idFundo
       }
       getLotesXFundo(data);
+      const found = lotes.filter((e) => e.idLote === row.idLote)
+      console.log("COORD", found)
+      const flag = typeof found[0] === 'object'
+      if (flag) setCoordenadas(found[0].coordenadas)
     }, [])
-
-    React.useEffect(() => {
-      let data = {
-        nombre_id: selectedFundo[0].idFundo
-      }
-      console.log(data)
-      getLotesXFundo(data);
-    }, [selectedFundo])
 
     const handleChangeCultivo = (e) => {
       setCultivo(e.target.value);
@@ -165,7 +167,9 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
             }
             setLotes(auxLotes);
             lotes = auxLotes;
-            console.log(response)
+            console.log("LOTES",response)
+            
+              
           }
         }
       })
@@ -184,7 +188,7 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
           maxHeight="md"
         >
           <DialogTitle id="titulo" sx={{ color: '#103A5E' }}>
-            {"Nuevo lote"}
+            {"Modificar lote"}
             <Divider/>
           </DialogTitle>
           <DialogContent>
@@ -215,6 +219,8 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
                 <Select
                 labelId="fundo"
                 id="fundo"
+                disabled
+                defaultValue={campaña}
                 value={campaña}
                 variant='outlined'
                 onChange={(e) => setCampaña(e.target.value)}
@@ -287,8 +293,6 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
               <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={numSurcos} onChange={(e) => setNumSurcos(e.target.value)}/>
               </Box>
             </Box>
-            
-            
             <Box display='flex' sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: '#103A5E' }}>
                 Dibujar en mapa:
@@ -304,6 +308,7 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
                 labelId="fundo"
                 id="fundo"
                 value={fundo}
+                disabled
                 variant='outlined'
                 onChange={(e) => setFundo(e.target.value)}
                 name="fundo"
@@ -316,12 +321,13 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
                 </Select>
             </FormControl>
             </Box>
-            <MapViewPopUpAñadir
-              fundo={fundo}
+            <MapViewPopUp
+              fundo={row.idFundo}
               fundos={fundos}
               lotes={lotes}
               selectedFundo={selectedFundo}
               setSelectedFundo={setSelectedFundo}
+              row={row}
               coordenadas={coordenadas}
               setCoordenadas={setCoordenadas}
               tamanio={tamanio}
@@ -350,4 +356,4 @@ function PopUpAñadirLote({show, setShow, cultivos, campañas, variedades, setVa
     )
 }
 
-export default PopUpAñadirLote
+export default PopUpModificarLote

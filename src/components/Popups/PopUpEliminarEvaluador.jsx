@@ -1,8 +1,8 @@
 import React from 'react'
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Snackbar, Typography } from '@mui/material';
-import { eliminarPlaga } from '../../services/adminService';
+import { eliminarCampaña, eliminarPesticida, eliminarUsuario } from '../../services/adminService';
 
-function PopUpEliminarPlaga({show, setShow, row}) {
+function PopUpEliminarEvaluador({show, setShow, row}) {
     const [snackbar, setSnackbar] = React.useState(null);
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -10,9 +10,10 @@ function PopUpEliminarPlaga({show, setShow, row}) {
     };
     const handleEliminar = async() => {
       let data = {
-        idPlaga: row.idPlaga,
+        idUsuario: row.idUsuario,
       }
-      const result = await eliminarPlaga(data);
+      console.log(data)
+      const result = await eliminarUsuario(data);
       if (result.status == 200) {
         console.log("Se eliminó con éxito de la base de datos");
         console.log(result)
@@ -60,4 +61,4 @@ function PopUpEliminarPlaga({show, setShow, row}) {
     )
 }
 
-export default PopUpEliminarPlaga
+export default PopUpEliminarEvaluador

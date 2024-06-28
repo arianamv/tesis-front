@@ -4,6 +4,8 @@ import Login from './screens/Login/Login';
 import InicioAdmin from './screens/Administrador/InicioAdmin';
 import GestionDatos from './screens/Administrador/GestionDatos';
 import GestionMovimientos from './screens/Administrador/GestionMovimientos';
+import InicioEvaluador from './screens/Evaluador/InicioEvaluador';
+import GestionEvaluador from './screens/Evaluador/GestionEvaluador';
 
 function App() {
   return (

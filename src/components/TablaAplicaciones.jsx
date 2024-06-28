@@ -18,12 +18,14 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarAplicaciones, listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
+import { listarAplicaciones, listarAplicacionesXCampaña, listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
 import PopUpAñadirEvaluacion from './Popups/PopUpAñadirEvaluacion';
 import PopUpDescargar from './Popups/PopUpDescargar';
 import PopUpAñadirAplicacion from './Popups/PopUpAñadirAplicacion';
+import PopUpModificarAplicacion from './Popups/PopUpModificarAplicacion';
+import PopUpEliminarAplicacion from './Popups/PopUpEliminarAplicacion';
 
-function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -274,7 +276,7 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
                           <EditIcon style={{ color: "#074F57" }}/>
                       </IconButton>
                       
-                      <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                      <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                           <DeleteIcon style={{ color: 'red' }}/>
                       </IconButton>
                   </div>
@@ -309,8 +311,9 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         .join(' ');
     };
   
-    function handleDelete(id){
+    function handleDelete(id, datos){
       setIdClient(id);
+      setDataCustomer(datos.row);
       setShowEliminar(true);
     }
   
@@ -330,12 +333,15 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
           ))
       }
     }, [search]);
+
+    
   
-    const getAplicaciones = () => {
-        listarAplicaciones().then((response) => {
+    const getAplicaciones = (data) => {
+        listarAplicacionesXCampaña(data).then((response) => {
           if(response?.data){
               if(response?.data.Aplicacion){
                 let aux = [];
+                setLoading(true);
                 for(let i = 0; i < response?.data?.Aplicacion?.length; i++){
                     aux.push({
                     id: i+1,
@@ -367,9 +373,29 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
     }
   
     React.useEffect(() => {
-        getAplicaciones()
-        console.log("Aplicaciones", rows)
+      let data = {
+        nombre_id: campaña
+      }
+        getAplicaciones(data)
     }, [])
+
+    React.useEffect(() => {
+      let data = {
+        nombre_id: campaña
+      }
+      if(showAñadir === false){
+        getAplicaciones(data)
+      }
+      if(showEditCustomer === false) getAplicaciones(data);
+      if(showEliminar === false) getAplicaciones(data);
+  }, [showAñadir, showEditCustomer, showEliminar])
+
+    React.useEffect(() => {
+      let data = {
+        nombre_id: campaña
+      }
+      getAplicaciones(data)
+  }, [campaña])
   
     return (
       <div>
@@ -377,9 +403,15 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
           show={showAñadir}
           setShow={setShowAñadir}
         />
-        <PopupEliminar
+        <PopUpModificarAplicacion
+          show={showEditCustomer}
+          setShow={setShowEditCustomer}
+          row={dataCustomer}
+        />
+        <PopUpEliminarAplicacion
           show={showEliminar}
           setShow={setShowEliminar}
+          row={dataCustomer}
         />
         <PopUpDescargar
           show={showDescargar}

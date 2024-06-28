@@ -18,11 +18,13 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
+import { listarEvaluaciones, listarEvaluacionesXCampaña, listarEvaluadores, listarUsuarios } from '../services/adminService';
 import PopUpAñadirEvaluacion from './Popups/PopUpAñadirEvaluacion';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpModificarEvaluacion from './Popups/PopUpModificarEvaluacion';
+import PopUpEliminarEvaluacion from './Popups/PopUpEliminarEvaluacion';
 
-function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -273,7 +275,7 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
                           <EditIcon style={{ color: "#074F57" }}/>
                       </IconButton>
                       
-                      <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                      <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                           <DeleteIcon style={{ color: 'red' }}/>
                       </IconButton>
                   </div>
@@ -308,8 +310,9 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         .join(' ');
     };
   
-    function handleDelete(id){
+    function handleDelete(id, datos){
       setIdClient(id);
+      setDataCustomer(datos.row);
       setShowEliminar(true);
     }
   
@@ -330,10 +333,11 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
       }
     }, [search]);
   
-    const getEvaluaciones = () => {
-        listarEvaluaciones().then((response) => {
+    const getEvaluaciones = (data) => {
+        listarEvaluacionesXCampaña(data).then((response) => {
           if(response?.data){
               if(response?.data.Evaluacion){
+                setLoading(true);
                 let aux = [];
                 for(let i = 0; i < response?.data?.Evaluacion?.length; i++){
                     aux.push({
@@ -345,7 +349,14 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
                     nombreLote: response?.data.Evaluacion[i].nombreLote,
                     semana: response?.data.Evaluacion[i].semana,
                     idPlaga: response?.data.Evaluacion[i].Plaga_idPlaga,
+                    idUsuario: response?.data.Evaluacion[i].idUsuario,
+                    idLote: response?.data.Evaluacion[i].idLote,
+                    idCultivo: response?.data.Evaluacion[i].Variedad_Cultivo_idCultivo,
+                    idVariedad: response?.data.Evaluacion[i].Variedad_idVariedad,
                     nombrePlaga: response?.data.Evaluacion[i].nombrePlaga,
+                    cantLeve: response?.data.Evaluacion[i].cantLeve,
+                    cantGrave: response?.data.Evaluacion[i].cantGrave,
+                    cantMedio: response?.data.Evaluacion[i].cantMedio,
                     cantEncontrada: response?.data.Evaluacion[i].cantEncontrada,
                     gravedad: response?.data.Evaluacion[i].gravedad,
                     estado: response?.data.Evaluacion[i].estado,
@@ -363,18 +374,47 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
     }
   
     React.useEffect(() => {
-      getEvaluaciones()
+      let data = {
+        nombre_id: campaña
+      }
+      getEvaluaciones(data)
     }, [])
+
+    React.useEffect(() => {
+      let data = {
+        nombre_id: campaña
+      }
+      getEvaluaciones(data)
+      console.log(data)
+    }, [campaña])
+
+    React.useEffect(() => {
+      let data = {
+        nombre_id: campaña
+      }
+      if(showAñadir === false){
+        getEvaluaciones(data)
+      }
+      if(showEditCustomer === false) getEvaluaciones(data);
+      if(showEliminar === false) getEvaluaciones(data);
+  }, [showAñadir, showEditCustomer, showEliminar])
   
     return (
       <div>
         <PopUpAñadirEvaluacion
           show={showAñadir}
           setShow={setShowAñadir}
+          selectedCampaña={campaña}
         />
-        <PopupEliminar
+        <PopUpModificarEvaluacion
+          show={showEditCustomer}
+          setShow={setShowEditCustomer}
+          row={dataCustomer}
+        />
+        <PopUpEliminarEvaluacion
           show={showEliminar}
           setShow={setShowEliminar}
+          row={dataCustomer}
         />
         <PopUpDescargar
           show={showDescargar}

@@ -18,10 +18,12 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarCampanias, listarCultivos, listarFundos, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo } from '../services/adminService';
+import { listarCampanias, listarCultivos, listarFundos, listarLoteXCampaña, listarLotes, listarLotesXCampañaXFundo, listarVariedadesXCultivo } from '../services/adminService';
 import PopUpAñadirLote from './Popups/PopUpAñadirLote';
+import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpModificarLote from './Popups/PopUpModificarLote';
 
-function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState("");
   const [idClient, setIdClient] = React.useState(0);
@@ -34,11 +36,16 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
   const [showEliminar, setShowEliminar] = React.useState(false);
   const [loading, setLoading] = React.useState(true);
   const [showAñadir, setShowAñadir] = React.useState(false);
+  const [showDescargar, setShowDescargar] = React.useState(false);
 
   const handleChange = (event) => {
     setEstadoCliente(event.target.value);
     //RellenarTabla(event.target.value)
   };
+
+  function handleDownload(){
+    setShowDescargar(true);
+  }
 
   function handleAñadir(){
     setShowAñadir(true);
@@ -67,11 +74,11 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
         }
     },
     {
-        field: 'nombre',
+        field: 'nombreLote',
         headerName: 'Nombre', 
         headerClassName: 'super-app-theme--header',
         editable: false,
-        width: 170,
+        width: 100,
         headerAlign: 'center',
         align: 'center',
         renderCell: (cellValues) => {
@@ -93,7 +100,7 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
         headerName: 'Descripción',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 400,
+        width: 150,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
@@ -137,7 +144,7 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
       field: 'nombreFundo',
       headerName: 'Fundo',
       headerClassName: 'super-app-theme--header',
-      width: 200,
+      width: 150,
       headerAlign: 'center',
       align: 'center',
       editable: false,
@@ -152,6 +159,98 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
                 }}
               >
                   {capitalizeWords(cellValues.value)}
+              </Box>
+          )
+      }
+    },
+    {
+      field: 'nombreCultivo',
+      headerName: 'Cultivo',
+      headerClassName: 'super-app-theme--header',
+      width: 100,
+      headerAlign: 'center',
+      align: 'center',
+      editable: false,
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {capitalizeWords(cellValues.value)}
+              </Box>
+          )
+      }
+    },
+    {
+      field: 'nombreVariedad',
+      headerName: 'Variedad',
+      headerClassName: 'super-app-theme--header',
+      width: 100,
+      headerAlign: 'center',
+      align: 'center',
+      editable: false,
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {capitalizeWords(cellValues.value)}
+              </Box>
+          )
+      }
+    },
+    {
+      field: 'numPlantas',
+      headerName: 'N° Plantas',
+      headerClassName: 'super-app-theme--header',
+      width: 100,
+      headerAlign: 'center',
+      align: 'center',
+      editable: false,
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {(cellValues.value)}
+              </Box>
+          )
+      }
+    },
+    {
+      field: 'numSurcos',
+      headerName: 'N° Surcos',
+      headerClassName: 'super-app-theme--header',
+      width: 100,
+      headerAlign: 'center',
+      align: 'center',
+      editable: false,
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {(cellValues.value)}
               </Box>
           )
       }
@@ -265,7 +364,6 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
       setVariedades(response.data?.Cultivo)
       variedades = response.data?.Cultivo
     })
-    console.log("variedades", variedades)
   }
 
   let [cultivos, setCultivos] = React.useState([]);
@@ -292,7 +390,7 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
     })
   }
 
-  const getLotes = () => {
+  const getLotesXCampaña = (data) => {
     getCampañas();
     getCultivos();
     getFundos();
@@ -301,22 +399,30 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
     }
     getVariedades(id);
     setLoading(true);
-    listarLotes().then((response) => {
+    listarLoteXCampaña(data).then((response) => {
         if(response?.data){
             if(response?.data.Lote){
               let auxLotes = [];
               for(let i = 0; i < response?.data?.Lote?.length; i++){
                 auxLotes.push({
                   id: i+1,
-                  idLote: response?.data.Lote[i].idLote,
+                  idCampañaXLote: response?.data.Lote[i].idCampañaXLote,
+                  idLote: response?.data.Lote[i].Lote_idLote,
                   estado: response?.data.Lote[i].estado,
-                  gravedad: response?.data.Lote[i].gravedad,
                   idFundo: response?.data.Lote[i].Lote_Fundo_idFundo,
-                  nombre: response?.data.Lote[i].nombreLote,
-                  descripcion: response?.data.Lote[i].descripcion,
-                  area: response?.data.Lote[i].tamanio,
-                  estadoLote: response?.data.Lote[i].estadoLote,
+                  numPlantas: response?.data.Lote[i].numPlantas,
+                  numSurcos: response?.data.Lote[i].numSurcos,
+                  idVariedad: response?.data.Lote[i].Variedad_idVariedad,
+                  idCultivo: response?.data.Lote[i].Variedad_Cultivo_idCultivo,
+                  idCampaña: response?.data.Lote[i].Campaña_idCampaña,
+                  nombreCampaña: response?.data.Lote[i].nombreCampaña,
                   nombreFundo: response?.data.Lote[i].nombreFundo,
+                  descripcion: response?.data.Lote[i].descripcion,
+                  idLote: response?.data.Lote[i].idLote,
+                  nombreLote: response?.data.Lote[i].nombreLote,
+                  area: response?.data.Lote[i].tamanio,
+                  nombreCultivo: response?.data.Lote[i].nombreCultivo,
+                  nombreVariedad: response?.data.Lote[i].nombreVariedad,
                   coordenadas: response?.data.Lote[i].coordenadas,
                 })
               }
@@ -324,7 +430,6 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
               rows = auxLotes;
               setRowsTable(auxLotes);
               rowsTable = auxLotes;
-              console.log(rowsTable);
               setLoading(false);
             }
           }
@@ -332,8 +437,29 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
   }
 
   React.useEffect(() => {
-    getLotes()
+    let data = {
+      nombre_id: campaña
+    }
+    if(showAñadir === false){
+      getLotesXCampaña(data)
+    }
+    if(showEditCustomer === false) getLotesXCampaña(data)
+    if(showEliminar === false) getLotesXCampaña(data)
+}, [showAñadir, showEditCustomer, showEliminar])
+
+  React.useEffect(() => {
+    let data = {
+      nombre_id: campaña
+    }
+    getLotesXCampaña(data)
   }, [])
+
+  React.useEffect(() => {
+    let data = {
+      nombre_id: campaña
+    }
+    getLotesXCampaña(data)
+  }, [campaña])
 
   return (
     <div>
@@ -346,10 +472,24 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
         setVariedades={setVariedades}
         fundos={fundos}
       />
+      <PopUpModificarLote
+        show={showEditCustomer}
+        setShow={setShowEditCustomer}
+        row={dataCustomer}
+        cultivos={cultivos}
+        campañas={campañas}
+        variedades={variedades}
+        setVariedades={setVariedades}
+        fundos={fundos}
+      />
       <PopupEliminar
         show={showEliminar}
         setShow={setShowEliminar}
       />
+      <PopUpDescargar
+          show={showDescargar}
+          setShow={setShowDescargar}
+        />
       <Box display='flex' sx={{ mb: 1 }}>
           <Box>
             <Typography><b>Lotes</b></Typography>
@@ -377,6 +517,7 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows})
                 backgroundColor: '#074F57',
                 position: 'relative'
               }}
+              onClick={() => handleDownload()}
             >
               Descargar
             </Button>

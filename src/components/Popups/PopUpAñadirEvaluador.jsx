@@ -10,30 +10,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { listarLoteXFundo } from '../../services/adminService';
+import { insertarUsuario, listarLoteXFundo } from '../../services/adminService';
+import { Row } from 'react-bootstrap';
 
 function Lotes({lote, i, lotes, setLotes, fundos, lotesFundo, setLotesFundo}){
   const [selectedFundo, setSelectedFundo] = React.useState(1);
-  const [selectedLote, setSelectedLote] = React.useState(1);
   const handleChangeFundo = (e) => {
-    lote.idFundo = e.target.value;
+    lote.Fundo_idFundo = e.target.value;
     setSelectedFundo(e.target.value);
-    let id = {
-      nombre_id: e.target.value
-    }
-    getLotes(id);
-  }
-
-  const getLotes = (id) => {
-    listarLoteXFundo(id).then((response) => {
-      setLotesFundo(response.data?.Lote)
-      lotesFundo = response.data?.Lote
-    })
-  }
-
-  const handleChangeLote = (e) => {
-    lote.idLote = e.target.value;
-    setSelectedLote(e.target.value);
   }
   const handleDelete = (e) => {
     lotes.splice(e, 1);
@@ -42,6 +26,13 @@ function Lotes({lote, i, lotes, setLotes, fundos, lotesFundo, setLotesFundo}){
     })
     console.log(e, lotes)
   }
+
+  React.useEffect(() => {
+    lote.Fundo_idFundo = selectedFundo
+    lote.estado = 1
+    console.log(lote);
+  }, [selectedFundo])
+
   return(
     <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Typography>
@@ -89,13 +80,13 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
     };
 
     const [lotes, setLotes] = React.useState([{
-      idFundo: 1,
-      idLote: 1,
+      Fundo_idFundo: 1,
+      estado: 1,
     }]);
     const handleAddCultivo = () => {
       const newLote = {
-        idFundo: 1,
-        idLote: 1,
+        Fundo_idFundo: 1,
+        estado: 1,
       }
       console.log(lotes.length)
       if(lotes.length < 2) setLotes(v => [...v, newLote])
@@ -108,8 +99,44 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
       setDNI("");
       setTelefono("");
       setCorreo("");
-      setLotes([]);
+      setLotes([{
+        Fundo_idFundo: 1,
+        estado: 1,
+      }]);
     }
+
+    const addUsuario = async(data) => {
+      const result = await insertarUsuario(data);
+      if (result.status == 200) {
+        console.log("Se editó con éxito la base de datos");
+        console.log(result)
+        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
+      }
+      else {
+        alert('Algo salio mal al guardar el dato');
+      }
+      limpiarDatos();
+      setShow(false);
+    }
+
+    const [selectedUsuario, setSelectedUsuario] = React.useState("");
+
+    React.useEffect(() => {
+      let newUsuario = {
+        nombres: nombre,
+        apellidoPat: apellidoPat,
+        apellidoMat: apellidoMat,
+        dni: dni,
+        email: correo,
+        telefono: telefono,
+        contrasenia: dni,
+        Perfil_idPerfil: 2,
+        estado: 1,
+        fundos: lotes
+      }
+      setSelectedUsuario(newUsuario)
+      console.log(selectedUsuario)
+    }, [nombre, apellidoPat, apellidoMat, dni, correo, telefono, lotes])
 
     return (
       <div>
@@ -171,7 +198,7 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: '#103A5E' }}>
-                Lote(s) autorizado(s):
+                Fundo(s) autorizado(s):
               </Typography>
               <IconButton
                 onClick={handleAddCultivo}
@@ -195,7 +222,7 @@ function PopUpAñadirEvaluador({show, setShow, fundos, lotesFundo, setLotesFundo
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addUsuario(selectedUsuario)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

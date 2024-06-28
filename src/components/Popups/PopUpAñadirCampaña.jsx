@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import { Alert, Box, Button, TextField, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Snackbar, Typography } from '@mui/material';
 import { DemoContainer } from '@mui/x-date-pickers/internals/demo';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
@@ -10,30 +10,20 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { insertarCampaña, listarVariedadesXCultivo } from '../../services/adminService';
+import { insertarCampaña, listarFundos, listarVariedadesXCultivo } from '../../services/adminService';
 
-function Cultivos({cultivo, i, cultivos, setCultivos}){
+function Cultivos({cultivo, i, cultivos, setCultivos, idFundo}){
   const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-  const [selectedVariedad, setSelectedVariedad] = React.useState(1);
   const [selectedFecha, setSelectedFecha] = React.useState(dayjs());
-  let [variedades, setVariedades] = React.useState([]);
 
   const handleChangeCultivo = (e) => {
-    cultivo.idCultivo = e.target.value;
+    cultivo.Cultivo_idCultivo = e.target.value;
+    cultivo.Cultivo_idCultivo1 = e.target.value;
     setSelectedCultivo(e.target.value);
-    let id = {
-      nombre_id: e.target.value
-    }
-    getVariedades(id);
-  }
-
-  const handleChangeVariedad = (e) => {
-    cultivo.idVariedad = e.target.value;
-    setSelectedVariedad(e.target.value);
   }
 
   const handleChangeFecha = (e) => {
-    cultivo.fechaCosecha = e;
+    cultivo.fechCosecha = e;
     setSelectedFecha(e);
   }
 
@@ -45,19 +35,16 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
     console.log(e, cultivos)
   }
 
-  const getVariedades = (id) => {
-    listarVariedadesXCultivo(id).then((response) => {
-        setVariedades(response.data?.Cultivo)
-        variedades = response.data?.Cultivo
-      })
-  }
+  const [campañaXCultivo, setCampañaXCultivo] = React.useState("");
 
   React.useEffect(() => {
-    let data = {
-      nombre_id: 1
-    }
-    getVariedades(data);
-  }, [])
+      cultivo.Cultivo_idCultivo = selectedCultivo
+      cultivo.fechCosecha = selectedFecha
+      cultivo.Cultivo_idCultivo1 = selectedCultivo
+      cultivo.Fundo_idFundo = idFundo
+      cultivo.estado = 1
+    console.log(cultivo);
+  }, [selectedCultivo, selectedFecha, idFundo])
 
   return(
     <Box>
@@ -87,31 +74,6 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
         </Select>
       </FormControl>
       <Typography>
-        Variedad:
-      </Typography>
-      <FormControl size="small">
-        <Select
-          labelId="variedad"
-          id="variedad"
-          value={selectedVariedad}
-          variant='outlined'
-          onChange={handleChangeVariedad}
-          name="variedad"
-          sx={{ m: 1, minWidth: 250 }}
-        >
-          {variedades?.map((e) => (
-              <MenuItem key={e.idVariedad} value={e.idVariedad}>
-              {e.nombreVariedad}
-              </MenuItem>
-          ))}
-        </Select>
-      </FormControl>
-      <IconButton onClick={() => handleDelete(i)}>
-        <RemoveCircleOutlineIcon style={{ color: "#074F57" }}/>
-      </IconButton>
-    </Box>
-    <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'flex-start', alignItems: 'center' }}>
-      <Typography>
         Fecha cosecha:
       </Typography>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
@@ -123,13 +85,16 @@ function Cultivos({cultivo, i, cultivos, setCultivos}){
           onChange={handleChangeFecha}
         />
       </LocalizationProvider>
+      <IconButton onClick={() => handleDelete(i)}>
+        <RemoveCircleOutlineIcon style={{ color: "#074F57" }}/>
+      </IconButton>
     </Box>
     <Divider/>
     </Box>
   )
 }
 
-function PopUpAñadirCampaña({show, setShow}) {
+function PopUpAñadirCampaña({show, setShow, idFundo}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -144,16 +109,10 @@ function PopUpAñadirCampaña({show, setShow}) {
       fechaIni: "",
       fechaFin: "",
       estado: 1,
-    })
-
-    const [newCampaña, setNewCampaña] = React.useState({
-      nombre: "",
-      descripcion: "",
-      fechaIni: "",
-      fechaFin: "",
-      estado: 1,
       cultivos: [],
     })
+
+    let [fundos, setFundos] = useState([]);
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -161,51 +120,46 @@ function PopUpAñadirCampaña({show, setShow}) {
       setShow(false);
     };
 
-    const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-    const handleChangeCultivo = (e) => {
-      setSelectedCultivo(e.target.value);
+    const getFundos = () => {
+      listarFundos().then((response) => {
+        setFundos(response.data?.Fundo)
+        fundos = response.data?.Fundo
+      })
+    }
+
+    const [selectedFundo, setSelectedFundo] = React.useState(1);
+    const handleChangeFundo = (e) => {
+      setSelectedFundo(e.target.value);
     }
 
     const [cultivos, setCultivos] = React.useState([{
-      idCultivo: 1,
-      fechaCosecha: dayjs(),
-      idVariedad: 1,
+      Campaña_idCampaña: 1,
+      Cultivo_idCultivo: 1,
+      fechCosecha: dayjs(),
+      Cultivo_idCultivo1: 1,
+      Fundo_idFundo: 1,
+      estado: 1,
     }]);
 
     const handleAddCultivo = () => {
       const newCultivo = {
-        idCultivo: 1,
-        fechaCosecha: dayjs(),
-        idVariedad: 1,
+        Campaña_idCampaña: 1,
+        Cultivo_idCultivo: 1,
+        fechCosecha: dayjs(),
+        Cultivo_idCultivo1: 1,
+        Fundo_idFundo: 1,
+        estado: 1,
       }
       console.log(cultivos.length)
       if(cultivos.length < 3) setCultivos(v => [...v, newCultivo])
     }
 
     const addCampaña = async(data) => {
-      let nuevaCampaña = {
-        nombre: nombre,
-        descripcion: descripcion,
-        fechaIni: fechaIni,
-        fechaFin: fechaFin,
-        estado: 1,
-      }
-      setSelectedCampaña(nuevaCampaña);
-      console.log(nuevaCampaña);
       const result = await insertarCampaña(data);
       if (result.status == 200) {
-        cultivos.map((cultivo, index) => {
-          let newCultivo = {
-            idCampaña: 0,
-            idCultivo: cultivo.idCultivo,
-            idVariedad: cultivo.idVariedad,
-            fechCosecha: cultivo.fechaCosecha,
-            estado: 1,
-          }
-        })
         console.log("Se editó con éxito la base de datos");
         console.log(result)
-        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
       }
       else {
         alert('Algo salio mal al guardar la campaña');
@@ -220,20 +174,31 @@ function PopUpAñadirCampaña({show, setShow}) {
       setFechaIni(dayjs());
       setFechaFin(dayjs());
       setCultivos([{
-        idCultivo: 1,
-        fechaCosecha: dayjs(),
-        idVariedad: 1,
+        Campaña_idCampaña: 1,
+        Cultivo_idCultivo: 1,
+        fechCosecha: dayjs(),
+        Cultivo_idCultivo1: 1,
+        Fundo_idFundo: 1,
+        estado: 1,
       }]);
     }
 
     React.useEffect(() => {
-      newCampaña.nombre = nombre;
-      newCampaña.descripcion = descripcion;
-      newCampaña.fechaIni = fechaIni;
-      newCampaña.fechaFin = fechaFin;
-      newCampaña.cultivos = cultivos;
+      let newCampaña = {
+        nombre: nombre,
+        descripcion: descripcion,
+        fechaIni: fechaIni,
+        fechaFin: fechaFin,
+        cultivos: cultivos,
+        estado: 1
+      }
+      setSelectedCampaña(newCampaña)
       console.log(newCampaña)
     }, [nombre, descripcion, fechaIni, fechaFin, cultivos])
+
+    React.useEffect(() => {
+      getFundos();
+    }, [])
 
     return (
       <div>
@@ -291,6 +256,27 @@ function PopUpAñadirCampaña({show, setShow}) {
                 />
               </LocalizationProvider>
             </Box>
+            <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
+              <Typography>
+                Fundo:     
+              </Typography>
+              <FormControl size="small" sx={{ m: 1, width: '80%' }}>
+              <Select
+                labelId="fundo"
+                id="fundo"
+                value={selectedFundo}
+                variant='outlined'
+                onChange={handleChangeFundo}
+                name="fundo"
+              >
+                {fundos.map((fundo, index) => (
+                  <MenuItem value={fundo.idFundo}>
+                    {fundo.nombreFundo}
+                  </MenuItem>
+                ))}
+              </Select>
+            </FormControl>
+            </Box>
             <Box display='flex' sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: '#103A5E' }}>
                 Cultivo(s):
@@ -309,13 +295,14 @@ function PopUpAñadirCampaña({show, setShow}) {
                 i={i}
                 cultivos={cultivos}
                 setCultivos={setCultivos}
+                idFundo={selectedFundo}
               />
             )}
             </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addCampaña(selectedCampaña)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

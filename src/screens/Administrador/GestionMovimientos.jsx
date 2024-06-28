@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 import NavBarAdmin from '../../components/Navbars/NavbarAdmin'
 import Box from '@mui/material/Box';
 import Typography from '@mui/material/Typography';
@@ -21,15 +21,21 @@ import {
   } from "@mui/material";
 import ColumnTabsMov from '../../components/Tabs/columnTabsMov';
 import FilterEvaluaciones from '../../components/Filters/FilterEvaluaciones';
-import { listarSemanas } from '../../services/adminService';
+import { listarCampanias, listarFundos, listarSemanas } from '../../services/adminService';
 import FilterAplicaciones from '../../components/Filters/FilterAplicaciones';
 
-function SearchBar({search, setSearch}) {
+function SearchBar({search, setSearch, campañas, setCampañas, campaña, setCampaña}) {
   const onSearch = (event) => {
     setSearch(event.target.value);
   };
+  
+  const handleSelect = (event) => {
+    setCampaña(event.target.value);
+  }
   return (
-    <TextField
+    <Box sx={{ display: 'flex', justifyContent: 'space-between'  }}>
+      <Box sx={{ display: 'flex', width: '65%', alignItems: 'center' }}>
+      <TextField
       value={search}
       onChange={onSearch}
       fullWidth={true}
@@ -42,22 +48,94 @@ function SearchBar({search, setSearch}) {
           ),
       }}
     />
+      </Box>
+    <Box sx={{display: 'flex', width: '30%', alignItems: 'center'}}>
+    <Typography>Campaña: </Typography>
+    <Select
+      id="vista-select"
+      value={campaña}
+      onChange={handleSelect}
+      size={'small'}
+      variant='outlined'
+      sx={{ 
+          width: '100%',
+          ml: 2,
+      }}
+      >
+      {campañas?.map((e) => (
+        <MenuItem key={e.idCampaña} value={e.idCampaña}>
+          {e.nombre}
+        </MenuItem>
+      ))}
+    </Select>
+    </Box>
+    </Box>
   )
 }
 
-function CombSemanas({semana, setSemana, semanas, setSemanas}) {
+function CombSemanas({fundo, setFundo, campaña, setCampaña, semana, setSemana, semanas, setSemanas, fundos, campañas}) {
   const handleSelect = (event) => {
     setSemana(event.target.value);
   }
+  const handleFundo = (event) => {
+    setFundo(event.target.value);
+  }
+  const handleCampaña = (event) => {
+    setCampaña(event.target.value);
+  }
   return(
-    <Select
+    <Box display={'flex'} sx={{ alignItems: 'center', justifyContent: 'space-between' }}>
+      <Box display={'flex'} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '30%' }}>
+      <Typography>Fundo: </Typography>
+      <Select
+      id="vista-select"
+      value={fundo}
+      onChange={handleFundo}
+      size={'small'}
+      variant='outlined'
+      sx={{ 
+          width: '100%',
+          ml: 2
+      }}
+      >
+      {fundos?.map((e) => (
+        <MenuItem key={e.idFundo} value={e.idFundo}>
+          {e.nombreFundo}
+        </MenuItem>
+      ))}
+    </Select>
+      </Box>
+    <Box display={'flex'} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '30%' }}>
+    <Typography>Campaña: </Typography>
+      <Select
+      id="vista-select"
+      value={campaña}
+      onChange={handleCampaña}
+      size={'small'}
+      variant='outlined'
+      sx={{ 
+          width: '100%',
+          ml: 2
+      }}
+      >
+      {campañas?.map((e) => (
+        <MenuItem key={e.idCampaña} value={e.idCampaña}>
+          {e.nombre}
+        </MenuItem>
+      ))}
+    </Select>
+    </Box >
+      <Box display={'flex'} sx={{ alignItems: 'center', justifyContent: 'space-between', width: '30%' }}>
+      <Typography>Semana: </Typography>
+      <Select
       id="vista-select"
       value={semana}
       onChange={handleSelect}
       size={'small'}
       variant='outlined'
       sx={{ 
-          width: '100%'
+          width: '100%',
+          ml:2
       }}
       >
       {semanas?.map((e) => (
@@ -66,6 +144,8 @@ function CombSemanas({semana, setSemana, semanas, setSemanas}) {
         </MenuItem>
       ))}
     </Select>
+      </Box>
+    </Box>
   )
 }
 
@@ -105,8 +185,30 @@ function GestionMovimientos() {
     })
   }
 
+  let [fundos, setFundos] = React.useState([]);
+  const getFundos = () => {
+    listarFundos().then((response) => {
+      setFundos(response.data?.Fundo)
+      fundos = response.data?.Fundo
+    })
+  }
+
+  const [campaña, setCampaña] = useState(4);
+  const [campañaGrafico, setCampañaGrafico] = useState(4);
+  const [fundo, setFundo] = useState(2);
+
+  let [campañas, setCampañas] = React.useState([]);
+  const getCampañas = () => {
+    listarCampanias().then((response) => {
+      setCampañas(response.data?.Campaña)
+      campañas = response.data?.Campaña
+    })
+  }
+
   React.useEffect(() => {
     getSemanas();
+    getCampañas();
+    getFundos();
   }, [])
 
   return (
@@ -163,10 +265,16 @@ function GestionMovimientos() {
                 }}>
                     <Box sx={{ width: '100%', p: 2 }}>
                     <CombSemanas
+                    fundo={fundo}
+                    setFundo={setFundo}
+                    campaña={campañaGrafico}
+                    setCampaña={setCampañaGrafico}
                     semana={semana}
                     setSemana={setSemana}
                     semanas={semanas}
                     setSemanas={setSemanas}
+                    fundos={fundos}
+                    campañas={campañas}
                     />
                   </Box>
                   </Box>
@@ -180,10 +288,14 @@ function GestionMovimientos() {
                     justifyContent: 'center',
                     display: 'flex'
                 }}>
-                    <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
+                  <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
                   <SearchBar
                     search={search}
                     setSearch={search}
+                    campañas={campañas}
+                    setCampañas={setCampañas}
+                    campaña={campaña}
+                    setCampaña={setCampaña}
                   />
                   </Box>
                   <Box display='flex' justifyContent='center' alignItems='center' sx={{ width: '5%' }}>
@@ -210,6 +322,12 @@ function GestionMovimientos() {
           setSemana={setSemana}
           vista={vista}
           setVista={setVista}
+          campaña={campaña}
+          setCampaña={setCampaña}
+          campañaGrafico={campañaGrafico}
+          setCampañaGrafico = {setCampañaGrafico}
+          fundo={fundo}
+          setFundo={setFundo}
           />
       </Row>
     </Box>

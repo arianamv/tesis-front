@@ -10,7 +10,7 @@ import Row from 'react-bootstrap/Row';
 import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
-import { getFundo, listarCampanias, listarCoordenadaXLote, listarEvaluacionesXSemana, listarFundos, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
+import { getFundo, listarCampanias, listarCoordenadaXLote, listarEvaluacionesXSemana, listarFundos, listarLastEvaluacionesXSemana, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
 
 function InicioAdmin() {
   let [fundo, setFundo] = React.useState(2);
@@ -61,19 +61,19 @@ function InicioAdmin() {
             auxLotes.push({
               idCampañaXLote: response?.data.Lote[i].idCampañaXLote,
               estado: response?.data.Lote[i].estado,
-              gravedad: response?.data.Lote[i].gravedad,
               idFundo: response?.data.Lote[i].Lote_Fundo_idFundo,
-              idCampañaXCultivo: response?.data.Lote[i].CampañaXCultivo_idCampañaXCultivo,
-              idCampaña: response?.data.Lote[i].CampañaXCultivo_Campaña_idCampaña,
-              idCultivo: response?.data.Lote[i].CampañaXCultivo_Cultivo_idCultivo,
-              fechaCosecha: response?.data.Lote[i].fechCosecha,
+              idCampañaXCultivo: response?.data.Lote[i].campañaxcultivo[0].idCampañaXCultivo,
+              idCampaña: response?.data.Lote[i].Campaña_idCampaña,
+              idCultivo: response?.data.Lote[i].cultivo[0].idCultivo,
+              fechaCosecha: response?.data.Lote[i].campañaxcultivo[0].fechCosecha,
               numPlantas: response?.data.Lote[i].numPlantas,
               numSurcos: response?.data.Lote[i].numSurcos,
-              nombreLote: response?.data.Lote[i].nombreLote,
-              tamanio: response?.data.Lote[i].tamanio,
-              estadoLote: response?.data.Lote[i].estadoLote,
-              nombreCultivo: response?.data.Lote[i].nombreCultivo,
-              nombreVariedad: response?.data.Lote[i].nombreVariedad,
+              nombreLote: response?.data.Lote[i].lote[0].nombreLote,
+              tamanio: response?.data.Lote[i].lote[0].tamanio,
+              estadoLote: response?.data.Lote[i].lote[0].estado,
+              nombreCultivo: response?.data.Lote[i].cultivo[0].nombreCultivo,
+              idVariedad: response?.data.Lote[i].variedad[0].idVariedad,
+              nombreVariedad: response?.data.Lote[i].variedad[0].nombreVariedad,
               coordenadas: response?.data.Lote[i].coordenadas,
             })
           }
@@ -86,7 +86,7 @@ function InicioAdmin() {
   }
 
   const getEvaluacionesXSemana = (data) => {
-    listarEvaluacionesXSemana(data).then((response) => {
+    listarLastEvaluacionesXSemana(data).then((response) => {
       if(response?.data){
         if(response?.data.Evaluacion){
           let auxLotes = [];
@@ -124,7 +124,9 @@ function InicioAdmin() {
       "idCampania": campania
     }
     let dataEval = {
-      "nombre_id": semana,
+      "idFundo": fundo,
+      "idCampaña": campania,
+      "semana": semana,
     }
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)
@@ -139,7 +141,9 @@ function InicioAdmin() {
       "idCampania": campania
     }
     let dataEval = {
-      "nombre_id": semana,
+      "idFundo": fundo,
+      "idCampaña": campania,
+      "semana": semana,
     }
     //getLotesXFundo(idFundo)
     getLotesXCampañaXFundo(data)

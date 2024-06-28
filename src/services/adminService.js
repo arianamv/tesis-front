@@ -12,6 +12,42 @@ export const listarFundos = (data) => {
     });
 };
 
+export const insertarFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("fundo/insertarFundo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("fundo/modificarFundo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("fundo/eliminarFundo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 export const listarLoteXFundo = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("lote/listarLoteXFundo", data)
@@ -23,6 +59,55 @@ export const listarLoteXFundo = (data) => {
             });
     });
 };
+
+export const insertarLote = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("lote/insertarLote", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarLote = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("lote/modificarLote", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarLote = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("lote/eliminarLote", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarLoteXCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("lote/listarLoteXCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 
 export const listarCoordenadaXLote = (data) => {
     return new Promise((resolve, reject) => {
@@ -72,9 +157,57 @@ export const listarLotesXCampañaXFundo = (data) => {
     });
 };
 
+export const getCampañaXLote = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/getCampaniaXLote", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 export const listarUsuarios = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.get("usuario/listarUsuario", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarUsuario = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("usuario/insertarUsuario", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarUsuario = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("usuario/modificarUsuario", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarUsuario = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("usuario/eliminarUsuario", data)
             .then((resultado) => {
                 resolve(resultado);
             })
@@ -110,7 +243,7 @@ export const listarLotes = () => {
 
 export const listarEvaluadores = (data) => {
     return new Promise((resolve, reject) => {
-        HttpClient.get("usuario/listarEvaluadores", data)
+        HttpClient.get("usuario/listarEvaluadores")
             .then((resultado) => {
                 resolve(resultado);
             })
@@ -123,6 +256,54 @@ export const listarEvaluadores = (data) => {
 export const listarAplicaciones = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.get("aplicacion/listarAplicaciones", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarAplicacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("aplicacion/insertarAplicacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarAplicacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("aplicacion/modificarAplicacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarAplicacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("aplicacion/eliminarAplicacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarAplicacionesXCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("aplicacion/listarAplicacionesXCampania", data)
             .then((resultado) => {
                 resolve(resultado);
             })
@@ -156,6 +337,42 @@ export const listarPesticidas = (data) => {
     });
 };
 
+export const insertarPesticida = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("pesticida/insertarPesticida", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarPesticida = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("pesticida/modificarPesticida", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarPesticida = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("pesticida/eliminarPesticida", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 export const listarVariedadesXCultivo = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("cultivo/listarVariedadesXCultivo", data)
@@ -171,6 +388,18 @@ export const listarVariedadesXCultivo = (data) => {
 export const listarCultivos = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.get("cultivo/listarCultivo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarVariedades = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.get("cultivo/listarVariedades", data)
             .then((resultado) => {
                 resolve(resultado);
             })
@@ -231,6 +460,90 @@ export const listarGravedades = (data) => {
 export const listarEvaluacionesXSemana = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("evaluacion/listarEvaluacionesXSemana", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarEvaluacionesXCampañaXFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarEvaluacionesXCampaniaXFundo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarAplicacionesXCampañaXFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("aplicacion/listarAplicacionesXCampaniaXFundo", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarLastEvaluacionesXSemana = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarLastEvaluacionesXSemana", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const insertarEvaluacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/insertarEvaluacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const modificarEvaluacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/modificarEvaluacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const eliminarEvaluacion = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/eliminarEvaluacion", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarEvaluacionesXCampaña = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarEvaluacionesXCampania", data)
             .then((resultado) => {
                 resolve(resultado);
             })
@@ -303,6 +616,18 @@ export const eliminarPlaga = (data) => {
 export const insertarCampaña = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("campania/insertarCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarCampañaXFundo = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("campania/listarCampaniaXFundo", data)
             .then((resultado) => {
                 resolve(resultado);
             })

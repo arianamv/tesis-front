@@ -10,11 +10,14 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { insertarCampaña, listarPlagas, listarVariedadesXCultivo } from '../../services/adminService';
+import { insertarCampaña, insertarPesticida, listarPlagas, listarVariedadesXCultivo } from '../../services/adminService';
 
 function Plagas({plaga, i, plagas, setPlagas}){
   const [selectedCultivo, setSelectedCultivo] = React.useState(1);
-  let [selectedPlaga, setSelectedPlaga] = React.useState(null);
+  let [selectedPlaga, setSelectedPlaga] = React.useState({
+    idPlaga: 1,
+    nombrePlaga: "",
+  });
   const [dosisRec, setDosisRec] = React.useState(1);
   const [unidadRec, setUnidadRec] = React.useState(1);
   const [periodoCarencia, setPeriodoCarencia] = React.useState(1);
@@ -22,14 +25,8 @@ function Plagas({plaga, i, plagas, setPlagas}){
   let [arrayPlagas, setArrayPlagas] = React.useState([]);
 
   const handleChangeCultivo = (e) => {
-    plaga.idCultivo = e.target.value;
+    plaga.Cultivo_idCultivo = e.target.value;
     setSelectedCultivo(e.target.value);
-  }
-
-  const handleChangePlaga = (e) => {
-    plaga.idPlaga = e.target.value;
-    setSelectedPlaga(e.target.value);
-    console.log(selectedPlaga)
   }
 
   const handleDelete = (e) => {
@@ -44,12 +41,25 @@ function Plagas({plaga, i, plagas, setPlagas}){
     listarPlagas().then((response) => {
         setArrayPlagas(response.data?.Plaga)
         arrayPlagas = response.data?.Plaga
+        setSelectedPlaga(arrayPlagas[0])
       })
   }
 
   React.useEffect(() => {
     getPlagas();
+    console.log("PLAGA", selectedPlaga)
   }, [])
+
+  React.useEffect(() => {
+    plaga.estado = 1 
+    if(selectedPlaga !== undefined) plaga.Plaga_idPlaga = selectedPlaga.idPlaga
+    plaga.dosisRec = dosisRec
+    plaga.unidadRec = unidadRec
+    plaga.periodoCarencia = periodoCarencia
+    plaga.periodoReingreso = periodoReingreso
+    plaga.Cultivo_idCultivo = selectedCultivo
+    console.log(plaga);
+  }, [selectedPlaga, dosisRec, unidadRec, periodoCarencia, periodoReingreso, selectedCultivo])
 
   return(
     <Box>
@@ -166,19 +176,8 @@ function PopUpAñadirPesticida({show, setShow}) {
     const [descripcion, setDescripcion] = React.useState("");
     const [material, setMaterial] = React.useState("");
     const [recomendaciones, setRecomendaciones] = React.useState("");
-    const [metodoAplicacion, setMetodoAplicacion] = React.useState("");
-    const [toxicidad, setToxicidad] = React.useState(0);
-
-    const [newPesticida, setNewPesticida] = React.useState({
-      nombrePesticida: "",
-      descripcion: "",
-      material: "",
-      recomendaciones: "",
-      metodoAplicacion: "",
-      toxicidad: 0,
-      estado: 1,
-      plagas: [],
-    })
+    const [metodoAplicacion, setMetodoAplicacion] = React.useState("Aspersión");
+    const [toxicidad, setToxicidad] = React.useState("");
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -191,68 +190,47 @@ function PopUpAñadirPesticida({show, setShow}) {
     }
 
     const [plagas, setPlagas] = React.useState([{
-      idPlaga: 1,
-      dosisRec: 0,
+      estado: 1, 
+      Plaga_idPlaga: 1,
+      dosisRec: 1, 
       unidadRec: "",
-      periodoCarencia: 0,
-      periodoReingreso: 0,
-      idCultivo: 1,
+      periodoCarencia: 1,
+      periodoReingreso: 1,
+      Cultivo_idCultivo: 1,
     }]);
 
     const handleAddPlaga = () => {
       const newPlaga = {
-        idPlaga: 1,
-        dosisRec: 0,
+        estado: 1, 
+        Plaga_idPlaga: 1,
+        dosisRec: 1, 
         unidadRec: "",
-        periodoCarencia: 0,
-        periodoReingreso: 0,
-        idCultivo: 1,
+        periodoCarencia: 1,
+        periodoReingreso: 1,
+        Cultivo_idCultivo: 1,
       }
       console.log(plagas.length)
       if(plagas.length < 5) setPlagas(v => [...v, newPlaga])
     }
 
     const [selectedPesticida, setSelectedPesticida] = React.useState({
-        nombrePesticida: "",
+        nombrePeticida: "",
         descripcion: "",
         material: "",
         recomendaciones: "",
         metodoAplicacion: "",
-        toxicidad: 0,
+        toxicidad: "",
         estado: 1,
     })
-    const addPesticida = async(data) => {
-      let nuevoPesticida = {
-        nombrePesticida: nombre,
-        descripcion: descripcion,
-        material: material,
-        recomendaciones: recomendaciones,
-        metodoAplicacion: metodoAplicacion,
-        toxicidad: parseInt(toxicidad),
-        estado: 1,
-      }
-      setSelectedPesticida(nuevoPesticida);
-      console.log(selectedPesticida);
-      const result = await insertarCampaña(selectedPesticida);
+    const addNewPesticida = async(data) => {
+      const result = await insertarPesticida(data);
       if (result.status == 200) {
-        plagas.map((plaga, index) => {
-          let newPlaga = {
-            idPesticida: 0,
-            idPlaga: plaga.idPlaga,
-            dosisRec: plaga.dosisRec,
-            unidadRec: plaga.unidadRec,
-            periodoCarencia: plaga.periodoCarencia,
-            periodoReingreso: plaga.periodoReingreso,
-            idCultivo: plaga.idCultivo,
-            estado: 1,
-          }
-        })
-        console.log("Se editó con éxito la base de datos");
+        console.log("Se insertó con éxito la base de datos");
         console.log(result)
-        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
       }
       else {
-        alert('Algo salio mal al guardar la campaña');
+        alert('Algo salio mal al guardar el dato');
       }
       limpiarDatos();
       setShow(false);
@@ -266,24 +244,28 @@ function PopUpAñadirPesticida({show, setShow}) {
       setRecomendaciones("");
       setToxicidad("");
       setPlagas([{
-        idPlaga: 1,
-        dosisRec: 0,
+        estado: 1, 
+        Plaga_idPlaga: 1,
+        dosisRec: 1, 
         unidadRec: "",
-        periodoCarencia: 0,
-        periodoReingreso: 0,
-        idCultivo: 1,
+        periodoCarencia: 1,
+        periodoReingreso: 1,
+        Cultivo_idCultivo: 1,
       }]);
     }
 
     React.useEffect(() => {
-      newPesticida.descripcion = descripcion;
-      newPesticida.material = material;
-      newPesticida.metodoAplicacion = material;
-      newPesticida.nombrePesticida = nombre;
-      newPesticida.recomendaciones = recomendaciones;
-      newPesticida.toxicidad = toxicidad;
-      newPesticida.plagas = plagas;
-      console.log(newPesticida)
+      let newPesticida = {
+        descripcion: descripcion,
+        material: material,
+        metodoAplicacion: metodoAplicacion,
+        nombrePeticida: nombre,
+        recomendaciones: recomendaciones,
+        toxicidad: parseInt(toxicidad),
+        plagas: plagas,
+      }
+      setSelectedPesticida(newPesticida)
+      console.log(selectedPesticida)
     }, [nombre, descripcion, material, material, recomendaciones, toxicidad, plagas])
 
     return (
@@ -336,16 +318,16 @@ function PopUpAñadirPesticida({show, setShow}) {
                 onChange={handleChangeMetodo}
                 name="metodo"
                 >
-                  <MenuItem value={1}>
+                  <MenuItem value={"Aspersión"}>
                     {"Aspersión"}
                   </MenuItem>
-                  <MenuItem value={2}>
+                  <MenuItem value={"Pulverización"}>
                     {"Pulverización"}
                   </MenuItem>
-                  <MenuItem value={3}>
+                  <MenuItem value={"Espolvoreo"}>
                     {"Espolvoreo"}
                   </MenuItem>
-                  <MenuItem value={4}>
+                  <MenuItem value={"Riego"}>
                     {"Riego"}
                   </MenuItem>
                 </Select>
@@ -388,7 +370,7 @@ function PopUpAñadirPesticida({show, setShow}) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addNewPesticida(selectedPesticida)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

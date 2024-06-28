@@ -14,8 +14,9 @@ import TablaEvaluaciones from '../TablaEvaluaciones';
 import { listarSemanas } from '../../services/adminService';
 import GraficoEvaluaciones from '../GraficoEvaluaciones';
 import TablaAplicaciones from '../TablaAplicaciones';
+import GraficoAplicaciones from '../GraficoAplicaciones';
 
-function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setRowsTableAplicaciones, rowsAplicaciones, setRowsAplicaciones, vista, setVista, semana, setSemana}) {
+function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setRowsTableAplicaciones, rowsAplicaciones, setRowsAplicaciones, vista, setVista, semana, setSemana, campaña, setCampaña, campañaGrafico, setCampañaGrafico, fundo, setFundo}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -81,6 +82,8 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
               setRowsTable={setRowsTableEvaluaciones}
               rows={rowsEvaluaciones}
               setRows={setRowsEvaluaciones}
+              campaña={campaña}
+              setCampaña={setCampaña}
             />)
           }
           {
@@ -89,6 +92,10 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
               setRowsTable={setRowsTableEvaluaciones}
               semana={semana}
               setSemana={setSemana}
+              campaña={campañaGrafico}
+              setCampaña={setCampañaGrafico}
+              fundo={fundo}
+              setFundo={setFundo}
             />
           }
         </TabPanel>
@@ -102,15 +109,21 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
               setRowsTable={setRowsTableAplicaciones}
               rows={rowsAplicaciones}
               setRows={setRowsAplicaciones}
+              campaña={campaña}
+              setCampaña={setCampaña}
             />)
           }
           {
-            vista && <GraficoEvaluaciones
-              rowsTable={rowsTableAplicaciones}
-              setRowsTable={setRowsTableAplicaciones}
-              semana={semana}
-              setSemana={setSemana}
-            />
+            vista && <GraficoAplicaciones
+            rowsTable={rowsTableEvaluaciones}
+            setRowsTable={setRowsTableEvaluaciones}
+            semana={semana}
+            setSemana={setSemana}
+            campaña={campañaGrafico}
+            setCampaña={setCampañaGrafico}
+            fundo={fundo}
+            setFundo={setFundo}
+          />
           }
         </TabPanel>
       </TabContext>

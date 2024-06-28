@@ -10,21 +10,32 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPlagas, listarVariedadesXCultivo } from '../../services/adminService';
+import { getCampañaXLote, insertarEvaluacion, insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPlagas, listarVariedades, listarVariedadesXCultivo } from '../../services/adminService';
+import { LegendToggle } from '@mui/icons-material';
+import moment from 'moment';
 
-function PopUpAñadirEvaluacion({show, setShow}) {
+function PopUpAñadirEvaluacion({show, setShow, selectedCampaña}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
-    const [evaluador, setEvaluador] = React.useState(1);
+    let [evaluador, setEvaluador] = React.useState({
+      idUsuario: 1,
+      Perfil_idPerfil: 1,
+    });
     const [descripcion, setDescripcion] = React.useState("");
-    const [lote, setLote] = React.useState("");
+    let [lote, setLote] = React.useState({
+      idLote: 1
+    });
     const [cantidadEncontrada, setCantidadEncontrada] = React.useState("");
     const [gravedad, setGravedad] = React.useState("");
-    let [selectedPlaga, setSelectedPlaga] = React.useState(null);
+    let [selectedPlaga, setSelectedPlaga] = React.useState({
+      idPlaga: 1
+    });
     const [cultivo, setCultivo] = React.useState(1);
     const [variedad, setVariedad] = React.useState(1);
     let [arrayPlagas, setArrayPlagas] = React.useState([]);
+
+    let fechaInicio = "2024-06-01"
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -32,27 +43,36 @@ function PopUpAñadirEvaluacion({show, setShow}) {
       setShow(false);
     };
 
-    const addNewPlaga = async(data) => {
-      const result = await insertarPlaga(data);
+    const [selectedEvaluacion, setSelectedEvaluacion] = React.useState("");
+
+    const addNewEvaluacion = async(data) => {
+      const result = await insertarEvaluacion(data);
       if (result.status == 200) {
         console.log("Se editó con éxito la base de datos");
         console.log(result)
-        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+        setSnackbar({ children: 'Dato insertado correctamente', severity: 'success' });
       }
       else {
-        alert('Algo salio mal al guardar la plaga');
+        alert('Algo salio mal al guardar el dato');
       }
       limpiarDatos();
       setShow(false);
     };
 
     const limpiarDatos = () => {
-        setEvaluador("");
+        setEvaluador({
+          idUsuario: 1,
+          Perfil_idPerfil: 1,
+        });
         setDescripcion("");
-        setLote("");
+        setLote({
+          idLote: 1
+        });
         setCantidadEncontrada("");
         setGravedad("");
-        setSelectedPlaga(null);
+        setSelectedPlaga({
+          idPlaga: 1
+        });
     }
 
     const handleChangeCultivo = (e) => {
@@ -60,28 +80,18 @@ function PopUpAñadirEvaluacion({show, setShow}) {
         let id = {
           nombre_id: e.target.value
         }
-        getVariedades(id);
       }
   
       const handleChangeVariedad = (e) => {
           setVariedad(e.target.value);
         }
 
-    React.useEffect(() => {
-      let newEvaluacion = {
-        descripcion: descripcion,
-        fecha: new Date(),
-        estado: 1,
-      }
-      setSelectedPlaga(newEvaluacion);
-      console.log(selectedPlaga);
-    }, [descripcion])
-
     let [evaluadores, setEvaluadores] = React.useState([]);
     const getEvaluadores = () => {
         listarEvaluadores().then((response) => {
-            setEvaluadores(response.data?.Evaluador)
-            evaluadores = response.data?.Evaluador
+            setEvaluadores(response.data?.Usuario)
+            evaluadores = response.data?.Usuario
+            setEvaluador(response.data?.Usuario[0])
           })
     }
 
@@ -90,12 +100,13 @@ function PopUpAñadirEvaluacion({show, setShow}) {
         listarLotes().then((response) => {
             setLotes(response.data?.Lote)
             lotes = response.data?.Lote
+            setLote(response.data?.Lote[0])
           })
     }
 
     let [variedades, setVariedades] = React.useState([]);
-    const getVariedades = (id) => {
-        listarVariedadesXCultivo(id).then((response) => {
+    const getVariedades = () => {
+        listarVariedades().then((response) => {
             setVariedades(response.data?.Cultivo)
             variedades = response.data?.Cultivo
           })
@@ -105,8 +116,25 @@ function PopUpAñadirEvaluacion({show, setShow}) {
         listarPlagas().then((response) => {
             setArrayPlagas(response.data?.Plaga)
             arrayPlagas = response.data?.Plaga
+            setSelectedPlaga(response.data?.Plaga[0])
           })
       }
+
+    React.useEffect(() => {
+      setEvaluador({
+        idUsuario: 1,
+        Perfil_idPerfil: 1,
+      });
+      setDescripcion("");
+      setLote({
+        idLote: 1
+      });
+      setCantidadEncontrada("");
+      setGravedad("");
+      setSelectedPlaga({
+        idPlaga: 1
+      });
+    }, [])
 
     React.useEffect(() => {
         let data = {
@@ -115,8 +143,66 @@ function PopUpAñadirEvaluacion({show, setShow}) {
         getEvaluadores();
         getLotes();
         getPlagas();
-        getVariedades(data);
+        getVariedades();
+        let dataCam = {
+          idCampaña: selectedCampaña,
+          idLote: 1
+        }
+        getCampaña(dataCam)
     }, [])
+
+    let [campaña, setCampaña] = React.useState([{
+      Variedad_Cultivo_idCultivo: 1,
+      Variedad_idVariedad: 1,
+    }]);
+    const getCampaña = (data) => {
+      getCampañaXLote(data).then((response) => {
+        setCampaña(response.data?.Campaña);
+        campaña = response.data?.Campaña
+      })
+    }
+
+    React.useEffect(() => {
+      let data = {
+        idCampaña: selectedCampaña,
+        idLote: lote.idLote
+      }
+      
+      getCampaña(data)
+      console.log(campaña)
+      setCultivo(campaña[0].Variedad_Cultivo_idCultivo)
+      setVariedad(campaña[0].Variedad_idVariedad)
+    }, [lote])
+
+    React.useEffect(() => {
+      console.log(evaluador)
+        let newEvaluacion = {
+          descripcion: descripcion,
+          fecha: dayjs(),
+          idCampañaXLote: lote.idLote,
+          semana: moment().week() - moment(fechaInicio).week(),
+          cantEncontrada: parseInt(cantidadEncontrada),
+          idPlaga: selectedPlaga.idPlaga,
+          gravedad: parseInt(gravedad),
+          idUsuario: evaluador.idUsuario,
+          idPerfil: evaluador.Perfil_idPerfil,
+          estado: 1,
+        }
+        setSelectedEvaluacion(newEvaluacion)
+        console.log(newEvaluacion)
+    }, [descripcion, lote, evaluador, selectedPlaga, gravedad, cantidadEncontrada, cultivo, variedad])
+
+    React.useEffect(() => {
+      if(selectedPlaga !== null){
+        if((selectedPlaga.cantGrave) < parseInt(cantidadEncontrada)) 
+          setGravedad("3");
+        if((selectedPlaga.cantLeve) <= parseInt(cantidadEncontrada) && (selectedPlaga.cantGrave) >= parseInt(cantidadEncontrada)) 
+          setGravedad("2");
+        if((selectedPlaga.cantLeve) > parseInt(cantidadEncontrada)) 
+          setGravedad("1");
+      }
+      console.log(selectedPlaga)
+    }, [cantidadEncontrada, selectedPlaga])
 
     return (
       <div>
@@ -140,20 +226,36 @@ function PopUpAñadirEvaluacion({show, setShow}) {
               <Typography>
                 Evaluador:
               </Typography>
-              <FormControl size="small" sx={{ m: 1, width: '80%' }}>
-                <Select
-                labelId="evaluador"
-                id="evaluador"
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                size='small'
+                options={evaluadores}
                 value={evaluador}
-                variant='outlined'
-                onChange={(e) => setEvaluador(e.target.value)}
-                name="evaluador"
-                >
-                  <MenuItem key={1} value={1}>
-                    {"Federico Garcia Aranda"}
-                    </MenuItem>
-                </Select>
-            </FormControl>
+                onChange={(event, newValue) => {
+                if (typeof newValue === 'string') {
+                  setEvaluador({
+                      idUsuario: newValue,
+                    });
+                } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+                    setEvaluador({
+                      idUsuario: newValue.inputValue,
+                    });
+                    } else {
+                      setEvaluador(newValue);
+                      evaluador = newValue;
+                    }
+                    console.log(evaluador)
+                    }}
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    getOptionKey={(option) => option.idUsuario}
+                    getOptionLabel={(option) => (option.nombres + " " + option.apellidoPat + " " + option.apellidoMat) || ""}
+                    sx={{ m: 1, width: '80%' }}
+                    renderInput={(params) => <TextField {...params} />}
+                />
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography sx={{ mt: 1 }}>
@@ -165,22 +267,36 @@ function PopUpAñadirEvaluacion({show, setShow}) {
               <Typography>
                 Lote:
               </Typography>
-              <FormControl size="small" sx={{ m: 1, width: '80%' }}>
-                <Select
-                labelId="lote"
-                id="lote"
+              <Autocomplete
+                disablePortal
+                id="combo-box-demo"
+                size='small'
+                options={lotes}
                 value={lote}
-                variant='outlined'
-                onChange={(e) => setLote(e.target.value)}
-                name="lote"
-                >
-                {lotes?.map((e) => (
-                    <MenuItem key={e.idLote} value={e.idLote}>
-                    {e.nombreLote}
-                    </MenuItem>
-                ))}
-                </Select>
-            </FormControl>
+                onChange={(event, newValue) => {
+                if (typeof newValue === 'string') {
+                  setLote({
+                    nombreLote: newValue,
+                    });
+                } else if (newValue && newValue.inputValue) {
+                    // Create a new value from the user input
+                    setLote({
+                      nombreLote: newValue.inputValue,
+                    });
+                    } else {
+                      setLote(newValue);
+                      lote = newValue;
+                    }
+                    console.log(lote)
+                    }}
+                    selectOnFocus
+                    clearOnBlur
+                    handleHomeEndKeys
+                    getOptionKey={(option) => option.idLote}
+                    getOptionLabel={(option) => option.nombreLote || ""}
+                    sx={{ m: 1, width: '80%' }}
+                    renderInput={(params) => <TextField {...params} />}
+                />
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
               <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', width: '50%' }}>
@@ -195,7 +311,7 @@ function PopUpAñadirEvaluacion({show, setShow}) {
                 variant='outlined'
                 onChange={handleChangeCultivo}
                 name="fundo"
-                
+                disabled
                 >
                 <MenuItem key={1} value={1}>{"Uva"}</MenuItem>
                 <MenuItem key={2} value={2}>{"Palta"}</MenuItem>
@@ -213,6 +329,7 @@ function PopUpAñadirEvaluacion({show, setShow}) {
                 id="fundo"
                 value={variedad}
                 variant='outlined'
+                disabled
                 onChange={handleChangeVariedad}
                 name="fundo"
                 >
@@ -249,7 +366,7 @@ function PopUpAñadirEvaluacion({show, setShow}) {
                 } else if (newValue && newValue.inputValue) {
                     // Create a new value from the user input
                     setSelectedPlaga({
-                    nombrePlaga: newValue.inputValue,
+                      nombrePlaga: newValue.inputValue,
                     });
                     } else {
                         setSelectedPlaga(newValue);
@@ -260,8 +377,7 @@ function PopUpAñadirEvaluacion({show, setShow}) {
                     selectOnFocus
                     clearOnBlur
                     handleHomeEndKeys
-                    getOptionKey={(option) => option.idPlaga}
-                    getOptionLabel={(option) => option.nombrePlaga}
+                    getOptionLabel={(option) => option.nombrePlaga || ""}
                     sx={{ m: 1, width: '80%' }}
                     renderInput={(params) => <TextField {...params} />}
                 />
@@ -277,14 +393,14 @@ function PopUpAñadirEvaluacion({show, setShow}) {
               <Typography sx={{ ml: 2 }}>
                 Gravedad:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} value={gravedad} onChange={(e) => setGravedad(e.target.value)}/>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '60%' }} disabled value={gravedad} onChange={(e) => setGravedad(e.target.value)}/>
               </Box>
             </Box>
             </Box>
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={() => addNewPlaga(selectedPlaga)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addNewEvaluacion(selectedEvaluacion)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

@@ -16,21 +16,14 @@ function PopUpModificarPlaga({show, setShow, row}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
-    let [nombre, setNombre] = React.useState(row.nombre);
-    nombre = row.nombre;
-    let [descripcion, setDescripcion] = React.useState(row.descripcion);
-    descripcion = row.descripcion;
-    let [familia, setFamilia] = React.useState(row.familia);
-    familia = row.familia;
-    let [nomCientifico, setNomCientifico] = React.useState(row.nombreCientifico);
-    nomCientifico = row.nombreCientifico;
-    let [cantGrave, setCantGrave] = React.useState(row.cantGrave);
-    cantGrave = row.cantGrave;
-    let [cantMedio, setCantMedio] = React.useState(row.cantMedio);
-    cantMedio = row.cantMedio;
-    let [cantLeve, setCantLeve] = React.useState(row.cantLeve);
-    cantLeve = row.cantLeve;
-    console.log(row)
+    const [nombre, setNombre] = React.useState(row.nombre);
+    const [descripcion, setDescripcion] = React.useState(row.descripcion);
+    const [familia, setFamilia] = React.useState(row.familia);
+    const [nomCientifico, setNomCientifico] = React.useState(row.nombreCientifico);
+    const [cantGrave, setCantGrave] = React.useState(row.cantGrave);
+    const [cantMedio, setCantMedio] = React.useState(row.cantMedio);
+    const [cantLeve, setCantLeve] = React.useState(row.cantLeve);
+    
     const [selectedPlaga, setSelectedPlaga] = React.useState({
       idPlaga: 1,
       nombrePlaga: row.nombre,
@@ -46,6 +39,7 @@ function PopUpModificarPlaga({show, setShow, row}) {
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
       setShow(false);
+      limpiarDatos()
     };
 
     const limpiarDatos = () => {
@@ -57,6 +51,16 @@ function PopUpModificarPlaga({show, setShow, row}) {
       setCantLeve("");
       setCantMedio("");
     }
+
+    React.useEffect(() => {
+      setNombre(row.nombre);
+      setDescripcion(row.descripcion);
+      setFamilia(row.familia);
+      setNomCientifico(row.nombreCientifico);
+      setCantGrave(row.cantGrave);
+      setCantMedio(row.cantMedio);
+      setCantLeve(row.cantLeve);
+    }, [row])
 
     const modifyPlaga = async(data) => {
       const result = await modificarPlaga(data);
@@ -74,6 +78,7 @@ function PopUpModificarPlaga({show, setShow, row}) {
 
     React.useEffect(() => {
       let newPlaga = {
+        idPlaga: row.idPlaga,
         nombrePlaga: nombre,
         descripcion: descripcion,
         familia: familia,
@@ -109,7 +114,7 @@ function PopUpModificarPlaga({show, setShow, row}) {
               <Typography>
                 Nombre:
               </Typography>
-              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '80%' }} value={nombre} onChange={(e) => setNombre(e.target.value)}/>
+              <TextField id="standard-basic" variant="outlined" size="small" sx={{ m: 1, width: '80%' }} defaultValue={row.nombre} value={nombre} onChange={(e) => setNombre(e.target.value)}/>
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between' }}>
               <Typography sx={{ mt: 1 }}>

@@ -11,8 +11,9 @@ import TablaLotes from '../TablaLotes';
 import TablaEvaluadores from '../TablaEvaluadores';
 import TablaPlagas from '../TablaPlagas';
 import TablaPesticidas from '../TablaPesticidas';
+import TablaFundos from '../TablaFundos';
 
-function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setRowsTableCampaña, rowsCampaña, setRowsCampaña, rowsTableLote, setRowsTableLote, rowsLote, setRowsLote, rowsTablePlaga, setRowsTablePlaga, rowsPlaga, setRowsPlaga, rowsTablePesticida, setRowsTablePesticida, rowsPesticida, setRowsPesticida, rowsTableEvaluador, setRowsTableEvaluador, rowsEvaluador, setRowsEvaluador}) {
+function ColumnTabs({value, setValue, search, setSearch, rowsTableFundo, setRowsTableFundo, rowsFundo, setRowsFundo, rowsTableCampaña, setRowsTableCampaña, rowsCampaña, setRowsCampaña, rowsTableLote, setRowsTableLote, rowsLote, setRowsLote, rowsTablePlaga, setRowsTablePlaga, rowsPlaga, setRowsPlaga, rowsTablePesticida, setRowsTablePesticida, rowsPesticida, setRowsPesticida, rowsTableEvaluador, setRowsTableEvaluador, rowsEvaluador, setRowsEvaluador, fundo, setFundo, campaña, setCampaña}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -41,16 +42,27 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setR
                 },
             }}
           >
-            <Tab label="Campañas" value="1" />
-            <Tab label="Lotes" value="2" />
-            <Tab label="Plagas" value="3" />
-            <Tab label="Pesticidas" value="4" />
-            <Tab label="Evaluadores" value="5" />
+            <Tab label="Fundos" value="1" />
+            <Tab label="Campañas" value="2" />
+            <Tab label="Lotes" value="3" />
+            <Tab label="Plagas" value="4" />
+            <Tab label="Pesticidas" value="5" />
+            <Tab label="Evaluadores" value="6" />
           </TabList>
         </Box>
         
         </Box>
         <TabPanel value="1">
+          <TablaFundos
+            search={search}
+            setSearch={setSearch}
+            rowsTable={rowsTableFundo}
+            setRowsTable={setRowsTableFundo}
+            rows={rowsFundo}
+            setRows={setRowsFundo}
+          />
+        </TabPanel>
+        <TabPanel value="2">
           <TablaCampañas
             search={search}
             setSearch={setSearch}
@@ -58,9 +70,11 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setR
             setRowsTable={setRowsTableCampaña}
             rows={rowsCampaña}
             setRows={setRowsCampaña}
+            fundo={fundo}
+            setFundo={setFundo}
           />
         </TabPanel>
-        <TabPanel value="2">
+        <TabPanel value="3">
           <TablaLotes
             search={search}
             setSearch={setSearch}
@@ -68,9 +82,11 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setR
             setRowsTable={setRowsTableLote}
             rows={rowsLote}
             setRows={setRowsLote}
+            campaña={campaña}
+            setCampaña={setCampaña}
           />
         </TabPanel>
-        <TabPanel value="3">
+        <TabPanel value="4">
           <TablaPlagas
             search={search}
             setSearch={setSearch}
@@ -80,7 +96,7 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setR
             setRows={setRowsPlaga}
           />
         </TabPanel>
-        <TabPanel value="4">
+        <TabPanel value="5">
           <TablaPesticidas
             search={search}
             setSearch={setSearch}
@@ -90,7 +106,7 @@ function ColumnTabs({value, setValue, search, setSearch, rowsTableCampaña, setR
             setRows={setRowsPesticida}
           />
         </TabPanel>
-        <TabPanel value="5">
+        <TabPanel value="6">
         <TablaEvaluadores
             search={search}
             setSearch={setSearch}

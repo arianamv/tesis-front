@@ -22,6 +22,7 @@ import { listarEvaluadores, listarPesticidaXPlaga, listarPesticidas, listarPlaga
 import PopUpAñadirPesticida from './Popups/PopUpAñadirPesticida';
 import PopUpModificarPesticida from './Popups/PopUpModificarPesticida';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpEliminarPesticida from './Popups/PopUpEliminarPesticida';
 
 function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
@@ -236,7 +237,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
                           <EditIcon style={{ color: "#074F57" }}/>
                       </IconButton>
                       
-                      <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                      <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                           <DeleteIcon style={{ color: 'red' }}/>
                       </IconButton>
                   </div>
@@ -272,8 +273,9 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
         .join(' ');
     };
   
-    function handleDelete(id){
+    function handleDelete(id, datos){
       setIdClient(id);
+      setDataCustomer(datos.row);
       setShowEliminar(true);
     }
   
@@ -328,6 +330,14 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
       getPesticidas()
       console.log(rows);
     }, [])
+
+    React.useEffect(() => {
+      if(showAñadir === false){
+        getPesticidas()
+      }
+      if(showEditCustomer === false) getPesticidas()
+      if(showEliminar === false) getPesticidas()
+  }, [showAñadir, showEditCustomer, showEliminar])
   
     return (
       <div>
@@ -340,9 +350,10 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
           setShow={setShowEditCustomer}
           row={dataCustomer}
         />
-        <PopupEliminar
+        <PopUpEliminarPesticida
           show={showEliminar}
           setShow={setShowEliminar}
+          row={dataCustomer}
         />
         <PopUpDescargar
           show={showDescargar}

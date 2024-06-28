@@ -1,8 +1,8 @@
 import React from 'react'
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Snackbar, Typography } from '@mui/material';
-import { eliminarPlaga } from '../../services/adminService';
+import { eliminarEvaluacion, eliminarFundo, eliminarPlaga } from '../../services/adminService';
 
-function PopUpEliminarPlaga({show, setShow, row}) {
+function PopUpEliminarFundo({show, setShow, row}) {
     const [snackbar, setSnackbar] = React.useState(null);
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -10,16 +10,17 @@ function PopUpEliminarPlaga({show, setShow, row}) {
     };
     const handleEliminar = async() => {
       let data = {
-        idPlaga: row.idPlaga,
+        idFundo: row.idFundo,
       }
-      const result = await eliminarPlaga(data);
+      console.log(row)
+      const result = await eliminarFundo(data);
       if (result.status == 200) {
         console.log("Se eliminó con éxito de la base de datos");
         console.log(result)
         setSnackbar({ children: 'Dato eliminado correctamente', severity: 'success' });
       }
       else {
-        alert('Algo salio mal al eliminar la plaga');
+        alert('Algo salio mal al eliminar el dato');
       }
       setShow(false);
     };
@@ -41,7 +42,7 @@ function PopUpEliminarPlaga({show, setShow, row}) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleEliminar} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => handleEliminar()} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>
@@ -60,4 +61,4 @@ function PopUpEliminarPlaga({show, setShow, row}) {
     )
 }
 
-export default PopUpEliminarPlaga
+export default PopUpEliminarFundo

@@ -22,6 +22,7 @@ import { listarEvaluadores, listarFundos, listarLoteXFundo, listarUsuarios, list
 import PopUpAñadirEvaluador from './Popups/PopUpAñadirEvaluador';
 import PopUpModificarEvaluador from './Popups/PopUpModificarEvaluador';
 import PopUpDescargar from './Popups/PopUpDescargar';
+import PopUpEliminarEvaluador from './Popups/PopUpEliminarEvaluador';
 
 function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
@@ -217,7 +218,7 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
                           <EditIcon style={{ color: "#074F57" }}/>
                       </IconButton>
                       
-                      <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                      <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                           <DeleteIcon style={{ color: 'red' }}/>
                       </IconButton>
                   </div>
@@ -253,8 +254,9 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
         .join(' ');
     };
   
-    function handleDelete(id){
+    function handleDelete(id, datos){
       setIdClient(id);
+      setDataCustomer(datos.row);
       setShowEliminar(true);
     }
   
@@ -332,6 +334,14 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
     React.useEffect(() => {
       getUsuarios()
     }, [])
+
+    React.useEffect(() => {
+      if(showAñadir === false){
+        getUsuarios()
+      }
+      if(showEditCustomer === false) getUsuarios()
+      if(showEliminar === false) getUsuarios()
+  }, [showAñadir, showEditCustomer, showEliminar])
   
     return (
       <div>
@@ -348,9 +358,10 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
           row={dataCustomer}
           fundos={fundos}
         />
-        <PopupEliminar
+        <PopUpEliminarEvaluador
           show={showEliminar}
           setShow={setShowEliminar}
+          row={dataCustomer}
         />
         <PopUpDescargar
           show={showDescargar}

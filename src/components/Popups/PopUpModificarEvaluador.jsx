@@ -10,13 +10,13 @@ import MenuItem from '@mui/material/MenuItem';
 import FormControl from '@mui/material/FormControl';
 import dayjs from 'dayjs';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
-import { listarLoteXFundo } from '../../services/adminService';
+import { listarLoteXFundo, modificarUsuario } from '../../services/adminService';
 
 function Lotes({lote, i, lotes, setLotes, fundos}){
-  let [selectedFundo, setSelectedFundo] = React.useState(lote.idFundo);
-  selectedFundo = lote.idFundo;
+  let [selectedFundo, setSelectedFundo] = React.useState(lote.Fundo_idFundo);
+  selectedFundo = lote.Fundo_idFundo;
   const handleChangeFundo = (e) => {
-    lote.idFundo = e.target.value;
+    lote.Fundo_idFundo = e.target.value;
     setSelectedFundo(e.target.value);
   }
 
@@ -27,6 +27,14 @@ function Lotes({lote, i, lotes, setLotes, fundos}){
     })
     console.log(e, lotes)
   }
+
+  React.useEffect(() => {
+    lote.idUsuarioXFundo = lote.idUsuarioXFundo
+    lote.Fundo_idFundo = selectedFundo
+    lote.estado = 1
+    console.log(lote);
+    }, [selectedFundo])
+
   return(
     <Box display='flex' sx={{ flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center' }}>
       <Typography>
@@ -61,17 +69,11 @@ function PopUpModificarEvaluador({show, setShow, row, fundos}) {
     const [snackbar, setSnackbar] = React.useState(null);
 
     let [nombre, setNombre] = React.useState(row.nombres);
-    nombre = row.nombres;
     let [apellidoPat, setApellidoPat] = React.useState(row.apellidoPat);
-    apellidoPat = row.apellidoPat;
     let [apellidoMat, setApellidoMat] = React.useState(row.apellidoMat);
-    apellidoMat = row.apellidoMat;
     let [correo, setCorreo] = React.useState(row.email);
-    correo = row.email;
     let [telefono, setTelefono] = React.useState(row.telefono);
-    telefono = row.telefono;
     let [dni, setDNI] = React.useState(row.dni);
-    dni = row.dni;
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {
@@ -89,6 +91,20 @@ function PopUpModificarEvaluador({show, setShow, row, fundos}) {
       if(lotes.length < 2) setLotes(v => [...v, newLote])
     }
 
+    const addNewUsuario = async(data) => {
+      const result = await modificarUsuario(data);
+      if (result.status == 200) {
+        console.log("Se editó con éxito la base de datos");
+        console.log(result)
+        setSnackbar({ children: 'Dato editado correctamente', severity: 'success' });
+      }
+      else {
+        alert('Algo salio mal al guardar el dato');
+      }
+      limpiarDatos();
+      setShow(false);
+    }
+
     const limpiarDatos = () => {
       setNombre("");
       setApellidoMat("");
@@ -98,6 +114,36 @@ function PopUpModificarEvaluador({show, setShow, row, fundos}) {
       setCorreo("");
       setLotes([]);
     }
+
+    React.useEffect(() => {
+      setNombre(row.nombres);
+      setApellidoMat(row.apellidoPat);
+      setApellidoPat(row.apellidoMat);
+      setDNI(row.dni);
+      setTelefono(row.telefono);
+      setCorreo(row.email);
+      setLotes(row.fundos);
+    }, [row])
+
+    const [selectedUsuario, setSelectedUsuario] = React.useState("");
+
+    React.useEffect(() => {
+      let newUsuario = {
+        idUsuario: row.idUsuario,
+        nombres: nombre,
+        apellidoPat: apellidoPat,
+        apellidoMat: apellidoMat,
+        dni: dni,
+        email: correo,
+        telefono: telefono,
+        contrasenia: dni,
+        Perfil_idPerfil: 2,
+        estado: 1,
+        fundos: lotes
+      }
+      setSelectedUsuario(newUsuario)
+      console.log(selectedUsuario)
+    }, [nombre, apellidoPat, apellidoMat, dni, correo, telefono, lotes])
 
     return (
       <div>
@@ -159,7 +205,7 @@ function PopUpModificarEvaluador({show, setShow, row, fundos}) {
             </Box>
             <Box display='flex' sx={{ flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' }}>
               <Typography sx={{ color: '#103A5E' }}>
-                Lote(s) autorizado(s):
+                Fundo(s) autorizado(s):
               </Typography>
               <IconButton
                 onClick={handleAddCultivo}
@@ -181,7 +227,7 @@ function PopUpModificarEvaluador({show, setShow, row, fundos}) {
           </DialogContent>
           <DialogActions>
             <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
-            <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
+            <Button onClick={() => addNewUsuario(selectedUsuario)} variant="contained" sx={{ backgroundColor: '#074F57' }}>
               Confirmar
             </Button>
           </DialogActions>

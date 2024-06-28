@@ -18,14 +18,14 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarCampanias, listarCampañaXCultivo } from '../services/adminService';
+import { listarCampanias, listarCampañaXCultivo, listarCampañaXFundo } from '../services/adminService';
 import PopUpDescargar from './Popups/PopUpDescargar';
 import PopUpAñadirCampaña from './Popups/PopUpAñadirCampaña';
 import PopUpModificarCampaña from './Popups/PopUpModificarCampaña';
 import dayjs from 'dayjs';
 
 
-export default function TablaCampañas({search, setSearch, rowsTable, setRowsTable, rows, setRows}) {
+export default function TablaCampañas({search, setSearch, rowsTable, setRowsTable, rows, setRows, fundo, setFundo}) {
   const [showEditCustomer, setShowEditCustomer] = React.useState(false);
   const [dataCustomer, setDataCustomer] = React.useState({
     cultivos: [],
@@ -101,7 +101,7 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
         headerName: 'Descripción',
         editable: false,
         headerClassName: 'super-app-theme--header',
-        width: 380,
+        width: 300,
         headerAlign: 'center',
         renderCell: (cellValues) => {
           //console.log(cellValues.value)
@@ -118,6 +118,28 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
             )
         }
     },
+    {
+      field: 'nombreFundo',
+      headerName: 'Fundo',
+      editable: false,
+      headerClassName: 'super-app-theme--header',
+      width: 100,
+      headerAlign: 'center',
+      renderCell: (cellValues) => {
+        //console.log(cellValues.value)
+          return (
+              <Box
+                sx={{
+                  maxHeight: 'inherit',
+                  whiteSpace: 'initial',
+                  lineHeight: '16px',
+                }}
+              >
+                  {capitalizeWords(cellValues.value)}
+              </Box>
+          )
+      }
+  },
     {
       field: 'fechaIni',
       headerName: 'Fecha de inicio',
@@ -209,7 +231,7 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
                         <EditIcon style={{ color: "#074F57" }}/>
                     </IconButton>
                     
-                    <IconButton onClick = {() => handleDelete(cellValues.id)}>
+                    <IconButton onClick = {() => handleDelete(cellValues.id, cellValues)}>
                         <DeleteIcon style={{ color: 'red' }}/>
                     </IconButton>
                 </div>
@@ -248,8 +270,9 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
     setShowDescargar(true);
   }
 
-  function handleDelete(id){
+  function handleDelete(id, datos){
     setIdClient(id);
+    setDataCustomer(datos.row);
     setShowEliminar(true);
   }
 
@@ -274,18 +297,18 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
     }
   }, [search]);
 
-  const getCampañaXCultivo = () => {
-    listarCampañaXCultivo().then((response) => {
+  const getCampañaXFundo = (data) => {
+    listarCampañaXFundo(data).then((response) => {
       if(response?.data){
         if(response?.data.Campaña){
           let aux = [];
           for(let i = 0; i < response?.data?.Campaña?.length; i++){
             aux.push({
               id: i+1,
-              idCampañaXCultivo: response?.data.Campaña[i].idCampañaXCultivo,
               estado: response?.data.Campaña[i].estado,
-              idCampaña: response?.data.Campaña[i].Campaña_idCampaña,
-              idCultivo: response?.data.Campaña[i].Cultivo_idCultivo,
+              idCampaña: response?.data.Campaña[i].idCampaña,
+              nombreFundo: response?.data.Campaña[i].nombreFundo,
+              idFundo: response?.data.Campaña[i].idFundo,
               fechaIni: response?.data.Campaña[i].fechaIni,
               fechaFin: response?.data.Campaña[i].fechaFin,
               nombre: response?.data.Campaña[i].nombre,
@@ -305,19 +328,42 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
   }
 
   React.useEffect(() => {
-    getCampañaXCultivo()
+    let data = {
+      nombre_id: fundo
+    }
+    getCampañaXFundo(data);
   }, [])
+
+  React.useEffect(() => {
+    let data = {
+      nombre_id: fundo
+    }
+    getCampañaXFundo(data);
+  }, [fundo])
+
+  React.useEffect(() => {
+    let data = {
+      nombre_id: fundo
+    }
+    if(showAñadir === false){
+      getCampañaXFundo(data)
+    }
+    if(showEditCustomer === false) getCampañaXFundo(data)
+    if(showEliminar === false) getCampañaXFundo(data)
+}, [showAñadir, showEditCustomer, showEliminar])
 
   return (
     <div>
       <PopUpAñadirCampaña
         show={showAñadir}
         setShow={setShowAñadir}
+        idFundo={fundo}
       />
       <PopUpModificarCampaña
         show={showEditCustomer}
         setShow={setShowEditCustomer}
         row={dataCustomer}
+        fundo={fundo}
       />
       <PopUpDescargar
         show={showDescargar}
@@ -326,6 +372,7 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
       <PopupEliminar
         show={showEliminar}
         setShow={setShowEliminar}
+        row={dataCustomer}
       />
       <Box display='flex' sx={{ mb: 1 }}>
           <Box>
