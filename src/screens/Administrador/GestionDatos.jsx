@@ -190,7 +190,7 @@ function GestionDatos() {
     }
   };
 
-  const [campaña, setCampaña] = React.useState(1);
+  const [campaña, setCampaña] = React.useState(4);
   let [campañas, setCampañas] = React.useState([]);
   const getCampañas = () => {
     listarCampanias().then((response) => {

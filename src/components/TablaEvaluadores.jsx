@@ -366,6 +366,7 @@ function TablaEvaluadores({search, setSearch, rowsTable, setRowsTable, rows, set
         <PopUpDescargar
           show={showDescargar}
           setShow={setShowDescargar}
+          rowsTable={rowsTable}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>

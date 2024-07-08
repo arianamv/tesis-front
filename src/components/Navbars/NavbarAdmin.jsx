@@ -62,7 +62,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                href="/home"
+                href="/admin-home"
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
@@ -80,7 +80,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                href="/datos"
+                href="/admin-datos"
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
@@ -98,7 +98,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                href='/movimientos'
+                href='/admin-movimientos'
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,

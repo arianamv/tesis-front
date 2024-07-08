@@ -14,9 +14,12 @@ import TablaEvaluaciones from '../TablaEvaluaciones';
 import { listarSemanas } from '../../services/adminService';
 import GraficoEvaluaciones from '../GraficoEvaluaciones';
 import TablaAplicaciones from '../TablaAplicaciones';
+import TablaEvaluacionesEval from '../TablaEvaluacionesEval';
+import { useLocation } from 'react-router-dom';
 
-function ColumnTabsEva({value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, vista, setVista, semana, setSemana}) {
-    const handleChange = (event, newValue) => {
+function ColumnTabsEva({state, value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setVista, campaña, setCampaña}) {
+
+  const handleChange = (event, newValue) => {
         setValue(newValue);
       };
     
@@ -53,13 +56,16 @@ function ColumnTabsEva({value, setValue, search, setSearch, rowsTableEvaluacione
             </Box>
             </Box>
             <TabPanel value="1">
-                <TablaEvaluaciones
+                <TablaEvaluacionesEval
+                  state={state}
                   search={search}
                   setSearch={setSearch}
                   rowsTable={rowsTableEvaluaciones}
                   setRowsTable={setRowsTableEvaluaciones}
                   rows={rowsEvaluaciones}
                   setRows={setRowsEvaluaciones}
+                  campaña={campaña}
+                  setCampaña={setCampaña}
                 />
             </TabPanel>
           </TabContext>

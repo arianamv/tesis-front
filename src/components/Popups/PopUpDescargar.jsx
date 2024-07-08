@@ -1,7 +1,8 @@
 import React from 'react'
 import { Alert, Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Divider, Grid, IconButton, Snackbar, Typography } from '@mui/material';
+import { CSVLink, CSVDownload } from "react-csv";
 
-function PopUpDescargar({show, setShow}) {
+function PopUpDescargar({show, setShow, rowsTable}) {
   const [snackbar, setSnackbar] = React.useState(null);
   const handleCloseSnackbar = () => setSnackbar(null);
   const handleClose = async() => {
@@ -25,9 +26,11 @@ function PopUpDescargar({show, setShow}) {
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} sx={{ color: '#074F57' }}>Cancelar</Button>
+          <CSVLink data={rowsTable} filename="reporte.csv">
           <Button onClick={handleClose} variant="contained" sx={{ backgroundColor: '#074F57' }}>
             Confirmar
           </Button>
+          </CSVLink>
         </DialogActions>
       </Dialog>
       {!!snackbar && (

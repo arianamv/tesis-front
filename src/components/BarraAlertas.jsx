@@ -222,7 +222,6 @@ function BarraAlertas({ evaluaciones, lotes, plagas, setPlagas, cultivos, setCul
                 </Box>
                 <Box display={'flex'} sx={{ justifyContent: 'space-between' }}>
                   <Typography sx={{ fontSize: '12px', color: '#103A5E' }}>{e.nombrePlaga}</Typography>
-                  <Typography sx={{ fontSize: '10px', color: '#103A5E' }}>13:05</Typography>
                 </Box>
                 <Box display={'flex'} sx={{ justifyContent: 'space-between', alignItems: 'center' }}>
                   <Typography sx={{ fontSize: '10px', color: '#103A5E' }}>Cantidad: {e.cantEncontrada}</Typography>

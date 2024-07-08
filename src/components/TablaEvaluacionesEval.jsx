@@ -18,14 +18,16 @@ import useProgress from './ProgressContext/useProgress'
 import PopupEliminar from './Popups/PopupEliminarCampaña';
 import { type } from '@testing-library/user-event/dist/type';
 import { format } from 'date-fns';
-import { listarAplicaciones, listarAplicacionesXCampaña, listarEvaluaciones, listarEvaluadores, listarUsuarios } from '../services/adminService';
+import { listarEvaluaciones, listarEvaluacionesXCampaña, listarEvaluacionesXCampañaXUsuario, listarEvaluadores, listarUsuarios } from '../services/adminService';
 import PopUpAñadirEvaluacion from './Popups/PopUpAñadirEvaluacion';
 import PopUpDescargar from './Popups/PopUpDescargar';
-import PopUpAñadirAplicacion from './Popups/PopUpAñadirAplicacion';
-import PopUpModificarAplicacion from './Popups/PopUpModificarAplicacion';
-import PopUpEliminarAplicacion from './Popups/PopUpEliminarAplicacion';
+import PopUpModificarEvaluacion from './Popups/PopUpModificarEvaluacion';
+import PopUpEliminarEvaluacion from './Popups/PopUpEliminarEvaluacion';
+import { useLocation } from 'react-router-dom';
+import PopUpAñadirEvalEval from './Popups/PopUpAñadirEvalEval';
+import PopUpModificarEvalEval from './Popups/PopUpModificarEvalEval';
 
-function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
+function TablaEvaluacionesEval({state, search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -39,6 +41,8 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
     const [showEliminar, setShowEliminar] = React.useState(false);
     const [loading, setLoading] = React.useState(true);
     const [showDescargar, setShowDescargar] = React.useState(false);
+
+    console.log("STATE", state)
   
     const handleChange = (event) => {
       setEstadoCliente(event.target.value);
@@ -76,27 +80,27 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
           }
       },
       {
-        field: 'nombrePesticida',
-        headerName: 'Pesticida',
-        editable: false,
-        headerClassName: 'super-app-theme--header',
-        width: 200,
-        headerAlign: 'center',
-        renderCell: (cellValues) => {
-          //console.log(cellValues.value)
-            return (
-                <Box
-                  sx={{
-                    maxHeight: 'inherit',
-                    whiteSpace: 'initial',
-                    lineHeight: '16px',
-                  }}
-                >
-                    {capitalizeWords(cellValues.value)}
-                </Box>
-            )
-        }
-    },
+          field: 'descripcion',
+          headerName: 'Descripción', 
+          headerClassName: 'super-app-theme--header',
+          editable: false,
+          width: 200,
+          headerAlign: 'center',
+          align: 'center',
+          renderCell: (cellValues) => {
+              return (
+                  <Box
+                    sx={{
+                      maxHeight: 'inherit',
+                      whiteSpace: 'initial',
+                      lineHeight: '16px',
+                    }}
+                  >
+                      {capitalizeWords(cellValues.value)}
+                  </Box>
+              )
+          }
+      },
       {
           field: 'fecha',
           headerName: 'Fecha',
@@ -143,10 +147,10 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         }
     },
       {
-        field: 'cantidadAplicada',
-        headerName: 'Cantidad',
+        field: 'nombreLote',
+        headerName: 'Lote',
         headerClassName: 'super-app-theme--header',
-        width: 80,
+        width: 150,
         headerAlign: 'center',
         align: 'center',
         editable: false,
@@ -166,10 +170,10 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         }
       },
       {
-          field: 'unidadAplicada',
-          headerName: 'Unidad',
+          field: 'nombrePlaga',
+          headerName: 'Plaga',
           headerAlign: 'center',
-          width: 120,
+          width: 150,
           headerClassName: 'super-app-theme--header',
           renderCell: (cellValues) => {
             //console.log(cellValues.value)
@@ -181,16 +185,16 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
                       lineHeight: '16px',
                     }}
                   >
-                      {(cellValues.value)}
+                      {capitalizeWords(cellValues.value)}
                   </Box>
               )
           }
       },
       {
-        field: 'nombreCampaña',
-        headerName: 'Campaña',
+        field: 'cantEncontrada',
+        headerName: 'Cantidad',
         headerAlign: 'center',
-        width: 150,
+        width: 100,
         headerClassName: 'super-app-theme--header',
         align: 'center',
         renderCell: (cellValues) => {
@@ -209,10 +213,10 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         }
     },
     {
-      field: 'nombreLote',
-      headerName: 'Lote',
+      field: 'gravedad',
+      headerName: 'Gravedad',
       headerAlign: 'center',
-      width: 150,
+      width: 100,
       headerClassName: 'super-app-theme--header',
       align: 'center',
       renderCell: (cellValues) => {
@@ -333,32 +337,34 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
           ))
       }
     }, [search]);
-
-    
   
-    const getAplicaciones = (data) => {
-        listarAplicacionesXCampaña(data).then((response) => {
+    const getEvaluaciones = (data) => {
+        listarEvaluacionesXCampañaXUsuario(data).then((response) => {
           if(response?.data){
-              if(response?.data.Aplicacion){
-                let aux = [];
+              if(response?.data.Evaluacion){
                 setLoading(true);
-                for(let i = 0; i < response?.data?.Aplicacion?.length; i++){
+                let aux = [];
+                for(let i = 0; i < response?.data?.Evaluacion?.length; i++){
                     aux.push({
                     id: i+1,
-                    idADP: response?.data.Aplicacion[i].idADP,
-                    area: response?.data.Aplicacion[i].area,
-                    fecha: response?.data.Aplicacion[i].fecha,
-                    cantidadAplicada: response?.data.Aplicacion[i].cantidadAplicada,
-                    unidadAplicada: response?.data.Aplicacion[i].unidadAplicada,
-                    semana: response?.data.Aplicacion[i].semana,
-                    idCampañaXLote: response?.data.Aplicacion[i].CampañaXLote_idCampañaXLote,
-                    idPesticida: response?.data.Aplicacion[i].Pesticida_idPesticida,
-                    idCampaña: response?.data.Aplicacion[i].idCampaña,
-                    nombreCampaña: response?.data.Aplicacion[i].nombre,
-                    nombrePesticida: response?.data.Aplicacion[i].nombrePesticida,
-                    idLote: response?.data.Aplicacion[i].idLote,
-                    nombreLote: response?.data.Aplicacion[i].nombreLote,
-                    estado: response?.data.Aplicacion[i].estado,
+                    idEvaluacion: response?.data.Evaluacion[i].idEvaluacion,
+                    descripcion: response?.data.Evaluacion[i].descripcion,
+                    fecha: response?.data.Evaluacion[i].fecha,
+                    idCampañaXLote: response?.data.Evaluacion[i].CampañaXLote_idCampañaXLote,
+                    nombreLote: response?.data.Evaluacion[i].nombreLote,
+                    semana: response?.data.Evaluacion[i].semana,
+                    idPlaga: response?.data.Evaluacion[i].Plaga_idPlaga,
+                    idUsuario: response?.data.Evaluacion[i].idUsuario,
+                    idLote: response?.data.Evaluacion[i].idLote,
+                    idCultivo: response?.data.Evaluacion[i].Variedad_Cultivo_idCultivo,
+                    idVariedad: response?.data.Evaluacion[i].Variedad_idVariedad,
+                    nombrePlaga: response?.data.Evaluacion[i].nombrePlaga,
+                    cantLeve: response?.data.Evaluacion[i].cantLeve,
+                    cantGrave: response?.data.Evaluacion[i].cantGrave,
+                    cantMedio: response?.data.Evaluacion[i].cantMedio,
+                    cantEncontrada: response?.data.Evaluacion[i].cantEncontrada,
+                    gravedad: response?.data.Evaluacion[i].gravedad,
+                    estado: response?.data.Evaluacion[i].estado,
                   })
                 }
                 setRows(aux);
@@ -374,41 +380,49 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
   
     React.useEffect(() => {
       let data = {
-        nombre_id: campaña
+        idCampaña: campaña,
+        idUsuario: state.usuario.idUsuario,
       }
-        getAplicaciones(data)
+      console.log("DATA",data, state)
+      getEvaluaciones(data)
     }, [])
 
     React.useEffect(() => {
-      let data = {
-        nombre_id: campaña
-      }
-      if(showAñadir === false){
-        getAplicaciones(data)
-      }
-      if(showEditCustomer === false) getAplicaciones(data);
-      if(showEliminar === false) getAplicaciones(data);
-  }, [showAñadir, showEditCustomer, showEliminar])
+        let data = {
+            idCampaña: campaña,
+            idUsuario: state.usuario.idUsuario,
+          }
+      getEvaluaciones(data)
+      console.log(data)
+    }, [campaña])
 
     React.useEffect(() => {
-      let data = {
-        nombre_id: campaña
+        let data = {
+            idCampaña: campaña,
+            idUsuario: state.usuario.idUsuario,
+          }
+      if(showAñadir === false){
+        getEvaluaciones(data)
       }
-      getAplicaciones(data)
-  }, [campaña])
+      if(showEditCustomer === false) getEvaluaciones(data);
+      if(showEliminar === false) getEvaluaciones(data);
+  }, [showAñadir, showEditCustomer, showEliminar])
   
     return (
       <div>
-        <PopUpAñadirAplicacion
+        <PopUpAñadirEvalEval
           show={showAñadir}
           setShow={setShowAñadir}
+          selectedCampaña={campaña}
+          state={state}
         />
-        <PopUpModificarAplicacion
+        <PopUpModificarEvalEval
           show={showEditCustomer}
           setShow={setShowEditCustomer}
           row={dataCustomer}
+          state={state}
         />
-        <PopUpEliminarAplicacion
+        <PopUpEliminarEvaluacion
           show={showEliminar}
           setShow={setShowEliminar}
           row={dataCustomer}
@@ -420,7 +434,7 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>
-              <Typography sx={{width: 300}}><b>Aplicaciones de pesticida</b></Typography>
+              <Typography><b>Evaluaciones</b></Typography>
             </Box>
             <Box display="flex" justifyContent="flex-end" sx={{ width: '100%',}}>
               <Button
@@ -505,4 +519,4 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
     );
 }
 
-export default TablaAplicaciones
+export default TablaEvaluacionesEval

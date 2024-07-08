@@ -15,8 +15,15 @@ import LogoutOutlinedIcon from '@mui/icons-material/LogoutOutlined';
 import {useNavigate} from "react-router-dom";
 
 const drawerWidth = 60;
-function NavbarEvaluador() {
+function NavbarEvaluador({state}) {
+
     let navigate = useNavigate();
+
+    const handleNavigate = (path) => {
+      navigate(path, { state: state });
+    };
+  
+
     return (
       <Box sx={{ display: 'flex' }}>
         <Drawer 
@@ -61,7 +68,7 @@ function NavbarEvaluador() {
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}
-                  href="/home"
+                  onClick={() => handleNavigate('/eval-home')}
                   >
                   <ListItemIcon sx={{
                       minWidth: 0,
@@ -79,7 +86,7 @@ function NavbarEvaluador() {
                     justifyContent: 'center',
                     alignItems: 'center'
                   }}
-                  href='/movimientos'
+                  onClick={() => handleNavigate('/eval-movimientos')}
                   >
                   <ListItemIcon sx={{
                       minWidth: 0,

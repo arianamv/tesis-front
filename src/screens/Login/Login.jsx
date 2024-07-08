@@ -15,6 +15,8 @@ import { FormControl, FormHelperText, IconButton, Input, InputAdornment, InputLa
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import background from '../../assets/Login_image.jpg'
 import logo from '../../assets/Logo.png'
+import { login } from '../../services/adminService';
+import { BrowserRouter as Router, Route, useLocation } from 'react-router-dom';
 
 function Copyright(props) {
   return (
@@ -38,26 +40,27 @@ export default function LoginPage() {
     const [errorMail, setErrorEmail] = React.useState("");
     const [showPassword, setShowPassword] = React.useState(false);
     const [errorPassword, setErrorPassword] = React.useState("")
-
-    React.useEffect(() => {
-      console.log("PRUEBA")
-    },[])
+    let [usuario, setUsuario] = React.useState("");
     
-
     const handleSubmit = async (event) => {
         event.preventDefault();
         const data = new FormData(event.currentTarget);
         setErrorEmail("")
         setErrorPassword("")
 
+        let perfil =1
+
         if (validar.validarCorreo(data?.get('email')) || data?.get('email') === "admin"){
-          const response = await authService.login(data); 
-          if(response?.data?.token){
-            authService.setToken(JSON.stringify(response?.data));
-            if (authService.getUserRole() === "ADMINISTRADOR"){
-              navigate('/admin-page');
+          console.log(data)
+          const response = await login(data); 
+          console.log(response);
+          if(response?.data){
+            setUsuario(response.data.Usuario[0]);
+            usuario = response.data.Usuario[0];
+            if (response?.data.Usuario[0].Perfil_idPerfil === 1){
+              navigate('/admin-home', { state: { usuario: usuario } });
             } else {
-              navigate('/colab-page');
+              navigate('/eval-home', { state: { usuario: usuario } });
             }
           }  else {
             setErrorPassword("Fallo de autenticación: La contraseña ingresada es incorrecta o no existe el usuario.")

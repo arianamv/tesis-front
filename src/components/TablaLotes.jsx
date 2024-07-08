@@ -489,6 +489,7 @@ function TablaLotes({search, setSearch, rowsTable, setRowsTable, rows, setRows, 
       <PopUpDescargar
           show={showDescargar}
           setShow={setShowDescargar}
+          rowsTable={rowsTable}
         />
       <Box display='flex' sx={{ mb: 1 }}>
           <Box>

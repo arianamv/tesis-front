@@ -358,6 +358,7 @@ function TablaPesticidas({search, setSearch, rowsTable, setRowsTable, rows, setR
         <PopUpDescargar
           show={showDescargar}
           setShow={setShowDescargar}
+          rowsTable={rowsTable}
         />
         <Box display='flex' sx={{ mb: 1 }}>
             <Box>

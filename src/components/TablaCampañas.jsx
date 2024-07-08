@@ -368,6 +368,7 @@ export default function TablaCampañas({search, setSearch, rowsTable, setRowsTab
       <PopUpDescargar
         show={showDescargar}
         setShow={setShowDescargar}
+        rowsTable={rowsTable}
       />
       <PopupEliminar
         show={showEliminar}

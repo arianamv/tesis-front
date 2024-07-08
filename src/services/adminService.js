@@ -193,6 +193,22 @@ export const insertarUsuario = (data) => {
     });
 };
 
+export const login = (data) => {
+    let payLoad = JSON.stringify({
+        "correo": data.get('email'),
+        "contrasenia": data.get('password')
+    })
+    return new Promise((resolve, reject) => {
+        HttpClient.post("usuario/login", payLoad)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
 export const modificarUsuario = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("usuario/modificarUsuario", data)
@@ -544,6 +560,18 @@ export const eliminarEvaluacion = (data) => {
 export const listarEvaluacionesXCampaña = (data) => {
     return new Promise((resolve, reject) => {
         HttpClient.post("evaluacion/listarEvaluacionesXCampania", data)
+            .then((resultado) => {
+                resolve(resultado);
+            })
+            .catch((error) => {
+                resolve(error);
+            });
+    });
+};
+
+export const listarEvaluacionesXCampañaXUsuario = (data) => {
+    return new Promise((resolve, reject) => {
+        HttpClient.post("evaluacion/listarEvaluacionesXCampaniaXUsuario", data)
             .then((resultado) => {
                 resolve(resultado);
             })
