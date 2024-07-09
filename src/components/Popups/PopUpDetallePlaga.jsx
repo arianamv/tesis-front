@@ -92,7 +92,7 @@ function PopUpDetallePlaga({show, setShow, titulo, lote, evaluacion}) {
         <DialogContent>
           <Box display='flex'>
           <Box sx={{ width: '50%' }}>
-            <img src={require("../../assets/arañaRoja.jpg")} alt="plaga" width={'100%'} height={'100%'}/>
+            {evaluacion !== -1 && <img src={require("../../assets/imagenes plagas/" + evaluacion.idPlaga + ".jpg")} alt="plaga" width={'100%'} height={'100%'}/>}
           </Box>
           <Box display="flex" alignItems="center" justifyContent="center" sx={{ width: '50%' }}>
           <DialogContentText id="descripcion">

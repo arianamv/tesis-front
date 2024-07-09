@@ -25,7 +25,7 @@ import PopUpAñadirAplicacion from './Popups/PopUpAñadirAplicacion';
 import PopUpModificarAplicacion from './Popups/PopUpModificarAplicacion';
 import PopUpEliminarAplicacion from './Popups/PopUpEliminarAplicacion';
 
-function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
+function TablaAplicaciones({fechaInicio, search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -328,8 +328,7 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
       }
       if (search != "") {
         setRowsTable(rows.filter(
-            (key) => key.nombre?.toLowerCase().includes(search?.toLowerCase()) ||
-            key.descripcion?.toLowerCase().includes(search?.toLowerCase())
+            (key) => key.nombrePesticida?.toLowerCase().includes(search?.toLowerCase())
           ))
       }
     }, [search]);
@@ -402,11 +401,13 @@ function TablaAplicaciones({search, setSearch, rowsTable, setRowsTable, rows, se
         <PopUpAñadirAplicacion
           show={showAñadir}
           setShow={setShowAñadir}
+          fechaInicio={fechaInicio}
         />
         <PopUpModificarAplicacion
           show={showEditCustomer}
           setShow={setShowEditCustomer}
           row={dataCustomer}
+          fechaInicio={fechaInicio}
         />
         <PopUpEliminarAplicacion
           show={showEliminar}

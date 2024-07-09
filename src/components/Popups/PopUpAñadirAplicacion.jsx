@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { insertarAplicacion, insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPesticidas, listarPlagas, listarVariedadesXCultivo } from '../../services/adminService';
 import moment from 'moment';
 
-function PopUpAñadirAplicacion({show, setShow}) {
+function PopUpAñadirAplicacion({fechaInicio, show, setShow}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -62,7 +62,6 @@ function PopUpAñadirAplicacion({show, setShow}) {
       setUnidadAplicada("");
     }
 
-    let fechaInicio = '2024-06-01'
 
     React.useEffect(() => {
       let newAplicacion = {

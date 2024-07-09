@@ -204,10 +204,15 @@ function GestionEvaluador() {
   const [fundo, setFundo] = useState(2);
 
   let [campañas, setCampañas] = React.useState([]);
+  let [selectedCampaña, setSelectedCampaña] = React.useState([]);
   const getCampañas = () => {
     listarCampanias().then((response) => {
       setCampañas(response.data?.Campaña)
       campañas = response.data?.Campaña
+      const found = campañas.find(({ idCampaña }) => idCampaña === campaña);
+      console.log("FOUND", found)
+      setSelectedCampaña(found)
+      selectedCampaña = found
     })
   }
 
@@ -297,7 +302,7 @@ function GestionEvaluador() {
                   <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
                   <SearchBar
                     search={search}
-                    setSearch={search}
+                    setSearch={setSearch}
                     campañas={campañas}
                     setCampañas={setCampañas}
                     campaña={campaña}
@@ -335,6 +340,7 @@ function GestionEvaluador() {
           setCampañaGrafico = {setCampañaGrafico}
           fundo={fundo}
           setFundo={setFundo}
+          fechaInicio={selectedCampaña.fechaIni}
           />
       </Row>
     </Box>

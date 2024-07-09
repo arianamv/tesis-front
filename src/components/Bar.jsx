@@ -10,10 +10,11 @@ import Typography from '@mui/material/Typography';
 import FormControl from '@mui/material/FormControl';
 import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { listarCampanias, listarFundos, listarSemanas } from '../services/adminService';
+import PerfilDetalles from './Filters/PerfilDetalles';
 
 const drawerWidth = 300;
 
-function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, campania, setCampania, semana, setSemana}) {
+function Bar({state, fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, campania, setCampania, semana, setSemana}) {
   const [age, setAge] = React.useState('');
   const [selectedFundo, setSelectedFundo] = React.useState(2);
   const [selectedCampania, setSelectedCampania] = React.useState(4);
@@ -53,8 +54,19 @@ function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, c
     getSemanas();
   }, [])
 
+  const [showPerfil, setShowPerfil] = React.useState("");
+
+  const openFilter = (event) => {
+    setShowPerfil(event.currentTarget);
+  };
+
   return (
     <div>
+      <PerfilDetalles
+        show={showPerfil}
+        setShow={setShowPerfil}
+        state={state}
+      />
     <CssBaseline />
       <AppBar
         position="fixed"
@@ -141,6 +153,7 @@ function Bar({fundo, setFundo, fundos, setFundos, fundoObject, setFundoObject, c
           <IconButton
               size="large"
               edge="end"
+              onClick={openFilter}
             >
               <AccountCircle />
             </IconButton>

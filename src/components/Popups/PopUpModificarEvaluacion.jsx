@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPlagas, listarVariedades, listarVariedadesXCultivo, modificarEvaluacion } from '../../services/adminService';
 import moment from 'moment';
 
-function PopUpModificarEvaluacion({show, setShow, row}) {
+function PopUpModificarEvaluacion({fechaInicio, show, setShow, row}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -32,7 +32,6 @@ function PopUpModificarEvaluacion({show, setShow, row}) {
     const [cultivo, setCultivo] = React.useState(row.idCultivo);
     const [variedad, setVariedad] = React.useState(row.idVariedad);
     let [arrayPlagas, setArrayPlagas] = React.useState([]);
-    let fechaInicio = "2024-06-01"
     const [selectedEvaluacion, setSelectedEvaluacion] = React.useState("");
 
     const handleCloseSnackbar = () => setSnackbar(null);

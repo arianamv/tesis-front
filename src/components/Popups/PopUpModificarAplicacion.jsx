@@ -13,7 +13,7 @@ import Select, { SelectChangeEvent } from '@mui/material/Select';
 import { insertarPlaga, listarEvaluaciones, listarEvaluadores, listarLotes, listarPesticidas, listarPlagas, listarVariedadesXCultivo, modificarAplicacion } from '../../services/adminService';
 import moment from 'moment';
 
-function PopUpModificarAplicacion({show, setShow, row}) {
+function PopUpModificarAplicacion({fechaInicio, show, setShow, row}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -74,8 +74,6 @@ function PopUpModificarAplicacion({show, setShow, row}) {
         setCantidadAplicada(row.cantidadAplicada);
         setUnidadAplicada(row.unidadAplicada);
     }, [row])
-
-    let fechaInicio = '2024-06-01'
   
     React.useEffect(() => {
         if(lote !== undefined && pesticida !== undefined){

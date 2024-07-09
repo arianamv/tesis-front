@@ -17,7 +17,7 @@ import TablaAplicaciones from '../TablaAplicaciones';
 import TablaEvaluacionesEval from '../TablaEvaluacionesEval';
 import { useLocation } from 'react-router-dom';
 
-function ColumnTabsEva({state, value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setVista, campaña, setCampaña}) {
+function ColumnTabsEva({fechaInicio, state, value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setVista, campaña, setCampaña}) {
 
   const handleChange = (event, newValue) => {
         setValue(newValue);
@@ -66,6 +66,7 @@ function ColumnTabsEva({state, value, setValue, search, setSearch, rowsTableEval
                   setRows={setRowsEvaluaciones}
                   campaña={campaña}
                   setCampaña={setCampaña}
+                  fechaInicio={fechaInicio}
                 />
             </TabPanel>
           </TabContext>

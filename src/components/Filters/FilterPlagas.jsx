@@ -52,26 +52,6 @@ function FilterPlagas({show, setShow, rowsTable, setRowsTable, rows, setRows}) {
               >
                   <Typography fontWeight="bold">Filtrar</Typography>
                   <Divider/>
-                  <Box display='flex' sx={{ mt:1 }}>
-                    <Typography variant="body2" sx={{ mt: 1 }}>
-                      Familia:
-                    </Typography>
-                    <Select
-                      id="familia-select"
-                      value={familia}
-                      onChange={handleFamilia}
-                      size={'small'}
-                      variant='standard'
-                      sx={{ 
-                        width: '100%',
-                        ml: 2
-                      }}
-                    >
-                      <MenuItem value={2}>Palta</MenuItem>
-                      <MenuItem value={1}>Uva</MenuItem>
-                      <MenuItem value={3}>Arándano</MenuItem>
-                    </Select>
-                  </Box>
                   <Box display='flex' sx={{  mt:1 }}>
                     <Typography variant="body2" sx={{ mt: 1 }}>
                       Estado:

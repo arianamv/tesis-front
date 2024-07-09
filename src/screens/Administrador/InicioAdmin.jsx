@@ -11,6 +11,7 @@ import Button from 'react-bootstrap/Button';
 import Col from 'react-bootstrap/Col';
 import Container from 'react-bootstrap/Container';
 import { getFundo, listarCampanias, listarCoordenadaXLote, listarEvaluacionesXSemana, listarFundos, listarLastEvaluacionesXSemana, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
+import { useLocation } from 'react-router-dom';
 
 function InicioAdmin() {
   let [fundo, setFundo] = React.useState(2);
@@ -26,6 +27,8 @@ function InicioAdmin() {
   const [fundoObject, setFundoObject] = React.useState(-1);
   let [plagas, setPlagas] = React.useState([]);
   let [cultivos, setCultivos] = React.useState([]);
+  const location = useLocation();
+  const { state } = location;
 
   const getLotesXFundo = (fundo) => {
     console.log(fundo)
@@ -165,6 +168,7 @@ function InicioAdmin() {
         setCampania={setCampania}
         semana={semana}
         setSemana={setSemana}
+        state={state}
       />
       <NavBarAdmin/>
       <BarraAlertas

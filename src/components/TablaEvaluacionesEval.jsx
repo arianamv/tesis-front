@@ -27,7 +27,7 @@ import { useLocation } from 'react-router-dom';
 import PopUpAñadirEvalEval from './Popups/PopUpAñadirEvalEval';
 import PopUpModificarEvalEval from './Popups/PopUpModificarEvalEval';
 
-function TablaEvaluacionesEval({state, search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
+function TablaEvaluacionesEval({fechaInicio, state, search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -415,12 +415,14 @@ function TablaEvaluacionesEval({state, search, setSearch, rowsTable, setRowsTabl
           setShow={setShowAñadir}
           selectedCampaña={campaña}
           state={state}
+          fechaInicio={fechaInicio}
         />
         <PopUpModificarEvalEval
           show={showEditCustomer}
           setShow={setShowEditCustomer}
           row={dataCustomer}
           state={state}
+          fechaInicio={fechaInicio}
         />
         <PopUpEliminarEvaluacion
           show={showEliminar}

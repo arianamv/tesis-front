@@ -301,7 +301,7 @@ function GestionDatos() {
                 <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
                   <SearchBarFundo
                   search={search}
-                  setSearch={search}
+                  setSearch={setSearch}
                   fundos={fundos}
                   setFundos={setFundos}
                   fundo={fundo}
@@ -328,7 +328,7 @@ function GestionDatos() {
                 <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
                   <SearchBarCampaña
                   search={search}
-                  setSearch={search}
+                  setSearch={setSearch}
                   campañas={campañas}
                   setCampañas={setCampañas}
                   campaña={campaña}
@@ -355,7 +355,7 @@ function GestionDatos() {
                 <Box sx={{ width: '95%', pb:2, pl: 2, pt: 2 }}>
                   <SearchBar
                   search={search}
-                  setSearch={search}
+                  setSearch={setSearch}
                   />
                 </Box>
                 <Box display='flex' justifyContent='center' alignItems='center' sx={{ width: '5%' }}>

@@ -14,7 +14,7 @@ import { getCampañaXLote, insertarEvaluacion, insertarPlaga, listarEvaluaciones
 import { LegendToggle } from '@mui/icons-material';
 import moment from 'moment';
 
-function PopUpAñadirEvalEval({state, show, setShow, selectedCampaña}) {
+function PopUpAñadirEvalEval({fechaInicio, state, show, setShow, selectedCampaña}) {
     const [showSection, setShowSection] = React.useState(false);
     const [snackbar, setSnackbar] = React.useState(null);
 
@@ -34,8 +34,6 @@ function PopUpAñadirEvalEval({state, show, setShow, selectedCampaña}) {
     const [cultivo, setCultivo] = React.useState(1);
     const [variedad, setVariedad] = React.useState(1);
     let [arrayPlagas, setArrayPlagas] = React.useState([]);
-
-    let fechaInicio = "2024-06-01"
 
     const handleCloseSnackbar = () => setSnackbar(null);
     const handleClose = async() => {

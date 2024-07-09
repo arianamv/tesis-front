@@ -13,6 +13,7 @@ import Container from 'react-bootstrap/Container';
 import { getFundo, listarCampanias, listarCoordenadaXLote, listarEvaluacionesXSemana, listarFundos, listarLastEvaluacionesXSemana, listarLoteXFundo, listarLotesXCampañaXFundo } from '../../services/adminService';
 import NavbarEvaluador from '../../components/Navbars/NavbarEvaluador';
 import { useLocation } from 'react-router-dom';
+import PerfilDetalles from '../../components/Filters/PerfilDetalles';
 
 
 function InicioEvaluador() {
@@ -156,9 +157,12 @@ function InicioEvaluador() {
     console.log("Eval", evaluaciones)
   }, [fundo, campania, semana])
 
+  
+
 
   return (lotes !== -1 && fundos !== -1 && evaluaciones !== -1) ?(
     <div>
+      
       <Box sx={{ display: 'flex' }}>
       <Bar
         fundo={fundo}
@@ -170,6 +174,7 @@ function InicioEvaluador() {
         setCampania={setCampania}
         semana={semana}
         setSemana={setSemana}
+        state={state}
       />
       <NavbarEvaluador state={state}/>
       <BarraAlertas

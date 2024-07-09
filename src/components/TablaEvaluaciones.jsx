@@ -24,7 +24,7 @@ import PopUpDescargar from './Popups/PopUpDescargar';
 import PopUpModificarEvaluacion from './Popups/PopUpModificarEvaluacion';
 import PopUpEliminarEvaluacion from './Popups/PopUpEliminarEvaluacion';
 
-function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
+function TablaEvaluaciones({fechaInicio, search, setSearch, rowsTable, setRowsTable, rows, setRows, campaña, setCampaña}) {
     const [showEditCustomer, setShowEditCustomer] = React.useState(false);
     const [dataCustomer, setDataCustomer] = React.useState("");
     const [idClient, setIdClient] = React.useState(0);
@@ -405,11 +405,13 @@ function TablaEvaluaciones({search, setSearch, rowsTable, setRowsTable, rows, se
           show={showAñadir}
           setShow={setShowAñadir}
           selectedCampaña={campaña}
+          fechaInicio={fechaInicio}
         />
         <PopUpModificarEvaluacion
           show={showEditCustomer}
           setShow={setShowEditCustomer}
           row={dataCustomer}
+          fechaInicio={fechaInicio}
         />
         <PopUpEliminarEvaluacion
           show={showEliminar}

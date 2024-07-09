@@ -16,7 +16,7 @@ import GraficoEvaluaciones from '../GraficoEvaluaciones';
 import TablaAplicaciones from '../TablaAplicaciones';
 import GraficoAplicaciones from '../GraficoAplicaciones';
 
-function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setRowsTableAplicaciones, rowsAplicaciones, setRowsAplicaciones, vista, setVista, semana, setSemana, campaña, setCampaña, campañaGrafico, setCampañaGrafico, fundo, setFundo}) {
+function ColumnTabsMov({fechaInicio, value, setValue, search, setSearch, rowsTableEvaluaciones,setRowsTableEvaluaciones, rowsEvaluaciones, setRowsEvaluaciones, rowsTableAplicaciones, setRowsTableAplicaciones, rowsAplicaciones, setRowsAplicaciones, vista, setVista, semana, setSemana, campaña, setCampaña, campañaGrafico, setCampañaGrafico, fundo, setFundo}) {
   const handleChange = (event, newValue) => {
     setValue(newValue);
   };
@@ -76,6 +76,7 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
           {
             !vista &&
             (<TablaEvaluaciones
+              fechaInicio={fechaInicio}
               search={search}
               setSearch={setSearch}
               rowsTable={rowsTableEvaluaciones}
@@ -89,6 +90,7 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
           {
             vista && <GraficoEvaluaciones
               rowsTable={rowsTableEvaluaciones}
+              fechaInicio={fechaInicio}
               setRowsTable={setRowsTableEvaluaciones}
               semana={semana}
               setSemana={setSemana}
@@ -104,6 +106,7 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
             !vista &&
             (<TablaAplicaciones
               search={search}
+              fechaInicio={fechaInicio}
               setSearch={setSearch}
               rowsTable={rowsTableAplicaciones}
               setRowsTable={setRowsTableAplicaciones}
@@ -116,6 +119,7 @@ function ColumnTabsMov({value, setValue, search, setSearch, rowsTableEvaluacione
           {
             vista && <GraficoAplicaciones
             rowsTable={rowsTableEvaluaciones}
+            fechaInicio={fechaInicio}
             setRowsTable={setRowsTableEvaluaciones}
             semana={semana}
             setSemana={setSemana}

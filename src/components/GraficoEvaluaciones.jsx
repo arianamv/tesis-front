@@ -3,8 +3,8 @@ import dayjs from "dayjs";
 import { LineChart } from '@mui/x-charts/LineChart';
 import { listarEvaluacionesXCampañaXFundo } from '../services/adminService';
 
-function GraficoEvaluaciones({rowsTable, setRowsTable, semana, setSemana, campaña, setCampaña, fundo, setFundo}) {
-  const fechaInicio = "2024-06-01"
+function GraficoEvaluaciones({fechaInicio, rowsTable, setRowsTable, semana, setSemana, campaña, setCampaña, fundo, setFundo}) {
+
   
 
   var week = dates(new Date(fechaInicio));
