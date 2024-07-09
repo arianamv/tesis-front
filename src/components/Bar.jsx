@@ -62,11 +62,6 @@ function Bar({state, fundo, setFundo, fundos, setFundos, fundoObject, setFundoOb
 
   return (
     <div>
-      <PerfilDetalles
-        show={showPerfil}
-        setShow={setShowPerfil}
-        state={state}
-      />
     <CssBaseline />
       <AppBar
         position="fixed"

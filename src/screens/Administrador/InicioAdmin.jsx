@@ -168,7 +168,6 @@ function InicioAdmin() {
         setCampania={setCampania}
         semana={semana}
         setSemana={setSemana}
-        state={state}
       />
       <NavBarAdmin/>
       <BarraAlertas

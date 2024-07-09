@@ -18,9 +18,6 @@ const drawerWidth = 60;
 
 export default function NavbarAdmin() {
   let navigate = useNavigate();
-  const handleNavigate = (path) => {
-    navigate(path, { state: state });
-  };
   return (
     <Box sx={{ display: 'flex' }}>
       <Drawer 
@@ -65,7 +62,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                onClick={() => handleNavigate('/admin-home')}
+                href="/admin-home"
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
@@ -83,7 +80,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                onClick={() => handleNavigate('/admin-datos')}
+                href="/admin-datos"
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
@@ -101,7 +98,7 @@ export default function NavbarAdmin() {
                   justifyContent: 'center',
                   alignItems: 'center'
                 }}
-                onClick={() => handleNavigate('/admin-movimientos')}
+                href='/admin-movimientos'
                 >
                 <ListItemIcon sx={{
                     minWidth: 0,
